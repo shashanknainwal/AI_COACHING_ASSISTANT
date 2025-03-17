@@ -1,10 +1,12 @@
-# AI Coaching Assistant: An Interactive Code and Writing Analysis Tool
+# AI Coaching Assistant: An Interactive Learning and Analysis Tool
 
-The AI Coaching Assistant is a Streamlit-based web application that provides intelligent feedback on Python code and written text using AWS Bedrock's Claude AI model. It combines real-time code execution capabilities with AI-powered analysis to help developers write better code and improve their writing.
+The AI Coaching Assistant is a comprehensive Streamlit-based web application that combines intelligent feedback on code and writing with STEM tutoring and adaptive learning capabilities. Powered by AWS Bedrock's Claude AI model, it provides personalized learning experiences across multiple domains.
 
-The application offers two primary features:
+The application offers four primary features:
 - Code Assistant: Analyzes Python code for issues, suggests improvements, and provides real-time code execution in a sandboxed environment
 - Writing Assistant: Evaluates text content for clarity, coherence, and style while providing actionable improvement suggestions
+- STEM Tutor: Offers interactive tutoring across Mathematics, Physics, Chemistry, and Biology with step-by-step solutions
+- Adaptive Learning: Generates personalized questions based on subject, topic, and user performance level
 
 ## Repository Structure
 ```
@@ -12,6 +14,7 @@ The application offers two primary features:
 ├── app.py                  # Main application entry point with Streamlit UI implementation
 ├── backend/               # Core backend functionality
 │   ├── __init__.py       # Package initialization
+│   ├── adaptive_learning.py # Adaptive learning system management
 │   ├── ai_coach.py       # AWS Bedrock Claude integration for AI analysis
 │   └── code_sandbox.py   # Secure Python code execution environment
 ├── requirements.txt       # Project dependencies
@@ -63,6 +66,8 @@ streamlit run app.py
 2. Select your desired mode from the sidebar:
    - Code Assistant
    - Writing Assistant
+   - STEM Tutor
+   - Adaptive Learning
 
 3. For Code Assistant:
 ```python
@@ -78,6 +83,18 @@ example()
 4. For Writing Assistant:
 - Enter your text in the provided text area
 - Click "Analyze Writing" for detailed feedback
+
+5. For STEM Tutor:
+- Select a subject (Math, Physics, Chemistry, or Biology)
+- Choose a specific topic within the subject
+- Enter your question
+- Receive step-by-step solutions and explanations
+
+6. For Adaptive Learning:
+- Select your subject and topic
+- Start with beginner-level questions
+- Progress through difficulty levels based on performance
+- Access hints and explanations when needed
 
 ### More Detailed Examples
 
@@ -111,6 +128,32 @@ The AI will analyze:
 - Suggested improvements
 ```
 
+#### STEM Tutoring Example
+```text
+Subject: Physics
+Topic: Mechanics
+Question: "Calculate the acceleration of a 2kg mass with a force of 10N applied."
+
+The tutor will provide:
+- Step-by-step solution using F = ma
+- Key concepts about Newton's laws
+- Visual force diagrams
+- Practice problems for reinforcement
+```
+
+#### Adaptive Learning Example
+```text
+Subject: Mathematics
+Topic: Algebra
+Level: 1 (Beginner)
+
+- Receive progressively challenging questions
+- Get immediate feedback on answers
+- Access hints when stuck
+- View detailed explanations
+- Track progress across difficulty levels
+```
+
 ### Troubleshooting
 
 Common Issues:
@@ -140,10 +183,10 @@ logging.basicConfig(level=logging.DEBUG)
 ```
 
 ## Data Flow
-The application processes user input through AI analysis and code execution pipelines, providing immediate feedback and results.
+The application processes user input through multiple pipelines, providing immediate feedback and adaptive content delivery.
 
 ```ascii
-User Input --> [Streamlit UI] --> [AI Coach/Code Sandbox]
+User Input --> [Streamlit UI] --> [AI Coach/Code Sandbox/Adaptive Learning]
                                         |
                                         v
                                 [AWS Bedrock API]
@@ -153,10 +196,11 @@ Response Format --> [Helpers] --> [Streamlit Display]
 ```
 
 Component Interactions:
-1. Streamlit UI captures user input (code or text)
+1. Streamlit UI captures user input (code, text, or STEM questions)
 2. AI Coach communicates with AWS Bedrock using boto3
 3. Code Sandbox executes Python code in isolated environment
-4. Helper functions format AI responses for display
-5. Results are rendered in the Streamlit UI
-6. Error handling occurs at each step with appropriate user feedback
-7. All components maintain stateless operation for reliability
+4. Adaptive Learning system manages progression and content delivery
+5. Helper functions format AI responses for display
+6. Results are rendered in the Streamlit UI
+7. Error handling occurs at each step with appropriate user feedback
+8. All components maintain stateless operation for reliability
