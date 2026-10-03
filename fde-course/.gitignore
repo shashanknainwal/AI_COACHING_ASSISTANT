@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.env*.local
+.env
+# copied from node_modules/pyodide at install time
+public/pyodide/
+public/py/manifest.json
+public/monaco/

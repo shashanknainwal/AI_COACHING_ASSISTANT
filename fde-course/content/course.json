@@ -1,0 +1,215 @@
+{
+  "title": "Forward Deployed Engineering: The Complete Course",
+  "tagline": "Discovery, messy data, integrations, LLM systems built with Claude, and production support — the full FDE playbook, taught through hands-on Python exercises you complete right in your browser.",
+  "priceUsd": 99,
+  "modules": [
+    {
+      "slug": "01-fde-role-and-mindset",
+      "title": "The FDE Role & Mindset",
+      "summary": "What forward deployed engineers actually do, how the role differs from SWE, solutions engineering and consulting, and the operating loop you'll run on every engagement.",
+      "outcomes": [
+        "Explain the FDE role and where it fits in a company",
+        "Run the discover → build → deploy → measure → feed back loop",
+        "Prioritize a messy customer backlog with a defensible scoring model",
+        "Make your first Claude API call with the Anthropic Python SDK"
+      ],
+      "plannedMinutes": 75,
+      "plannedLessons": []
+    },
+    {
+      "slug": "02-customer-discovery",
+      "title": "Customer Discovery & Scoping",
+      "summary": "Turn vague asks into scoped, measurable engagements. Stakeholder maps, success metrics, written briefs, and the art of saying no.",
+      "outcomes": [
+        "Run a discovery call and capture requirements",
+        "Define success metrics a customer will sign off on",
+        "Write a one-page engagement brief and scope document",
+        "Use Claude with structured outputs to turn call notes into a requirements doc"
+      ],
+      "plannedMinutes": 60,
+      "plannedLessons": [
+        "Discovery calls that uncover the real problem",
+        "Stakeholder mapping: champions, blockers, and budget holders",
+        "Exercise: Parse discovery notes into requirements",
+        "Success metrics and acceptance criteria",
+        "Exercise: Structured requirements extraction with Claude",
+        "Scope, change requests, and saying no",
+        "Module quiz"
+      ]
+    },
+    {
+      "slug": "03-python-data-wrangling",
+      "title": "Wrangling Messy Customer Data",
+      "summary": "Customer data is never clean. Profile, clean, join and reconcile CSV exports and JSON dumps with Python and pandas.",
+      "outcomes": [
+        "Profile an unfamiliar dataset in minutes",
+        "Normalize dates, currencies, IDs and free-text fields",
+        "Deduplicate and reconcile records across systems",
+        "Produce a data-quality report a customer can act on"
+      ],
+      "plannedMinutes": 75,
+      "plannedLessons": [
+        "Data profiling: your first hour with customer data",
+        "Exercise: Profile a CRM export",
+        "Normalization: dates, money, phone numbers, IDs",
+        "Exercise: Clean a messy orders file",
+        "Entity resolution and deduplication",
+        "Exercise: Reconcile two systems of record",
+        "Data-quality reports that drive action",
+        "Module quiz"
+      ]
+    },
+    {
+      "slug": "04-apis-and-integrations",
+      "title": "APIs & Integrations",
+      "summary": "Connect to customer systems that rate-limit, paginate, time out and change without warning. Build integrations that survive.",
+      "outcomes": [
+        "Consume REST APIs with auth, pagination and filtering",
+        "Implement retries with exponential backoff and jitter",
+        "Design idempotent sync jobs and webhooks",
+        "Map and transform between two schemas"
+      ],
+      "plannedMinutes": 75,
+      "plannedLessons": [
+        "REST in the real world: auth, pagination, errors",
+        "Exercise: Paginate a customer API",
+        "Retries, backoff and rate limits",
+        "Exercise: Survive a flaky API",
+        "Idempotency, webhooks and sync jobs",
+        "Exercise: Build an idempotent sync",
+        "Schema mapping between systems",
+        "Module quiz"
+      ]
+    },
+    {
+      "slug": "05-sql-and-data-modeling",
+      "title": "SQL & Data Modeling on Customer Systems",
+      "summary": "Query customer databases safely, model data for analytics and AI features, and write the SQL that answers the executive's question.",
+      "outcomes": [
+        "Write joins, aggregations and window functions",
+        "Model entities for reporting and retrieval",
+        "Query production databases safely",
+        "Build a metrics layer from raw tables"
+      ],
+      "plannedMinutes": 60,
+      "plannedLessons": [
+        "SQL refresher for FDEs (sqlite3 in Python)",
+        "Exercise: Answer the exec's question with SQL",
+        "Window functions and cohort analysis",
+        "Exercise: Build a retention table",
+        "Data modeling for analytics and AI",
+        "Safe access to production data",
+        "Module quiz"
+      ]
+    },
+    {
+      "slug": "06-building-with-claude",
+      "title": "Building with Claude: Anthropic SDK Fundamentals",
+      "summary": "The core of modern FDE work. Messages, system prompts, multi-turn state, structured outputs, streaming, errors, cost and model choice.",
+      "outcomes": [
+        "Use the Anthropic Python SDK fluently",
+        "Write system prompts that hold up on real customer data",
+        "Get reliable JSON with structured outputs",
+        "Handle errors, retries, refusals, tokens and cost"
+      ],
+      "plannedMinutes": 75,
+      "plannedLessons": [
+        "The Messages API mental model",
+        "Exercise: Multi-turn support assistant",
+        "Prompting for production: system prompts and examples",
+        "Exercise: Classify support tickets",
+        "Structured outputs and JSON schemas",
+        "Exercise: Extract invoice fields",
+        "Errors, retries, refusals, tokens and cost",
+        "Exercise: A resilient Claude client",
+        "Module quiz"
+      ]
+    },
+    {
+      "slug": "07-tool-use-rag-agents",
+      "title": "Tool Use, RAG & Agents",
+      "summary": "Give Claude access to customer systems. Define tools, write the agent loop, retrieve from documents, and know when not to build an agent.",
+      "outcomes": [
+        "Define tools with JSON schemas and strict mode",
+        "Write and debug the tool-use loop",
+        "Build retrieval-augmented generation over customer docs",
+        "Choose between a single call, a workflow and an agent"
+      ],
+      "plannedMinutes": 90,
+      "plannedLessons": [
+        "Tool use: how Claude calls your code",
+        "Exercise: Your first tool",
+        "The agent loop",
+        "Exercise: A CRM agent with three tools",
+        "Retrieval-augmented generation",
+        "Exercise: RAG over a customer knowledge base",
+        "Workflows vs agents: picking the simplest thing",
+        "Exercise: Human-in-the-loop approvals",
+        "Module quiz"
+      ]
+    },
+    {
+      "slug": "08-evals-and-reliability",
+      "title": "Evals, Reliability & Cost",
+      "summary": "Prove your LLM system works before the customer finds out it doesn't. Build eval sets, graders, regression gates and cost models.",
+      "outcomes": [
+        "Build an eval set from real customer examples",
+        "Write code-based and LLM-as-judge graders",
+        "Gate releases on eval regressions",
+        "Model and reduce cost with caching and effort"
+      ],
+      "plannedMinutes": 60,
+      "plannedLessons": [
+        "Why evals are the FDE's superpower",
+        "Exercise: Build an eval harness",
+        "Graders: exact match, rubric, LLM-as-judge",
+        "Exercise: An LLM-as-judge grader",
+        "Cost modeling, prompt caching and effort",
+        "Exercise: Cost calculator for a deployment",
+        "Module quiz"
+      ]
+    },
+    {
+      "slug": "09-shipping-to-production",
+      "title": "Shipping to Production",
+      "summary": "Deploy into environments you don't control. Config, secrets, logging, observability, incident response and the post-mortem.",
+      "outcomes": [
+        "Package and configure a service for a customer environment",
+        "Add structured logging and metrics",
+        "Debug a production incident from logs alone",
+        "Write a blameless post-mortem and a handoff runbook"
+      ],
+      "plannedMinutes": 60,
+      "plannedLessons": [
+        "Deploying into customer environments",
+        "Config, secrets and environment parity",
+        "Exercise: Structured logging",
+        "Observability for LLM systems",
+        "Exercise: Debug an incident from logs",
+        "Post-mortems, runbooks and handoff",
+        "Module quiz"
+      ]
+    },
+    {
+      "slug": "10-capstone",
+      "title": "Capstone: An End-to-End Engagement",
+      "summary": "Run a full simulated engagement for a fictional logistics customer: discovery notes to scoped brief, data cleanup, integration, a Claude-powered triage agent with evals, and the executive readout.",
+      "outcomes": [
+        "Scope an engagement from raw discovery notes",
+        "Clean and integrate the customer's data",
+        "Ship a Claude-powered agent with an eval suite",
+        "Present results to an executive sponsor"
+      ],
+      "plannedMinutes": 75,
+      "plannedLessons": [
+        "The brief: meet NorthStar Logistics",
+        "Exercise: Scope the engagement",
+        "Exercise: Clean and join their shipment data",
+        "Exercise: Build the exception-triage agent",
+        "Exercise: Evaluate the agent",
+        "The executive readout",
+        "Final assessment"
+      ]
+    }
+  ]
+}
