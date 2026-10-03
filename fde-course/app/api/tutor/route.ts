@@ -1,8 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
+import { getViewer } from "@/lib/access";
 
-// TODO(auth): once Supabase auth + Stripe are added, reject requests from
-// users who haven't purchased, and rate-limit per user.
+// With accounts switched on, only signed-in learners can use the tutor (it costs API
+// credits). TODO: add a per-user daily limit before launch traffic.
 
 const SYSTEM = `You are the AI tutor inside an online course on Forward Deployed Engineering.
 Learners write Python in a browser editor. Their code is graded by hidden tests.
@@ -28,6 +29,12 @@ export async function POST(req: Request) {
     return NextResponse.json({
       answer: "The AI tutor isn't switched on for this site yet (ANTHROPIC_API_KEY is not set). Use the hints above in the meantime.",
     });
+  }
+
+  const viewer = await getViewer();
+  if (viewer.mode !== "dev" && !viewer.user) {
+    const answer = viewer.mode === "live" ? "Log in to use the AI tutor. It's free with your account." : "The AI tutor will be available once accounts open.";
+    return NextResponse.json({ answer }, { status: 401 });
   }
 
   let body: TutorRequest;

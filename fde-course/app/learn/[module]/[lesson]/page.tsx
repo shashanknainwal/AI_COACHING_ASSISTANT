@@ -1,10 +1,12 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import LessonWorkspace from "@/components/LessonWorkspace";
+import BuyButton from "@/components/BuyButton";
+import { canAccessModule, getViewer, toClientViewer } from "@/lib/access";
 import { getCourse, getLesson, getLessonSequence } from "@/lib/content";
 
-export function generateStaticParams() {
-  return getLessonSequence().map((l) => ({ module: l.moduleSlug, lesson: l.slug }));
-}
+// Rendered per request so paid lesson content is only sent to learners who bought the course.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ module: string; lesson: string }> }) {
   const { module, lesson } = await params;
@@ -19,14 +21,38 @@ export default async function LessonPage({ params }: { params: Promise<{ module:
 
   const course = getCourse();
   const mod = course.modules.find((m) => m.slug === module)!;
+  const viewer = await getViewer();
+  const clientViewer = toClientViewer(viewer);
+
+  if (!canAccessModule(viewer, module)) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 text-center">
+        <div className="text-4xl">🔒</div>
+        <p className="mt-4 text-sm uppercase tracking-widest text-gray-500">
+          Module {mod.number}: {mod.title}
+        </p>
+        <h1 className="mt-2 text-2xl font-bold text-white">{lesson.title}</h1>
+        <p className="mt-4 text-gray-400">
+          This lesson is part of the full course. Get lifetime access to all {course.modules.length} modules, every exercise and the AI tutor for a
+          one-time ${course.priceUsd}.
+        </p>
+        <div className="mt-8 flex flex-col items-center gap-3">
+          <BuyButton viewer={clientViewer} price={course.priceUsd} />
+          <Link href="/learn" className="text-sm text-gray-400 hover:text-white">
+            Back to the course
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   const seq = getLessonSequence();
   const i = seq.findIndex((l) => l.moduleSlug === module && l.slug === lessonSlug);
   const link = (j: number) => (seq[j] ? { href: `/learn/${seq[j].moduleSlug}/${seq[j].slug}`, title: seq[j].title } : null);
 
-  // TODO(paywall): once Stripe is wired, redirect unpaid users to /#pricing for any module after the first.
-
   return (
     <LessonWorkspace
+      viewer={clientViewer}
       lesson={{
         moduleSlug: lesson.moduleSlug,
         slug: lesson.slug,

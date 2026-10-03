@@ -1,8 +1,14 @@
 import Link from "next/link";
+import { getViewer, toClientViewer } from "@/lib/access";
 import { getCourse } from "@/lib/content";
+import AccountBadge from "@/components/AccountBadge";
+import BuyButton from "@/components/BuyButton";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
   const course = getCourse();
+  const viewer = toClientViewer(await getViewer());
   const totalMinutes = course.modules.reduce((s, m) => s + m.minutes, 0);
   const hours = Math.round(totalMinutes / 60);
 
@@ -13,9 +19,13 @@ export default function Home() {
         <nav className="ml-auto flex items-center gap-6 text-sm text-gray-400">
           <a href="#syllabus" className="hover:text-white">Syllabus</a>
           <a href="#pricing" className="hover:text-white">Pricing</a>
-          <Link href="/learn" className="rounded-lg border border-line px-3 py-1.5 text-gray-200 hover:bg-line">
-            Log in
-          </Link>
+          {viewer.signedIn || viewer.mode === "dev" ? (
+            <Link href="/learn" className="rounded-lg border border-line px-3 py-1.5 text-gray-200 hover:bg-line">
+              My course
+            </Link>
+          ) : (
+            <AccountBadge viewer={viewer} />
+          )}
         </nav>
       </header>
 
@@ -107,10 +117,7 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            {/* TODO(stripe): replace with a Stripe Checkout session link. */}
-            <Link href="/learn" className="mt-8 block rounded-lg bg-accent px-6 py-3 font-semibold text-ink hover:opacity-90">
-              Get full access
-            </Link>
+            <BuyButton viewer={viewer} price={course.priceUsd} className="mt-8 block w-full text-center" />
             <p className="mt-3 text-xs text-gray-500">Module 1 is free. No credit card needed to start.</p>
           </div>
         </div>

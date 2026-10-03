@@ -28,10 +28,32 @@ Optional: copy `.env.example` to `.env.local` and set `ANTHROPIC_API_KEY` to tur
 - **Python runtime:** `public/pyodide-worker.mjs` runs Pyodide in a Web Worker. Runs that take longer than 20 seconds are stopped.
 - **Simulated Anthropic SDK:** `public/py/anthropic/` mirrors the real `anthropic` Python SDK (`messages.create`, content blocks, `stop_reason`, `usage`, typed errors, retries). Exercises script replies through `anthropic._sim` in `setup.py`. Learner code works unchanged against the real API.
 - **AI tutor:** `app/api/tutor/route.ts` calls Claude through the Anthropic TypeScript SDK to give hints without giving away the answer.
-- **Progress:** stored in `localStorage` for now (`lib/progress.ts`).
+- **Progress:** cached in `localStorage`, and synced to Supabase when signed in (`lib/progress.ts`, `app/api/progress`).
+
+## Accounts and payments
+
+The app picks a mode from environment variables:
+
+| Mode | When | Behavior |
+|---|---|---|
+| Dev preview | `npm run dev`, no Supabase keys | Every module unlocked, "Dev preview" badge |
+| Unconfigured | Production build, no Supabase keys | Module 1 free, paid modules locked, nothing for sale |
+| Live | Supabase keys set | Email magic-link login, Module 1 free, Modules 2–10 need the $99 purchase, progress syncs to the account |
+
+Paid lesson content is rendered on the server only for learners who bought the course, so it never reaches the browser otherwise.
+
+### Going live
+
+1. **Supabase** (free tier): create a project, then run `supabase/migrations/0001_init.sql` in the SQL editor. Under Authentication → URL Configuration, set the Site URL to your domain and add `https://YOUR_DOMAIN/auth/callback` to the redirect URLs.
+2. **Stripe**: copy the secret key. Add a webhook endpoint at `https://YOUR_DOMAIN/api/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`, then copy its signing secret.
+3. **Environment variables**: fill in everything in `.env.example` (locally in `.env.local`, in production in your host's settings).
+4. **Test a purchase** in Stripe test mode with card `4242 4242 4242 4242`.
+
+Purchase flow: `/buy` → login if needed → Stripe Checkout → `/purchase/success`. The success page records the purchase immediately, and the webhook records it too as a backup (writes are idempotent). A full refund removes access.
 
 ## Not built yet
 
-- Accounts (Supabase), the $99 Stripe paywall, server-side progress, and certificates
 - Modules 2–10 content (the syllabus is in `content/course.json`)
+- Certificates of completion
+- Per-user rate limit on the AI tutor
 - Deployment to Vercel and a custom domain

@@ -4,7 +4,9 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { runPython, onPythonStatus, warmUpPython, type RunResult } from "@/lib/python-runner";
-import { lessonId, markComplete, saveCode, getSavedCode, useProgress } from "@/lib/progress";
+import { enableServerSync, lessonId, markComplete, saveCode, getSavedCode, useProgress } from "@/lib/progress";
+import type { ClientViewer } from "@/lib/access";
+import AccountBadge from "./AccountBadge";
 import Quiz, { type QuizQuestion } from "./Quiz";
 import TutorPanel from "./TutorPanel";
 
@@ -42,7 +44,9 @@ export default function LessonWorkspace({
   position,
   prev,
   next,
+  viewer,
 }: {
+  viewer: ClientViewer;
   lesson: WorkspaceLesson;
   moduleTitle: string;
   moduleNumber: number;
@@ -64,13 +68,23 @@ export default function LessonWorkspace({
   const [hintsShown, setHintsShown] = useState(0);
   const [split, setSplit] = useState(50);
   const dragging = useRef(false);
+  const edited = useRef(false);
 
   // Restore saved code for this lesson.
   useEffect(() => {
+    edited.current = false;
     setCode(getSavedCode(id) ?? initial);
     setResult(null);
     setHintsShown(0);
   }, [id, initial]);
+
+  // Signed in: merge with the account's progress, then restore code saved on another device.
+  useEffect(() => {
+    if (!viewer.signedIn) return;
+    enableServerSync().then(() => {
+      if (!edited.current) setCode(getSavedCode(id) ?? initial);
+    });
+  }, [viewer.signedIn, id, initial]);
 
   useEffect(() => {
     if (isQuiz) return;
@@ -86,6 +100,7 @@ export default function LessonWorkspace({
 
   const onChange = useCallback(
     (v: string) => {
+      edited.current = true;
       setCode(v);
       saveCode(id, v);
     },
@@ -146,6 +161,7 @@ export default function LessonWorkspace({
         <span className="ml-auto text-xs text-gray-500">
           {position.index} of {position.total}
         </span>
+        <AccountBadge viewer={viewer} compact />
         {prev && (
           <Link href={prev.href} className="rounded border border-line px-2 py-1 text-gray-300 hover:bg-line" title={prev.title}>
             ← Prev

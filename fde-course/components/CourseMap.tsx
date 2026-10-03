@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { lessonId, resetProgress, useProgress } from "@/lib/progress";
+import { useEffect } from "react";
+import type { ClientViewer } from "@/lib/access";
+import { enableServerSync, lessonId, resetProgress, useProgress } from "@/lib/progress";
 
 interface MapModule {
   slug: string;
@@ -10,14 +12,18 @@ interface MapModule {
   summary: string;
   status: "live" | "coming-soon";
   minutes: number;
+  locked: boolean;
   plannedLessons: string[];
   lessons: { slug: string; title: string; type: string; minutes: number }[];
 }
 
 const icon: Record<string, string> = { reading: "📖", exercise: "💻", quiz: "✅" };
 
-export default function CourseMap({ modules }: { modules: MapModule[] }) {
+export default function CourseMap({ modules, viewer }: { modules: MapModule[]; viewer: ClientViewer }) {
   const progress = useProgress();
+  useEffect(() => {
+    if (viewer.signedIn) void enableServerSync();
+  }, [viewer.signedIn]);
   const all = modules.flatMap((m) => m.lessons.map((l) => lessonId(m.slug, l.slug)));
   const doneCount = all.filter((id) => progress.completed[id]).length;
   const pct = all.length ? Math.round((doneCount / all.length) * 100) : 0;
@@ -56,6 +62,7 @@ export default function CourseMap({ modules }: { modules: MapModule[] }) {
                 <div className="flex items-baseline gap-3">
                   <span className="text-sm font-mono text-gray-500">{String(m.number).padStart(2, "0")}</span>
                   <h2 className="text-lg font-semibold text-white">{m.title}</h2>
+                  {m.locked && m.status === "live" && <span title="Part of the full course">🔒</span>}
                   <span className="ml-auto shrink-0 text-xs text-gray-500">
                     {m.status === "live" ? `${done}/${m.lessons.length} · ${m.minutes} min` : `Coming soon · ~${m.minutes} min`}
                   </span>
@@ -95,12 +102,14 @@ export default function CourseMap({ modules }: { modules: MapModule[] }) {
         })}
       </ol>
 
-      <button
-        onClick={() => confirm("Reset all progress and saved code in this browser?") && resetProgress()}
-        className="mt-10 text-xs text-gray-600 hover:text-gray-400"
-      >
-        Reset my progress
-      </button>
+      {!viewer.signedIn && (
+        <button
+          onClick={() => confirm("Reset all progress and saved code in this browser?") && resetProgress()}
+          className="mt-10 text-xs text-gray-600 hover:text-gray-400"
+        >
+          Reset my progress
+        </button>
+      )}
     </>
   );
 }
