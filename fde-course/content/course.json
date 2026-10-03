@@ -19,12 +19,13 @@
     {
       "slug": "02-customer-discovery",
       "title": "Customer Discovery & Scoping",
-      "summary": "Turn vague asks into scoped, measurable engagements. Stakeholder maps, success metrics, written briefs, and the art of saying no.",
+      "summary": "Turn vague asks into scoped, measurable engagements: discovery calls, stakeholder maps, honest baselines, requirements extracted with Claude, and change requests handled without saying no.",
       "outcomes": [
-        "Run a discovery call and capture requirements",
-        "Define success metrics a customer will sign off on",
-        "Write a one-page engagement brief and scope document",
-        "Use Claude with structured outputs to turn call notes into a requirements doc"
+        "Run a discovery call that surfaces workflow, pain, and cost",
+        "Map stakeholders and act on the risks that kill engagements",
+        "Measure an honest baseline and write complete success metrics",
+        "Extract typed requirements with Claude structured outputs",
+        "Evaluate change requests and present trade-offs to a sponsor"
       ],
       "plannedMinutes": 60,
       "plannedLessons": [

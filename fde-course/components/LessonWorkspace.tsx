@@ -57,6 +57,9 @@ export default function LessonWorkspace({
   const id = lessonId(lesson.moduleSlug, lesson.slug);
   const isExercise = lesson.type === "exercise";
   const isQuiz = lesson.type === "quiz";
+  // Reading lessons without example code open full-width; the scratchpad is one click away.
+  const [showEditor, setShowEditor] = useState(!isQuiz && (lesson.type !== "reading" || Boolean(lesson.starter)));
+  const fullWidth = isQuiz || !showEditor;
   const initial = lesson.starter || SCRATCH;
   const progress = useProgress();
   const done = Boolean(progress.completed[id]);
@@ -87,11 +90,11 @@ export default function LessonWorkspace({
   }, [viewer.signedIn, id, initial]);
 
   useEffect(() => {
-    if (isQuiz) return;
+    if (!showEditor) return;
     const off = onPythonStatus((s) => setPyStatus(s === "ready" ? "Python ready" : s));
     warmUpPython();
     return off;
-  }, [isQuiz]);
+  }, [showEditor]);
 
   // Reading lessons count as complete once opened.
   useEffect(() => {
@@ -161,6 +164,15 @@ export default function LessonWorkspace({
         <span className="ml-auto text-xs text-gray-500">
           {position.index} of {position.total}
         </span>
+        {!isQuiz && (
+          <button
+            onClick={() => setShowEditor((v) => !v)}
+            className="hidden rounded border border-line px-2 py-1 text-gray-300 hover:bg-line lg:inline"
+            title={showEditor ? "Hide the code editor" : "Open a Python scratchpad"}
+          >
+            {showEditor ? "Hide editor" : "Scratchpad"}
+          </button>
+        )}
         <AccountBadge viewer={viewer} compact />
         {prev && (
           <Link href={prev.href} className="rounded border border-line px-2 py-1 text-gray-300 hover:bg-line" title={prev.title}>
@@ -183,7 +195,7 @@ export default function LessonWorkspace({
         {/* Left: lesson content */}
         <section
           className="shrink-0 border-line lg:min-h-0 lg:shrink lg:basis-[var(--split)] lg:overflow-y-auto lg:border-r"
-          style={{ "--split": isQuiz ? "100%" : `${split}%` } as React.CSSProperties}
+          style={{ "--split": fullWidth ? "100%" : `${split}%` } as React.CSSProperties}
         >
           <div className="mx-auto max-w-3xl px-6 py-8">
             <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-wider">
@@ -231,7 +243,7 @@ export default function LessonWorkspace({
           </div>
         </section>
 
-        {!isQuiz && (
+        {!fullWidth && (
           <>
             <div
               className="hidden w-1 cursor-col-resize bg-line hover:bg-accent/50 lg:block"

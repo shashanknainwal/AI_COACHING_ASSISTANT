@@ -131,6 +131,51 @@ def _validate(params):
         )
     if "temperature" in params and params["model"].startswith(("claude-opus-5", "claude-sonnet-5", "claude-fable")):
         raise BadRequestError("temperature: sampling parameters are not supported on this model")
+    if "output_config" in params:
+        _validate_output_config(params["output_config"])
     tc = params.get("tool_choice")
     if isinstance(tc, dict) and tc.get("type") in ("any", "tool") and params["model"] in _sim.NO_FORCED_TOOL_MODELS:
         raise BadRequestError('tool_choice: type "tool" and "any" are not supported for this model.')
+
+
+_EFFORTS = ("low", "medium", "high", "xhigh", "max")
+
+
+def _validate_output_config(cfg):
+    if not isinstance(cfg, dict):
+        raise BadRequestError("output_config: must be an object")
+    unknown = set(cfg) - {"format", "effort", "task_budget"}
+    if unknown:
+        raise BadRequestError(f"output_config: unexpected field(s) {sorted(unknown)}")
+    if "effort" in cfg and cfg["effort"] not in _EFFORTS:
+        raise BadRequestError(f"output_config.effort: must be one of {list(_EFFORTS)}")
+    fmt = cfg.get("format")
+    if fmt is None:
+        return
+    if not isinstance(fmt, dict) or fmt.get("type") != "json_schema":
+        raise BadRequestError('output_config.format.type: must be "json_schema"')
+    schema = fmt.get("schema")
+    if not isinstance(schema, dict):
+        raise BadRequestError("output_config.format.schema: must be a JSON Schema object")
+    _check_schema(schema, "output_config.format.schema")
+
+
+def _check_schema(node, path):
+    """Structured outputs require every object to list its properties and forbid extras."""
+    if not isinstance(node, dict):
+        return
+    t = node.get("type")
+    if t == "object" or (isinstance(t, list) and "object" in t):
+        if node.get("additionalProperties") is not False:
+            raise BadRequestError(f"{path}: objects must set additionalProperties to false")
+        props = node.get("properties", {})
+        missing = [k for k in node.get("required", []) if k not in props]
+        if missing:
+            raise BadRequestError(f"{path}.required: {missing} not defined in properties")
+        for k, v in props.items():
+            _check_schema(v, f"{path}.properties.{k}")
+    if "items" in node:
+        _check_schema(node["items"], f"{path}.items")
+    for key in ("anyOf", "allOf"):
+        for i, sub in enumerate(node.get(key, [])):
+            _check_schema(sub, f"{path}.{key}.{i}")

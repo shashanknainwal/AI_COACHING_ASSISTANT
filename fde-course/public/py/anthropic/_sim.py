@@ -133,7 +133,26 @@ def _last_user_text(params):
     return str(content)
 
 
+def _example_from_schema(node):
+    """A minimal value matching a JSON Schema, used when no reply is scripted."""
+    if not isinstance(node, dict):
+        return None
+    if "enum" in node:
+        return node["enum"][0]
+    t = node.get("type")
+    if isinstance(t, list):
+        t = next((x for x in t if x != "null"), "null")
+    if t == "object":
+        return {k: _example_from_schema(v) for k, v in node.get("properties", {}).items()}
+    if t == "array":
+        return [_example_from_schema(node.get("items", {}))]
+    return {"string": "example", "integer": 0, "number": 0, "boolean": False}.get(t)
+
+
 def _default_reply(params):
+    fmt = (params.get("output_config") or {}).get("format")
+    if fmt and fmt.get("type") == "json_schema":
+        return json.dumps(_example_from_schema(fmt["schema"]))
     said = " ".join(_last_user_text(params).split())
     if len(said) > 80:
         said = said[:77] + "..."

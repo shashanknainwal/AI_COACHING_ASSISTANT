@@ -1,6 +1,7 @@
 // Checks every lesson the way a learner's browser would run it:
 //  - exercise solution.py passes all tests
 //  - exercise starter.py does NOT pass (otherwise the exercise is free)
+//  - starter.py and solution.py both run without raising
 //  - reading-lesson scratchpads run without errors
 //  - quiz questions are well-formed
 // Usage: npm run validate-content
@@ -64,6 +65,11 @@ for (const mod of readdirSync(modulesDir).sort()) {
       }
       const st = JSON.parse(run(starter, setup, tests, "submit"));
       if (st.passed) fail(where, "starter code already passes the tests");
+      // Pressing Run on untouched starter code must not crash: learners' first click should feel safe.
+      const stRun = JSON.parse(run(starter, setup, "", "run"));
+      if (!stRun.ok) fail(where, "starter code raises when run:\n" + stRun.error);
+      const solRun = JSON.parse(run(solution, setup, "", "run"));
+      if (!solRun.ok) fail(where, "solution raises when run:\n" + solRun.error);
       if (!sol.tests.length) fail(where, "no tests found");
       else console.log(`✓ ${where} (${sol.tests.length} tests)`);
     } else if (data.type === "quiz") {

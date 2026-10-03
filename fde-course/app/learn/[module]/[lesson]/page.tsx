@@ -52,6 +52,7 @@ export default async function LessonPage({ params }: { params: Promise<{ module:
 
   return (
     <LessonWorkspace
+      key={`${module}/${lessonSlug}`}
       viewer={clientViewer}
       lesson={{
         moduleSlug: lesson.moduleSlug,
