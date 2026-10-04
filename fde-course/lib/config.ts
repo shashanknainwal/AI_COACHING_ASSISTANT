@@ -24,5 +24,15 @@ export function stripeConfigured(): boolean {
 
 export const PRICE_USD = 149;
 
+/** Emails that get full access without paying (comma-separated in FREE_ACCESS_EMAILS), e.g. the instructor. */
+export function freeAccessEmails(): Set<string> {
+  return new Set(
+    (process.env.FREE_ACCESS_EMAILS ?? "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
 export const SITE_NAME = "FDE Playbook";
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://fdeplaybook.dev").replace(/\/$/, "");

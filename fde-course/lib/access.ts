@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { appMode, FREE_MODULES, stripeConfigured, type AppMode } from "@/lib/config";
+import { appMode, FREE_MODULES, freeAccessEmails, stripeConfigured, type AppMode } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 
 export interface Viewer {
@@ -22,6 +22,11 @@ export const getViewer = cache(async (): Promise<Viewer> => {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { mode, user: null, hasPurchased: false, canBuy: stripeConfigured() };
+
+  // Signing in proves the email (magic link), so listed emails can skip the purchase check.
+  if (user.email && freeAccessEmails().has(user.email.toLowerCase())) {
+    return { mode, user: { id: user.id, email: user.email }, hasPurchased: true, canBuy: false };
+  }
 
   const { data, error } = await supabase
     .from("purchases")
