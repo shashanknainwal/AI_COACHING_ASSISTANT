@@ -202,12 +202,13 @@
     {
       "slug": "10-capstone",
       "title": "Capstone: An End-to-End Engagement",
-      "summary": "Run a full simulated engagement for a fictional logistics customer: discovery notes to scoped brief, data cleanup, integration, a Claude-powered triage agent with evals, and the executive readout.",
+      "summary": "Run a full simulated engagement for NorthStar Logistics: scope from discovery notes and a measured baseline, clean and join their messy data, design and build a guarded exception-triage agent, evaluate it and make the ship call, then turn a pilot into fact-checked numbers for the executive readout.",
       "outcomes": [
-        "Scope an engagement from raw discovery notes",
-        "Clean and integrate the customer's data",
-        "Ship a Claude-powered agent with an eval suite",
-        "Present results to an executive sponsor"
+        "Scope an engagement from discovery notes, a measured baseline and a fixed budget",
+        "Clean and join a customer's messy exports into a trustworthy work queue",
+        "Build a Claude-powered triage agent with guardrails, approvals and an audit trail",
+        "Evaluate the agent against labeled cases and make an evidence-based ship decision",
+        "Build an impact model and present a fact-checked executive readout"
       ],
       "plannedMinutes": 75,
       "plannedLessons": [
