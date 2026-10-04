@@ -9,3 +9,5 @@ next-env.d.ts
 public/pyodide/
 public/py/manifest.json
 public/monaco/
+__pycache__/
+*.pyc
