@@ -158,12 +158,13 @@
     {
       "slug": "08-evals-and-reliability",
       "title": "Evals, Reliability & Cost",
-      "summary": "Prove your LLM system works before the customer finds out it doesn't. Build eval sets, graders, regression gates and cost models.",
+      "summary": "Prove your LLM system works before the customer finds out it doesn't. Build eval harnesses, calibrate LLM judges, evaluate agent trajectories and retrieval, gate releases on regressions and noise, and model cost against quality.",
       "outcomes": [
-        "Build an eval set from real customer examples",
-        "Write code-based and LLM-as-judge graders",
-        "Gate releases on eval regressions",
-        "Model and reduce cost with caching and effort"
+        "Build an eval set and harness from real customer examples, with slices and failure reports",
+        "Write code graders and calibrate an LLM-as-judge against human labels",
+        "Evaluate agent trajectories and RAG retrieval separately from final answers",
+        "Gate releases with must-pass cases, critical slices, confidence intervals and pass^k",
+        "Model monthly cost and choose the cheapest configuration that clears the quality bar"
       ],
       "plannedMinutes": 60,
       "plannedLessons": [
