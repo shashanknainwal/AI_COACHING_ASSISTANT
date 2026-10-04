@@ -41,11 +41,13 @@
     {
       "slug": "03-python-data-wrangling",
       "title": "Wrangling Messy Customer Data",
-      "summary": "Customer data is never clean. Profile, clean, join and reconcile CSV exports and JSON dumps with Python and pandas.",
+      "summary": "Customer data is never clean. Profile it, normalize it, reconcile systems of record, deduplicate entities, label free text with Claude cost-effectively, and report quality so problems get fixed at the source.",
       "outcomes": [
-        "Profile an unfamiliar dataset in minutes",
-        "Normalize dates, currencies, IDs and free-text fields",
-        "Deduplicate and reconcile records across systems",
+        "Profile an unfamiliar dataset in your first hour",
+        "Normalize dates, money, phones and IDs without guessing",
+        "Reconcile two systems and catch the join bug that doubles revenue",
+        "Find duplicate companies and choose thresholds deliberately",
+        "Label thousands of records with Claude: rules first, batched, with cost estimates",
         "Produce a data-quality report a customer can act on"
       ],
       "plannedMinutes": 75,

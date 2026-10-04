@@ -52,7 +52,8 @@ def test_slip_when_swap_cannot_fit():
 def test_does_not_mutate_plan():
     """evaluate_change() doesn't modify the plan"""
     plan = [dict(w) for w in PLAN]
-    evaluate_change(plan, CAPACITY, REQUESTS[0])
+    result = evaluate_change(plan, CAPACITY, REQUESTS[0])
+    assert isinstance(result, dict), "implement evaluate_change first: it should return a dict"
     assert plan == PLAN, "the plan was modified"
 
 

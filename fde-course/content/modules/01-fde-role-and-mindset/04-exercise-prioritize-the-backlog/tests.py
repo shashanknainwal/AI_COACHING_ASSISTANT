@@ -59,7 +59,8 @@ def test_plan_does_not_mutate_input():
     """plan_sprint() doesn't modify the input list"""
     backlog = [_r("A", 1, 1, 1), _r("B", 5, 5, 1)]
     before = copy.deepcopy(backlog)
-    plan_sprint(backlog, 10)
+    result = plan_sprint(backlog, 10)
+    assert isinstance(result, list), "implement plan_sprint first: it should return a list"
     assert backlog == before, "the input list was changed; use sorted() instead of .sort()"
 
 

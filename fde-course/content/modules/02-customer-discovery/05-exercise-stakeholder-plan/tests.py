@@ -36,7 +36,8 @@ def test_plan_name_tiebreak():
 def test_plan_does_not_mutate():
     """engagement_plan() doesn't reorder or modify the input"""
     data = [_s("B", 1, 1), _s("A", 5, 5)]
-    engagement_plan(data)
+    result = engagement_plan(data)
+    assert isinstance(result, list), "implement engagement_plan first: it should return a list"
     assert [d["name"] for d in data] == ["B", "A"], "the input list was reordered; use sorted() instead of .sort()"
 
 
