@@ -9,8 +9,11 @@ No network calls are made. Responses come from `anthropic._sim`, which each
 exercise configures with scripted replies.
 """
 
+import time
+
 from . import _sim
 from ._types import (
+    StopDetails,
     Message,
     TextBlock,
     ToolUseBlock,
@@ -61,17 +64,26 @@ class _Messages:
         self._client = client
 
     def create(self, **params):
+        if params.pop("stream", False):
+            raise BadRequestError("The simulator supports streaming through client.messages.stream(...)")
+        return self._send(params, stream=False)
+
+    def _send(self, params, stream):
         _validate(params)
         attempts = self._client.max_retries + 1
-        last_exc = None
         for attempt in range(attempts):
-            _sim._record(params, attempt)
+            _sim._record(params, attempt, stream=stream)
             try:
                 return _sim._respond(params)
             except _RETRYABLE as exc:
-                last_exc = exc
-                continue
-        raise last_exc
+                if attempt == attempts - 1:
+                    raise
+                # Like the real SDK: honor retry-after when present, otherwise back off exponentially.
+                retry_after = getattr(getattr(exc, "response", None), "headers", {}).get("retry-after")
+                time.sleep(float(retry_after) if retry_after else min(8.0, 0.5 * 2 ** attempt))
+
+    def stream(self, **params):
+        return MessageStream(self, params)
 
     def count_tokens(self, **params):
         if "model" not in params or "messages" not in params:
@@ -88,6 +100,63 @@ def _types_count(params):
             return f"MessageTokensCount(input_tokens={self.input_tokens})"
 
     return _Count(_sim.estimate_input_tokens(params))
+
+
+class _Event:
+    def __init__(self, type, **fields):
+        self.type = type
+        for k, v in fields.items():
+            setattr(self, k, v)
+
+    def __repr__(self):
+        return f"<Event {self.type}>"
+
+
+def _chunks(text, words=3):
+    parts = text.split(" ")
+    for i in range(0, len(parts), words):
+        piece = " ".join(parts[i:i + words])
+        yield piece if i + words >= len(parts) else piece + " "
+
+
+class MessageStream:
+    """Simulated `client.messages.stream(...)` context manager."""
+
+    def __init__(self, messages, params):
+        self._messages = messages
+        self._params = params
+        self._final = None
+
+    def __enter__(self):
+        self._final = self._messages._send(self._params, stream=True)
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def __iter__(self):
+        yield _Event("message_start", message=self._final)
+        for index, block in enumerate(self._final.content):
+            yield _Event("content_block_start", index=index, content_block=block)
+            if block.type == "text":
+                for piece in _chunks(block.text):
+                    yield _Event("content_block_delta", index=index, delta=_Event("text_delta", text=piece))
+            elif block.type == "thinking":
+                yield _Event("content_block_delta", index=index, delta=_Event("thinking_delta", thinking=block.thinking))
+            yield _Event("content_block_stop", index=index)
+        yield _Event("message_stop")
+
+    @property
+    def text_stream(self):
+        for event in self:
+            if event.type == "content_block_delta" and event.delta.type == "text_delta":
+                yield event.delta.text
+
+    def get_final_message(self):
+        return self._final
+
+    def get_final_text(self):
+        return "".join(b.text for b in self._final.content if b.type == "text")
 
 
 class Anthropic:
@@ -133,6 +202,8 @@ def _validate(params):
         raise BadRequestError("temperature: sampling parameters are not supported on this model")
     if "output_config" in params:
         _validate_output_config(params["output_config"])
+        if "effort" in params["output_config"] and params["model"].startswith("claude-haiku-4-5"):
+            raise BadRequestError("output_config.effort: effort is not supported on this model")
     tc = params.get("tool_choice")
     if isinstance(tc, dict) and tc.get("type") in ("any", "tool") and params["model"] in _sim.NO_FORCED_TOOL_MODELS:
         raise BadRequestError('tool_choice: type "tool" and "any" are not supported for this model.')

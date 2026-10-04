@@ -24,15 +24,18 @@ from ._errors import (
 STRICT_NO_PREFILL = True
 NO_FORCED_TOOL_MODELS = {"claude-opus-5-5", "claude-sonnet-5-5", "claude-fable-5-1"}
 
-calls = []       # every request attempt: {"params": {...}, "attempt": n}
+calls = []       # every request attempt: {"params": {...}, "attempt": n, "stream": bool}
 _queue = []
 _responder = None
+_cache = set()   # prompt-cache prefixes written so far
+CACHE_MIN_TOKENS = 1024  # simplified; real minimums vary by model
 
 
 def reset():
     global _responder
     calls.clear()
     _queue.clear()
+    _cache.clear()
     _responder = None
 
 
@@ -78,8 +81,9 @@ def message(*blocks, stop_reason=None):
     return {"__sim_message__": True, "blocks": blocks, "stop_reason": stop_reason}
 
 
-def rate_limit():
-    return RateLimitError("Error code: 429 - rate_limit_error")
+def rate_limit(retry_after=None):
+    headers = {"retry-after": str(retry_after)} if retry_after is not None else None
+    return RateLimitError("Error code: 429 - rate_limit_error", headers=headers)
 
 
 def server_error():
@@ -101,8 +105,8 @@ def refusal(category="cyber"):
 
 # ---- internals ------------------------------------------------------------
 
-def _record(params, attempt):
-    calls.append({"params": _snapshot(params), "attempt": attempt})
+def _record(params, attempt, stream=False):
+    calls.append({"params": _snapshot(params), "attempt": attempt, "stream": stream})
 
 
 def _snapshot(params):
@@ -166,6 +170,34 @@ def _default_reply(params):
     return {"__sim_message__": True, "blocks": blocks, "stop_reason": "end_turn"}
 
 
+def _cache_prefix(params):
+    """The cached prefix (as text) for this request, or None if caching isn't requested."""
+    system = params.get("system")
+    tools = params.get("tools", [])
+    if params.get("cache_control"):
+        # Automatic caching: everything up to the last cacheable block (here, all but the newest message).
+        return json.dumps([tools, system, params["messages"][:-1]], default=_jsonable, sort_keys=True)
+    if isinstance(system, list):
+        marked = [i for i, b in enumerate(system) if isinstance(b, dict) and b.get("cache_control")]
+        if marked:
+            return json.dumps([tools, system[: marked[-1] + 1]], default=_jsonable, sort_keys=True)
+    return None
+
+
+def _cache_usage(params):
+    prefix = _cache_prefix(params)
+    if prefix is None:
+        return 0, 0
+    tokens = len(prefix) // 4
+    if tokens < CACHE_MIN_TOKENS:
+        return 0, 0          # too short to cache: silently not cached, like the real API
+    key = (params["model"], prefix)
+    if key in _cache:
+        return 0, tokens
+    _cache.add(key)
+    return tokens, 0
+
+
 def _respond(params):
     if _queue:
         reply = _queue.pop(0)
@@ -202,7 +234,10 @@ def _respond(params):
         blocks = [TextBlock(b.text[:keep]) if b.type == "text" else b for b in blocks]
         stop_reason, output_tokens = "max_tokens", params["max_tokens"]
 
-    usage = Usage(input_tokens=estimate_input_tokens(params), output_tokens=output_tokens)
+    total_in = estimate_input_tokens(params)
+    written, read = _cache_usage(params)
+    usage = Usage(input_tokens=max(1, total_in - written - read), output_tokens=output_tokens,
+                  cache_creation_input_tokens=written, cache_read_input_tokens=read)
     return Message(blocks, model=params["model"], stop_reason=stop_reason, usage=usage, stop_details=stop_details)
 
 

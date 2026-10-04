@@ -26,7 +26,7 @@ Optional: copy `.env.example` to `.env.local` and set `ANTHROPIC_API_KEY` to tur
 - **Lesson content:** `content/course.json` (syllabus) plus `content/modules/<module>/<NN-lesson>.md`. Frontmatter sets `title`, `type` (`reading` | `exercise` | `quiz`), `minutes`, `hints`, and `questions`.
 - **Exercises:** a folder next to the lesson's `.md` with the same name, containing `starter.py`, `solution.py`, `tests.py`, and an optional hidden `setup.py`. Tests are plain `def test_*()` functions using `assert`. The first line of each docstring is shown to the learner. `solution.py` is never sent to the browser.
 - **Python runtime:** `public/pyodide-worker.mjs` runs Pyodide in a Web Worker. Runs that take longer than 20 seconds are stopped.
-- **Simulated Anthropic SDK:** `public/py/anthropic/` mirrors the real `anthropic` Python SDK (`messages.create`, content blocks, `stop_reason`, `usage`, typed errors, retries). Exercises script replies through `anthropic._sim` in `setup.py`. Learner code works unchanged against the real API.
+- **Simulated Anthropic SDK:** `public/py/anthropic/` mirrors the real `anthropic` Python SDK (`messages.create`, `messages.stream`, content blocks, `stop_reason`, `usage` with prompt-cache accounting, typed errors with request IDs, retries that honor `retry-after`). Exercises script replies through `anthropic._sim` in `setup.py`. Learner code works unchanged against the real API.
 - **Simulated `requests` library:** `public/py/requests/` mirrors `requests` (`get`/`post`, `Session`, `Response`, `raise_for_status`, timeouts, exception classes). Exercises define fake APIs with `requests._sim.route(...)`, including `flaky(...)` failures and `rate_limited(...)` endpoints.
 - **Datasets:** `public/py/fde_datasets/` holds shared practice databases (for example `pinecrest.connect()`, an in-memory SQLite gym-chain database), generated deterministically so results match in every browser.
 - **Fake clock:** `public/py/fde_clock.py` makes `time.sleep` instant and recorded, so retry/backoff exercises run immediately and tests can check exact delays.
@@ -57,7 +57,7 @@ Purchase flow: `/buy` → login if needed → Stripe Checkout → `/purchase/suc
 
 ## Not built yet
 
-- Modules 6–10 content (the syllabus is in `content/course.json`)
+- Modules 7–10 content (the syllabus is in `content/course.json`)
 - Certificates of completion
 - Per-user rate limit on the AI tutor
 - Deployment to Vercel and a custom domain

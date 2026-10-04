@@ -19,13 +19,21 @@ class APITimeoutError(APIConnectionError):
         super().__init__(message)
 
 
+class _Response:
+    def __init__(self, status_code, headers):
+        self.status_code = status_code
+        self.headers = {k.lower(): v for k, v in (headers or {}).items()}
+
+
 class APIStatusError(APIError):
     status_code = 0
 
-    def __init__(self, message="", body=None, status_code=None):
+    def __init__(self, message="", body=None, status_code=None, headers=None, request_id="req_sim_0001"):
         super().__init__(message or f"Error code: {status_code or self.status_code}", body)
         if status_code is not None:
             self.status_code = status_code
+        self.request_id = request_id
+        self.response = _Response(self.status_code, headers)
 
 
 class BadRequestError(APIStatusError):

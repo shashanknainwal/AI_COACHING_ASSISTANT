@@ -110,12 +110,13 @@
     {
       "slug": "06-building-with-claude",
       "title": "Building with Claude: Anthropic SDK Fundamentals",
-      "summary": "The core of modern FDE work. Messages, system prompts, multi-turn state, structured outputs, streaming, errors, cost and model choice.",
+      "summary": "The core of modern FDE work: the Anthropic SDK in depth. Multi-turn state, production prompts with injection defenses, streaming, errors and refusals, prompt caching and real cost, and routing requests across models.",
       "outcomes": [
-        "Use the Anthropic Python SDK fluently",
-        "Write system prompts that hold up on real customer data",
-        "Get reliable JSON with structured outputs",
-        "Handle errors, retries, refusals, tokens and cost"
+        "Build multi-turn assistants that keep history correctly",
+        "Write production prompts with examples and prompt-injection defenses",
+        "Stream long outputs and handle stop reasons after streaming",
+        "Handle errors, refusals, caching and cost like a production engineer",
+        "Route requests across models, effort levels and fallbacks"
       ],
       "plannedMinutes": 75,
       "plannedLessons": [

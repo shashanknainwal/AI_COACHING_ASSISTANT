@@ -65,6 +65,15 @@ class Usage(_Model):
         self.cache_creation_input_tokens = cache_creation_input_tokens
 
 
+class StopDetails(_Model):
+    _fields = ("type", "category", "explanation")
+
+    def __init__(self, type="refusal", category=None, explanation=None):
+        self.type = type
+        self.category = category
+        self.explanation = explanation
+
+
 class Message(_Model):
     _fields = ("id", "type", "role", "model", "content", "stop_reason", "stop_details", "usage")
 
@@ -75,5 +84,8 @@ class Message(_Model):
         self.model = model
         self.content = content
         self.stop_reason = stop_reason
+        if isinstance(stop_details, dict):
+            stop_details = StopDetails(**stop_details)
         self.stop_details = stop_details
         self.usage = usage or Usage()
+        self._request_id = f"req_sim_{next(_ids):06d}"
