@@ -180,12 +180,13 @@
     {
       "slug": "09-shipping-to-production",
       "title": "Shipping to Production",
-      "summary": "Deploy into environments you don't control. Config, secrets, logging, observability, incident response and the post-mortem.",
+      "summary": "Deploy into environments you don't control. Map the customer's environment, validate config and protect secrets, log every Claude call safely, alert on what matters, degrade gracefully, debug an incident from logs alone, and hand off with runbooks and a blameless post-mortem.",
       "outcomes": [
-        "Package and configure a service for a customer environment",
-        "Add structured logging and metrics",
-        "Debug a production incident from logs alone",
-        "Write a blameless post-mortem and a handoff runbook"
+        "Map a customer environment and prepare for their security review",
+        "Validate configuration at startup and keep secrets out of code and logs",
+        "Add structured, redacted logging, metrics and alerts for LLM calls",
+        "Build fallbacks, a circuit breaker and a kill switch, and debug an incident from logs",
+        "Write a blameless post-mortem, runbooks and a handoff package"
       ],
       "plannedMinutes": 60,
       "plannedLessons": [
