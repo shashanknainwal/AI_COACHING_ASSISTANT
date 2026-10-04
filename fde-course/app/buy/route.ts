@@ -1,0 +1,52 @@
+import { NextResponse } from "next/server";
+import { getViewer } from "@/lib/access";
+import { PRICE_USD } from "@/lib/config";
+import { getStripe } from "@/lib/purchases";
+
+// GET /buy → sends the learner to Stripe Checkout (or to log in first).
+export async function GET(req: Request) {
+  const origin = new URL(req.url).origin;
+  const viewer = await getViewer();
+
+  if (viewer.mode !== "live" || !viewer.canBuy) {
+    return NextResponse.redirect(new URL("/learn?checkout=unavailable", origin), 303);
+  }
+  if (!viewer.user) {
+    return NextResponse.redirect(new URL("/login?next=/buy", origin), 303);
+  }
+  if (viewer.hasPurchased) {
+    return NextResponse.redirect(new URL("/learn", origin), 303);
+  }
+
+  const priceId = process.env.STRIPE_PRICE_ID;
+  try {
+    const session = await getStripe().checkout.sessions.create({
+      mode: "payment",
+      line_items: [
+        priceId
+          ? { price: priceId, quantity: 1 }
+          : {
+              quantity: 1,
+              price_data: {
+                currency: "usd",
+                unit_amount: PRICE_USD * 100,
+                product_data: {
+                  name: "Forward Deployed Engineering: The Complete Course",
+                  description: "Lifetime access to all modules, exercises and the AI tutor.",
+                },
+              },
+            },
+      ],
+      client_reference_id: viewer.user.id,
+      customer_email: viewer.user.email ?? undefined,
+      metadata: { user_id: viewer.user.id },
+      allow_promotion_codes: true,
+      success_url: `${origin}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/#pricing`,
+    });
+    return NextResponse.redirect(session.url!, 303);
+  } catch (err) {
+    console.error("Checkout session creation failed", err);
+    return NextResponse.redirect(new URL("/learn?checkout=error", origin), 303);
+  }
+}
