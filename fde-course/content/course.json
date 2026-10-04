@@ -65,12 +65,13 @@
     {
       "slug": "04-apis-and-integrations",
       "title": "APIs & Integrations",
-      "summary": "Connect to customer systems that rate-limit, paginate, time out and change without warning. Build integrations that survive.",
+      "summary": "Connect to customer systems that paginate, rate-limit, time out and change without warning. Build clients, webhook receivers and sync jobs that survive production, and use Claude to speed up integration work safely.",
       "outcomes": [
-        "Consume REST APIs with auth, pagination and filtering",
-        "Implement retries with exponential backoff and jitter",
-        "Design idempotent sync jobs and webhooks",
-        "Map and transform between two schemas"
+        "Call REST APIs with auth, sessions, timeouts and full pagination",
+        "Retry the right failures with backoff and respect rate limits",
+        "Verify webhook signatures and process duplicate or out-of-order events correctly",
+        "Build idempotent incremental sync jobs with watermarks and schema mapping",
+        "Use Claude to propose schema mappings, validated and human-reviewed"
       ],
       "plannedMinutes": 75,
       "plannedLessons": [

@@ -9,6 +9,7 @@ const CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 
 
 let pyodideReady = null;
+let simulated = new Set();
 
 async function boot() {
   postMessage({ type: "status", message: "Loading Python…" });
@@ -24,6 +25,9 @@ async function boot() {
     pyodide.FS.mkdirTree(dir);
     pyodide.FS.writeFile(path, src);
   }
+  // Top-level names the course simulates (anthropic, requests, ...). Never download
+  // the real packages for these: the simulators must win.
+  simulated = new Set(manifest.files.map((f) => f.split("/")[0].replace(/\.py$/, "")));
   pyodide.runPython(`
 import sys
 sys.path.insert(0, "/home/pyodide/lib")
@@ -50,9 +54,18 @@ self.onmessage = async (event) => {
   try {
     // Fetch pandas/numpy etc. on demand when the code imports them.
     const all = [msg.setup || "", msg.code || "", msg.tests || ""].join("\n");
-    await pyodide.loadPackagesFromImports(all, {
-      messageCallback: (m) => postMessage({ type: "status", message: m }),
-    });
+    let imports = [];
+    try {
+      imports = pyodide.pyimport("pyodide.code").find_imports(all).toJs();
+    } catch {
+      // Syntax errors: let the harness report them.
+    }
+    const needed = imports.filter((name) => !simulated.has(name));
+    if (needed.length) {
+      await pyodide.loadPackagesFromImports(needed.map((n) => `import ${n}`).join("\n"), {
+        messageCallback: (m) => postMessage({ type: "status", message: m }),
+      });
+    }
     const run = pyodide.globals.get("fde_harness").run;
     const json = run(msg.code || "", msg.setup || "", msg.tests || "", msg.mode || "run");
     run.destroy?.();

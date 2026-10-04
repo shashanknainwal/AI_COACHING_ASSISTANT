@@ -15,7 +15,11 @@ _MAX_OUTPUT = 20_000
 
 
 def _reset_simulators():
-    for name in ("anthropic._sim", "fde_sim"):
+    import fde_clock
+
+    fde_clock.install()
+    fde_clock.reset()
+    for name in ("anthropic._sim", "requests._sim"):
         mod = sys.modules.get(name)
         if mod is not None and hasattr(mod, "reset"):
             mod.reset()

@@ -28,6 +28,18 @@ const pyodide = await loadPyodide({ indexURL: join(root, "node_modules", "pyodid
 })(pyRoot);
 pyodide.runPython('import sys; sys.path.insert(0, "/home/pyodide/lib"); import fde_harness');
 const run = pyodide.globals.get("fde_harness").run;
+const simulated = new Set(readdirSync(pyRoot).filter((n) => !n.endsWith(".json")).map((n) => n.replace(/\.py$/, "")));
+const findImports = pyodide.pyimport("pyodide.code").find_imports;
+async function loadNeeded(code) {
+  let names = [];
+  try {
+    names = findImports(code).toJs();
+  } catch {
+    return;
+  }
+  const needed = names.filter((n) => !simulated.has(n));
+  if (needed.length) await pyodide.loadPackagesFromImports(needed.map((n) => `import ${n}`).join("\n"));
+}
 
 const read = (p) => (existsSync(p) ? readFileSync(p, "utf8") : "");
 let failures = 0;
@@ -59,7 +71,8 @@ for (const mod of readdirSync(modulesDir).sort()) {
         fail(where, "exercise needs starter.py, solution.py and tests.py");
         continue;
       }
-      const sol = JSON.parse(await pyodide.loadPackagesFromImports(setup + solution + tests).then(() => run(solution, setup, tests, "submit")));
+      await loadNeeded([setup, solution, tests].join("\n"));
+      const sol = JSON.parse(run(solution, setup, tests, "submit"));
       if (!sol.passed) {
         fail(where, "solution does not pass:\n" + (sol.error ?? "") + sol.tests.filter((t) => !t.passed).map((t) => `    - ${t.name}: ${t.message}`).join("\n"));
       }
