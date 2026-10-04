@@ -155,7 +155,7 @@ export default function LessonWorkspace({
       {/* Top bar */}
       <header className="flex h-12 shrink-0 items-center gap-3 border-b border-line bg-panel px-4 text-sm">
         <Link href="/learn" className="font-semibold text-accent hover:underline">
-          FDE Course
+          FDE Playbook
         </Link>
         <span className="text-gray-600">/</span>
         <span className="hidden truncate text-gray-400 sm:inline">

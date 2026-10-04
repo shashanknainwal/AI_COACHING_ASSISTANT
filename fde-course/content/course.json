@@ -1,7 +1,6 @@
 {
   "title": "Forward Deployed Engineering: The Complete Course",
   "tagline": "Discovery, messy data, integrations, LLM systems built with Claude, and production support — the full FDE playbook, taught through hands-on Python exercises you complete right in your browser.",
-  "priceUsd": 99,
   "modules": [
     {
       "slug": "01-fde-role-and-mindset",

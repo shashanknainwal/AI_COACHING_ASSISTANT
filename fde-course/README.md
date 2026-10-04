@@ -1,4 +1,4 @@
-# FDE Course
+# FDE Playbook
 
 A browser-based course on Forward Deployed Engineering. Learners read lessons on the left and write Python on the right. Code runs in the browser (Pyodide) and is graded instantly by hidden tests.
 
@@ -42,16 +42,20 @@ The app picks a mode from environment variables:
 |---|---|---|
 | Dev preview | `npm run dev`, no Supabase keys | Every module unlocked, "Dev preview" badge |
 | Unconfigured | Production build, no Supabase keys | Module 1 free, paid modules locked, nothing for sale |
-| Live | Supabase keys set | Email magic-link login, Module 1 free, Modules 2–10 need the $99 purchase, progress syncs to the account |
+| Live | Supabase keys set | Email magic-link login, Module 1 free, Modules 2–10 need the $149 purchase, progress syncs to the account |
 
 Paid lesson content is rendered on the server only for learners who bought the course, so it never reaches the browser otherwise.
 
-### Going live
+### Going live on fdeplaybook.dev
 
-1. **Supabase** (free tier): create a project, then run `supabase/migrations/0001_init.sql` in the SQL editor. Under Authentication → URL Configuration, set the Site URL to your domain and add `https://YOUR_DOMAIN/auth/callback` to the redirect URLs.
-2. **Stripe**: copy the secret key. Add a webhook endpoint at `https://YOUR_DOMAIN/api/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`, then copy its signing secret.
-3. **Environment variables**: fill in everything in `.env.example` (locally in `.env.local`, in production in your host's settings).
-4. **Test a purchase** in Stripe test mode with card `4242 4242 4242 4242`.
+1. **Vercel** (free tier): import the GitHub repo, set **Root Directory** to `fde-course`, and deploy. The framework is detected as Next.js; `npm run build` copies the Python runtime and editor into `public/` automatically.
+2. **Domain (Cloudflare)**: in Vercel → Project → Settings → Domains, add `fdeplaybook.dev` and `www.fdeplaybook.dev`. Vercel shows the DNS records to create (usually an `A` record for the root and a `CNAME` for `www`). Add them in Cloudflare → DNS and set each record to **DNS only** (grey cloud), so Vercel can issue the HTTPS certificate. `.dev` domains only work over HTTPS, which Vercel handles.
+3. **Supabase** (free tier): create a project, then run `supabase/migrations/0001_init.sql` in the SQL editor. Under Authentication → URL Configuration, set the Site URL to `https://fdeplaybook.dev` and add `https://fdeplaybook.dev/auth/callback` to the redirect URLs.
+4. **Stripe**: copy the secret key. Add a webhook endpoint at `https://fdeplaybook.dev/api/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`, then copy its signing secret. Optionally create a $149 one-time Price and put its ID in `STRIPE_PRICE_ID`.
+5. **Environment variables**: fill in everything in `.env.example` in Vercel → Settings → Environment Variables (and in `.env.local` for local testing), then redeploy.
+6. **Test a purchase** in Stripe test mode with card `4242 4242 4242 4242`, then switch Stripe to live keys.
+
+The price is set in one place: `PRICE_USD` in `lib/config.ts`. If you use `STRIPE_PRICE_ID`, keep that Stripe Price at the same amount.
 
 Purchase flow: `/buy` → login if needed → Stripe Checkout → `/purchase/success`. The success page records the purchase immediately, and the webhook records it too as a backup (writes are idempotent). A full refund removes access.
 
@@ -59,4 +63,3 @@ Purchase flow: `/buy` → login if needed → Stripe Checkout → `/purchase/suc
 
 - Certificates of completion
 - Per-user rate limit on the AI tutor
-- Deployment to Vercel and a custom domain

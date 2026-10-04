@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
+import { PRICE_USD } from "./config";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
@@ -54,7 +55,6 @@ export interface Course {
 interface CourseJson {
   title: string;
   tagline: string;
-  priceUsd: number;
   modules: {
     slug: string;
     title: string;
@@ -115,7 +115,7 @@ export function getCourse(): Course {
       minutes: live ? lessons.reduce((s, l) => s + l.minutes, 0) : m.plannedMinutes,
     };
   });
-  courseCache = { title: json.title, tagline: json.tagline, priceUsd: json.priceUsd, modules };
+  courseCache = { title: json.title, tagline: json.tagline, priceUsd: PRICE_USD, modules };
   return courseCache;
 }
 

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getViewer } from "@/lib/access";
 import { getStripe, recordPurchase } from "@/lib/purchases";
 
-export const metadata = { title: "Thanks for your purchase — FDE Course" };
+export const metadata = { title: "Thanks for your purchase" };
 
 // Stripe redirects here after payment. We confirm the session directly with Stripe
 // so access is granted immediately, even if the webhook hasn't arrived yet.

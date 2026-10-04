@@ -4,7 +4,7 @@ import { getViewer } from "@/lib/access";
 import { safeNext } from "@/lib/safe-next";
 import LoginForm from "./LoginForm";
 
-export const metadata = { title: "Log in — FDE Course" };
+export const metadata = { title: "Log in" };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const { next, error } = await searchParams;
@@ -15,7 +15,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-6">
       <Link href="/" className="mb-10 font-semibold text-accent">
-        FDE Course
+        FDE Playbook
       </Link>
       <h1 className="text-2xl font-bold text-white">Log in or sign up</h1>
       <p className="mt-2 text-sm text-gray-400">We&apos;ll email you a link. No password needed.</p>

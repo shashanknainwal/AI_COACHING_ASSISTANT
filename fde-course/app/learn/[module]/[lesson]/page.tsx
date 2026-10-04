@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ module: string; lesson: string }> }) {
   const { module, lesson } = await params;
   const l = getLesson(module, lesson);
-  return { title: l ? `${l.title} — FDE Course` : "FDE Course" };
+  return { title: l ? l.title : "Lesson" };
 }
 
 export default async function LessonPage({ params }: { params: Promise<{ module: string; lesson: string }> }) {

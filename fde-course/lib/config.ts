@@ -22,4 +22,7 @@ export function stripeConfigured(): boolean {
   return Boolean(process.env.STRIPE_SECRET_KEY);
 }
 
-export const PRICE_USD = 99;
+export const PRICE_USD = 149;
+
+export const SITE_NAME = "FDE Playbook";
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://fdeplaybook.dev").replace(/\/$/, "");

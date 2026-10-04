@@ -5,7 +5,7 @@ import AccountBadge from "@/components/AccountBadge";
 import BuyButton from "@/components/BuyButton";
 import CourseMap from "@/components/CourseMap";
 
-export const metadata = { title: "Your course — FDE Course" };
+export const metadata = { title: "Your course" };
 export const dynamic = "force-dynamic";
 
 const NOTICES: Record<string, string> = {
@@ -23,7 +23,7 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
     <div className="min-h-screen">
       <header className="flex h-14 items-center gap-3 border-b border-line bg-panel px-6">
         <Link href="/" className="font-semibold text-accent">
-          FDE Course
+          FDE Playbook
         </Link>
         <div className="ml-auto">
           <AccountBadge viewer={clientViewer} />
