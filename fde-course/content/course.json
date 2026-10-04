@@ -88,12 +88,13 @@
     {
       "slug": "05-sql-and-data-modeling",
       "title": "SQL & Data Modeling on Customer Systems",
-      "summary": "Query customer databases safely, model data for analytics and AI features, and write the SQL that answers the executive's question.",
+      "summary": "Query customer databases safely and fluently: answer executive questions, use window functions and cohorts, build a metrics layer, guard production data, and put Claude-powered text-to-SQL behind real guardrails.",
       "outcomes": [
-        "Write joins, aggregations and window functions",
-        "Model entities for reporting and retrieval",
-        "Query production databases safely",
-        "Build a metrics layer from raw tables"
+        "Answer executive questions with joins, HAVING and anti-joins",
+        "Use window functions for dedup, growth and cohort retention",
+        "Build a metrics layer of SQL views without double counting",
+        "Access production data safely: read-only, parameters, row limits, PII masking",
+        "Ship a text-to-SQL assistant with Claude that refuses unsafe queries"
       ],
       "plannedMinutes": 60,
       "plannedLessons": [
