@@ -200,6 +200,9 @@ def _validate(params):
         )
     if "temperature" in params and params["model"].startswith(("claude-opus-5", "claude-sonnet-5", "claude-fable")):
         raise BadRequestError("temperature: sampling parameters are not supported on this model")
+    if "tools" in params:
+        _validate_tools(params["tools"])
+    _validate_tool_results(messages)
     if "output_config" in params:
         _validate_output_config(params["output_config"])
         if "effort" in params["output_config"] and params["model"].startswith("claude-haiku-4-5"):
@@ -250,3 +253,55 @@ def _check_schema(node, path):
     for key in ("anyOf", "allOf"):
         for i, sub in enumerate(node.get(key, [])):
             _check_schema(sub, f"{path}.{key}.{i}")
+
+
+def _block_get(block, key, default=None):
+    if isinstance(block, dict):
+        return block.get(key, default)
+    return getattr(block, key, default)
+
+
+def _validate_tools(tools):
+    if not isinstance(tools, list):
+        raise BadRequestError("tools: must be a list")
+    names = set()
+    for i, t in enumerate(tools):
+        if not isinstance(t, dict) or not t.get("name"):
+            raise BadRequestError(f"tools.{i}: each tool needs a name")
+        if "type" in t and "input_schema" not in t:
+            continue  # Anthropic-defined / server tools have no input_schema
+        if not t.get("description"):
+            raise BadRequestError(f"tools.{i}.description: write a description so Claude knows when to use the tool")
+        schema = t.get("input_schema")
+        if not isinstance(schema, dict) or schema.get("type") != "object":
+            raise BadRequestError(f"tools.{i}.input_schema: must be a JSON Schema with type 'object'")
+        if t.get("strict"):
+            _check_schema(schema, f"tools.{i}.input_schema")
+        if t["name"] in names:
+            raise BadRequestError(f"tools.{i}.name: duplicate tool name {t['name']!r}")
+        names.add(t["name"])
+
+
+def _validate_tool_results(messages):
+    """Every tool_use must be answered by tool_result blocks in the very next user message."""
+    for i, m in enumerate(messages):
+        content = m.get("content")
+        if m.get("role") != "assistant" or not isinstance(content, list):
+            continue
+        ids = [_block_get(b, "id") for b in content if _block_get(b, "type") == "tool_use"]
+        if not ids:
+            continue
+        if i + 1 >= len(messages):
+            raise BadRequestError("messages: the conversation ends with tool_use blocks; send the tool_result blocks in a user message")
+        nxt = messages[i + 1]
+        nxt_content = nxt.get("content") if nxt.get("role") == "user" else None
+        results = [] if not isinstance(nxt_content, list) else [_block_get(b, "tool_use_id") for b in nxt_content if _block_get(b, "type") == "tool_result"]
+        missing = [x for x in ids if x not in results]
+        if missing:
+            raise BadRequestError(
+                f"messages.{i + 1}: tool_use ids were found without tool_result blocks immediately after: {missing}. "
+                "Each tool_use block must have a corresponding tool_result block in the next message."
+            )
+        unknown = [x for x in results if x not in ids]
+        if unknown:
+            raise BadRequestError(f"messages.{i + 1}: tool_result blocks reference unknown tool_use ids: {unknown}")

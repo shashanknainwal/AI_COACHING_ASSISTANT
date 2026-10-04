@@ -134,12 +134,13 @@
     {
       "slug": "07-tool-use-rag-agents",
       "title": "Tool Use, RAG & Agents",
-      "summary": "Give Claude access to customer systems. Define tools, write the agent loop, retrieve from documents, and know when not to build an agent.",
+      "summary": "Give Claude access to customer systems. Define strict tools, write a traced agent loop, answer from documents with checked citations, gate risky actions behind human approval, and know when not to build an agent.",
       "outcomes": [
-        "Define tools with JSON schemas and strict mode",
-        "Write and debug the tool-use loop",
-        "Build retrieval-augmented generation over customer docs",
-        "Choose between a single call, a workflow and an agent"
+        "Define strict tools and return results and errors the way the API expects",
+        "Write a bounded, traced agent loop that chains several tools",
+        "Build a RAG pipeline with chunking, keyword retrieval, grounded prompts and validated citations",
+        "Gate risky actions behind fail-closed human approval with an audit log",
+        "Choose between a single call, a workflow and an agent, and explain MCP"
       ],
       "plannedMinutes": 90,
       "plannedLessons": [

@@ -57,7 +57,7 @@ Purchase flow: `/buy` → login if needed → Stripe Checkout → `/purchase/suc
 
 ## Not built yet
 
-- Modules 7–10 content (the syllabus is in `content/course.json`)
+- Modules 8–10 content (the syllabus is in `content/course.json`)
 - Certificates of completion
 - Per-user rate limit on the AI tutor
 - Deployment to Vercel and a custom domain

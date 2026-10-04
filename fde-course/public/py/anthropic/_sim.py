@@ -59,6 +59,29 @@ def last_request():
     return calls[-1]["params"] if calls else None
 
 
+def last_tool_results(params):
+    """{tool_use_id: content} from the newest user message, for scripting multi-step replies."""
+    content = params["messages"][-1].get("content")
+    if not isinstance(content, list):
+        return {}
+    out = {}
+    for b in content:
+        if isinstance(b, dict) and b.get("type") == "tool_result":
+            out[b["tool_use_id"]] = b.get("content")
+    return out
+
+
+def tool_calls_so_far(params):
+    """Names of every tool Claude has called earlier in this conversation."""
+    names = []
+    for m in params["messages"]:
+        if m.get("role") == "assistant" and isinstance(m.get("content"), list):
+            for b in m["content"]:
+                if (b.get("type") if isinstance(b, dict) else getattr(b, "type", None)) == "tool_use":
+                    names.append(b.get("name") if isinstance(b, dict) else b.name)
+    return names
+
+
 # ---- reply builders -------------------------------------------------------
 
 def text(s):
