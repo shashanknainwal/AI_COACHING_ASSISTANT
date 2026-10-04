@@ -3,6 +3,10 @@
 //   dev          `next dev` with no Supabase keys: everything unlocked for previewing.
 //   unconfigured production build with no Supabase keys: free modules only, nothing to buy.
 //   live         Supabase keys set: logins work, paid modules need a purchase.
+//
+// PREVIEW_UNLOCK_ALL=true turns a Vercel *preview* deployment into dev mode (everything
+// unlocked) for testing. It is ignored on production deployments, so fdeplaybook.dev
+// always keeps its paywall.
 
 export const FREE_MODULES = new Set(["01-fde-role-and-mindset"]);
 
@@ -13,7 +17,12 @@ export const supabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_K
 
 export type AppMode = "dev" | "unconfigured" | "live";
 
+export function previewUnlocked(): boolean {
+  return process.env.VERCEL_ENV === "preview" && process.env.PREVIEW_UNLOCK_ALL === "true";
+}
+
 export function appMode(): AppMode {
+  if (previewUnlocked()) return "dev";
   if (supabaseConfigured) return "live";
   return process.env.NODE_ENV === "production" ? "unconfigured" : "dev";
 }
