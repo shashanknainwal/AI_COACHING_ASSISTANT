@@ -24,7 +24,17 @@ export interface LessonMeta {
   minutes: number;
 }
 
+export interface Customer {
+  company: string;
+  sector: string;
+  contact: string;
+  role: string;
+  replies: string[];
+}
+
 export interface Lesson extends LessonMeta {
+  /** Exercise intro shown as the customer's case file (empty for other lesson types). */
+  briefHtml: string;
   html: string;
   hints: string[];
   questions: QuizQuestion[];
@@ -43,6 +53,7 @@ export interface ModuleMeta {
   plannedLessons: string[];
   lessons: LessonMeta[];
   minutes: number;
+  customer: Customer;
 }
 
 export interface Course {
@@ -62,6 +73,7 @@ interface CourseJson {
     outcomes: string[];
     plannedMinutes: number;
     plannedLessons: string[];
+    customer: Customer;
   }[];
 }
 
@@ -113,6 +125,7 @@ export function getCourse(): Course {
       plannedLessons: m.plannedLessons,
       lessons,
       minutes: live ? lessons.reduce((s, l) => s + l.minutes, 0) : m.plannedMinutes,
+      customer: m.customer,
     };
   });
   courseCache = { title: json.title, tagline: json.tagline, priceUsd: PRICE_USD, modules };
@@ -124,15 +137,27 @@ export function getLesson(moduleSlug: string, lessonSlug: string): Lesson | null
   if (!lessonFiles(moduleSlug).includes(file)) return null;
   const { meta, data, body } = parseMeta(moduleSlug, file);
   const exDir = path.join(CONTENT_DIR, "modules", moduleSlug, lessonSlug);
+  const html = decorate(marked.parse(body, { async: false }) as string);
+  // An exercise's opening paragraphs (before its first heading) are the customer's brief.
+  const cut = meta.type === "exercise" ? html.indexOf("<h2") : -1;
   return {
     ...meta,
-    html: marked.parse(body, { async: false }) as string,
+    briefHtml: cut > 0 ? html.slice(0, cut) : "",
+    html: cut > 0 ? html.slice(cut) : html,
     hints: Array.isArray(data.hints) ? (data.hints as string[]) : [],
     questions: Array.isArray(data.questions) ? (data.questions as QuizQuestion[]) : [],
     starter: readIfExists(path.join(exDir, "starter.py")),
     setup: readIfExists(path.join(exDir, "setup.py")),
     tests: readIfExists(path.join(exDir, "tests.py")),
   };
+}
+
+/** Tag the two recurring callouts so they can be styled: objectives and key takeaways. */
+function decorate(html: string): string {
+  return html.replace(/<blockquote>\s*<p><strong>(By the end of this lesson[^<]*|Key takeaways[^<]*)<\/strong>/g, (match, label: string) => {
+    const kind = label.startsWith("Key") ? "takeaways" : "objectives";
+    return match.replace("<blockquote>", `<blockquote class="callout-${kind}">`);
+  });
 }
 
 /** Flat ordered list of every live lesson, for prev/next navigation. */

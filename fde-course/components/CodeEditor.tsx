@@ -20,7 +20,27 @@ export default function CodeEditor({
     <Editor
       height="100%"
       language="python"
-      theme="vs-dark"
+      theme="playbook-night"
+      beforeMount={(monaco) => {
+        monaco.editor.defineTheme("playbook-night", {
+          base: "vs-dark",
+          inherit: true,
+          rules: [
+            { token: "comment", foreground: "7d8590", fontStyle: "italic" },
+            { token: "keyword", foreground: "ff7b72" },
+            { token: "string", foreground: "a5d6ff" },
+            { token: "number", foreground: "79c0ff" },
+          ],
+          colors: {
+            "editor.background": "#0d1117",
+            "editor.lineHighlightBackground": "#161b22",
+            "editorLineNumber.foreground": "#3b434e",
+            "editorLineNumber.activeForeground": "#8b949e",
+            "editorCursor.foreground": "#6ee7b7",
+            "editor.selectionBackground": "#264f78",
+          },
+        });
+      }}
       value={value}
       onChange={(v) => onChange(v ?? "")}
       onMount={(editor, monaco) => {
@@ -29,6 +49,8 @@ export default function CodeEditor({
       }}
       options={{
         fontSize: 14,
+        fontFamily: '"JetBrains Mono", ui-monospace, Menlo, monospace',
+        fontLigatures: true,
         minimap: { enabled: false },
         scrollBeyondLastLine: false,
         tabSize: 4,
