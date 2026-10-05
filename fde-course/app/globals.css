@@ -32,8 +32,8 @@
 
 html,
 body {
-  background: var(--color-ink);
-  color: #e5e7eb;
+  background: var(--color-paper);
+  color: var(--color-graphite);
 }
 
 /* ---------- Lesson body (dark marketing context, kept for compatibility) ---------- */
