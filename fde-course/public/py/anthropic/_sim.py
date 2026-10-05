@@ -132,6 +132,32 @@ def _record(params, attempt, stream=False):
     calls.append({"params": _snapshot(params), "attempt": attempt, "stream": stream})
 
 
+def _record_response(response):
+    """Attach a compact copy of the reply to the latest call (used by the trace viewer)."""
+    if not calls:
+        return
+    blocks = []
+    for b in response.content:
+        if b.type == "text":
+            blocks.append({"type": "text", "text": b.text})
+        elif b.type == "tool_use":
+            blocks.append({"type": "tool_use", "id": b.id, "name": b.name, "input": _jsonable(b.input) if not isinstance(b.input, dict) else b.input})
+        elif b.type == "thinking":
+            blocks.append({"type": "thinking"})
+    u = response.usage
+    calls[-1]["response"] = {
+        "stop_reason": response.stop_reason,
+        "blocks": blocks,
+        "usage": {"input": u.input_tokens, "output": u.output_tokens,
+                  "cache_read": u.cache_read_input_tokens, "cache_write": u.cache_creation_input_tokens},
+    }
+
+
+def _record_error(exc):
+    if calls:
+        calls[-1]["error"] = type(exc).__name__
+
+
 def _snapshot(params):
     # Copy so later mutation of the learner's list doesn't rewrite history.
     try:

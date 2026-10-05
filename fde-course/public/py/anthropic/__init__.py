@@ -74,8 +74,11 @@ class _Messages:
         for attempt in range(attempts):
             _sim._record(params, attempt, stream=stream)
             try:
-                return _sim._respond(params)
+                response = _sim._respond(params)
+                _sim._record_response(response)
+                return response
             except _RETRYABLE as exc:
+                _sim._record_error(exc)
                 if attempt == attempts - 1:
                     raise
                 # Like the real SDK: honor retry-after when present, otherwise back off exponentially.

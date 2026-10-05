@@ -95,6 +95,8 @@ print(response.usage.input_tokens)                 # processed normally
 
 The first request **writes** the cache; later requests with the same prefix **read** it. If `cache_read_input_tokens` stays at zero, something in your prefix is changing between requests (a timestamp, a random ID, unsorted JSON, a different tool order).
 
+<div data-diagram="prompt-caching"></div>
+
 ## The real cost of a call
 
 With caching, a request's input is split into three parts, each with its own price:

@@ -30,9 +30,7 @@ FDEs make this call constantly. "Just put it in the prompt" is often the right f
 
 ## The pipeline
 
-```
-Ingest → Chunk → Index → (per question) Retrieve → Prompt → Answer → Cite & check
-```
+<div data-diagram="rag-pipeline"></div>
 
 ### 1. Chunking
 

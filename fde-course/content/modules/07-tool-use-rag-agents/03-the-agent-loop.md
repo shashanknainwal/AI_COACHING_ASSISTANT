@@ -45,6 +45,8 @@ def run_agent(client, question, max_steps=6):
 
 That's the whole pattern: **call → if Claude wants tools, run them all and send all results back → repeat until Claude stops asking.** Everything else is about making it safe and observable.
 
+<div data-diagram="agent-loop"></div>
+
 ## Bound everything
 
 An unbounded loop is a production incident waiting to happen. A confused agent can call the same failing tool over and over, and every iteration resends a growing history (more tokens, more cost).

@@ -71,6 +71,8 @@ When a dependency is failing, every request that tries it pays the full timeout 
 
 Only count **dependency** failures (API errors, timeouts). A bug in your own code (a crash parsing a response) should surface as an error, not be hidden by the fallback.
 
+<div data-diagram="circuit-breaker"></div>
+
 ### Kill switches
 
 A kill switch is a feature flag, read at runtime, that turns a feature off without a deploy. Every LLM feature with real-world effects (sending emails, issuing credit) should have one, and the on-call engineer should know where it is. Make the safe state the default: if the flag can't be read, treat the feature as **off**.
