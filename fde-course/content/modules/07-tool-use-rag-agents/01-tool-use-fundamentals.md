@@ -18,14 +18,7 @@ Our customer for this module is **Brightway Retail**, the retailer whose shipmen
 
 ## The cycle
 
-```
-1. You → Claude:   question + tool definitions
-2. Claude → you:   stop_reason "tool_use", with a tool_use block:
-                   {name: "lookup_order", input: {"order_id": "B-1001"}, id: "toolu_01..."}
-3. You:            run lookup_order("B-1001") in your own code
-4. You → Claude:   the conversation so far + a tool_result block for that id
-5. Claude → you:   stop_reason "end_turn", with the final answer text
-```
+<div data-diagram="tool-cycle"></div>
 
 Two things to internalize:
 

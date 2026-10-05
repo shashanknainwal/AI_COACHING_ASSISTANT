@@ -25,7 +25,7 @@ export default function LoginForm({ next }: { next: string }) {
 
   if (state === "sent") {
     return (
-      <div className="mt-6 rounded-lg border border-accent/40 bg-accent/10 p-4 text-sm text-gray-200">
+      <div className="mt-6 rounded-xl border border-forest/30 bg-forest/5 p-4 text-sm text-graphite-2">
         Check <strong>{email}</strong> for a login link. You can close this tab.
       </div>
     );
@@ -40,16 +40,16 @@ export default function LoginForm({ next }: { next: string }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@company.com"
-        className="w-full rounded-lg border border-line bg-panel px-3 py-2 text-gray-100 placeholder:text-gray-600"
+        className="w-full rounded-xl border border-rule bg-paper/70 px-3.5 py-2.5 text-graphite placeholder:text-graphite-3 focus:border-forest focus:outline-none"
       />
       <button
         type="submit"
         disabled={state === "sending"}
-        className="w-full rounded-lg bg-accent px-4 py-2 font-semibold text-ink hover:opacity-90 disabled:opacity-50"
+        className="w-full rounded-full bg-graphite px-4 py-2.5 font-semibold text-paper hover:bg-black disabled:opacity-50"
       >
         {state === "sending" ? "Sending…" : "Email me a login link"}
       </button>
-      {state === "error" && <p className="text-sm text-red-300">{message}</p>}
+      {state === "error" && <p className="text-sm text-vermilion">{message}</p>}
     </form>
   );
 }

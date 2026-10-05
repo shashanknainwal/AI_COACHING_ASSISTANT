@@ -43,20 +43,25 @@ export default function TutorPanel({
   };
 
   return (
-    <div className="mt-6 rounded-lg border border-line bg-panel-2 p-4">
-      <h3 className="mb-1 font-semibold text-white">AI tutor</h3>
-      <p className="mb-3 text-sm text-gray-500">Gets a nudge in the right direction based on your code and test output. It won&apos;t hand you the answer.</p>
+    <div className="mt-6 rounded-2xl border border-rule bg-white/60 p-5">
+      <div className="flex items-center gap-2">
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-graphite text-[11px] text-emerald-300" aria-hidden="true">
+          ✦
+        </span>
+        <h3 className="font-serif text-lg font-semibold">Ask a senior FDE</h3>
+      </div>
+      <p className="mt-1 text-sm text-graphite-3">An AI tutor (Claude) reads your code and test results and nudges you in the right direction. It won&apos;t hand you the answer.</p>
       <textarea
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         placeholder="Optional: what are you stuck on?"
         rows={2}
-        className="mb-2 w-full rounded border border-line bg-ink p-2 text-sm text-gray-200 placeholder:text-gray-600"
+        className="mt-3 w-full rounded-xl border border-rule bg-paper/70 p-3 text-sm text-graphite placeholder:text-graphite-3 focus:border-forest focus:outline-none"
       />
-      <button onClick={ask} disabled={loading} className="rounded border border-accent-2 px-3 py-1 text-sm text-accent-2 hover:bg-accent-2/10 disabled:opacity-50">
+      <button onClick={ask} disabled={loading} className="mt-2 rounded-lg bg-graphite px-4 py-2 text-sm font-semibold text-paper hover:bg-black disabled:opacity-50">
         {loading ? "Thinking…" : "Ask the tutor"}
       </button>
-      {answer && <div className="mt-3 whitespace-pre-wrap rounded bg-ink p-3 text-sm text-gray-200">{answer}</div>}
+      {answer && <div className="check-in mt-4 whitespace-pre-wrap rounded-xl border-l-4 border-forest bg-paper/80 p-4 text-[15px] leading-relaxed text-graphite-2">{answer}</div>}
     </div>
   );
 }

@@ -26,21 +26,23 @@ export default async function LessonPage({ params }: { params: Promise<{ module:
 
   if (!canAccessModule(viewer, module)) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 text-center">
-        <div className="text-4xl">🔒</div>
-        <p className="mt-4 text-sm uppercase tracking-widest text-gray-500">
-          Module {mod.number}: {mod.title}
-        </p>
-        <h1 className="mt-2 text-2xl font-bold text-white">{lesson.title}</h1>
-        <p className="mt-4 text-gray-400">
-          This lesson is part of the full course. Get lifetime access to all {course.modules.length} modules, every exercise and the AI tutor for a
-          one-time ${course.priceUsd}.
-        </p>
-        <div className="mt-8 flex flex-col items-center gap-3">
-          <BuyButton viewer={clientViewer} price={course.priceUsd} />
-          <Link href="/learn" className="text-sm text-gray-400 hover:text-white">
-            Back to the course
-          </Link>
+      <main className="playbook-page flex min-h-screen items-center justify-center px-6">
+        <div className="w-full max-w-lg rounded-3xl border border-rule bg-white/75 p-8 text-center shadow-[0_30px_60px_-40px_rgba(29,27,22,0.6)] sm:p-10">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-graphite text-lg text-paper">🔒</div>
+          <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-graphite-3">
+            Module {mod.number} · {mod.customer.company}
+          </p>
+          <h1 className="mt-2 font-serif text-3xl font-semibold leading-tight text-graphite">{lesson.title}</h1>
+          <p className="mt-4 text-graphite-2">
+            This lesson is part of the full course. Get lifetime access to all {course.modules.length} modules, every exercise and the AI tutor for a
+            one-time ${course.priceUsd}.
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <BuyButton viewer={clientViewer} price={course.priceUsd} />
+            <Link href="/learn" className="text-sm text-graphite-3 hover:text-graphite">
+              Back to your engagement map
+            </Link>
+          </div>
         </div>
       </main>
     );
@@ -60,6 +62,7 @@ export default async function LessonPage({ params }: { params: Promise<{ module:
         title: lesson.title,
         type: lesson.type,
         minutes: lesson.minutes,
+        briefHtml: lesson.briefHtml,
         html: lesson.html,
         hints: lesson.hints,
         questions: lesson.questions,
@@ -69,6 +72,8 @@ export default async function LessonPage({ params }: { params: Promise<{ module:
       }}
       moduleTitle={mod.title}
       moduleNumber={mod.number}
+      customer={mod.customer}
+      siblings={mod.lessons.map((l) => ({ slug: l.slug, title: l.title, type: l.type }))}
       position={{ index: i + 1, total: seq.length }}
       prev={link(i - 1)}
       next={link(i + 1)}

@@ -13,7 +13,18 @@
         "Make your first Claude API call with the Anthropic Python SDK"
       ],
       "plannedMinutes": 75,
-      "plannedLessons": []
+      "plannedLessons": [],
+      "customer": {
+        "company": "Brightline Health",
+        "sector": "Clinic network",
+        "contact": "Dana Ruiz",
+        "role": "VP Operations",
+        "replies": [
+          "This is exactly what I needed for Thursday's ops review. Thank you!",
+          "Clear and practical. Sam and I are aligned now.",
+          "Great work. This makes the pilot feel real."
+        ]
+      }
     },
     {
       "slug": "02-customer-discovery",
@@ -35,7 +46,18 @@
         "Exercise: Structured requirements extraction with Claude",
         "Scope, change requests, and saying no",
         "Module quiz"
-      ]
+      ],
+      "customer": {
+        "company": "Lumen Insurance",
+        "sector": "Insurance",
+        "contact": "Marisol Grant",
+        "role": "VP Claims",
+        "replies": [
+          "You understood our claims process better than our last two vendors.",
+          "Perfect. I'm forwarding this to the CFO as is.",
+          "This is the clarity we needed before signing off."
+        ]
+      }
     },
     {
       "slug": "03-python-data-wrangling",
@@ -59,7 +81,18 @@
         "Exercise: Reconcile two systems of record",
         "Data-quality reports that drive action",
         "Module quiz"
-      ]
+      ],
+      "customer": {
+        "company": "Cobalt Supply",
+        "sector": "Industrial distribution",
+        "contact": "Owen Bradley",
+        "role": "CFO",
+        "replies": [
+          "Finally, numbers I can trust. Thank you.",
+          "My team spent weeks on this by hand. Impressive.",
+          "Great. Send me the data-quality summary for the board pack."
+        ]
+      }
     },
     {
       "slug": "04-apis-and-integrations",
@@ -82,7 +115,18 @@
         "Exercise: Build an idempotent sync",
         "Schema mapping between systems",
         "Module quiz"
-      ]
+      ],
+      "customer": {
+        "company": "Northwind Freight",
+        "sector": "Logistics",
+        "contact": "Leah Park",
+        "role": "Head of Integrations",
+        "replies": [
+          "The sync ran all night without a single page dropped. Nice.",
+          "Exactly how I'd want an integration built. Shipping it.",
+          "Our on-call engineer will thank you for this one."
+        ]
+      }
     },
     {
       "slug": "05-sql-and-data-modeling",
@@ -104,7 +148,18 @@
         "Data modeling for analytics and AI",
         "Safe access to production data",
         "Module quiz"
-      ]
+      ],
+      "customer": {
+        "company": "Pinecrest Fitness",
+        "sector": "Gym chain",
+        "contact": "Tom Haddad",
+        "role": "COO",
+        "replies": [
+          "Straight answers, finally. That's my Monday meeting sorted.",
+          "The retention numbers are eye-opening. Thank you.",
+          "Great. Can we make this the official definition company-wide?"
+        ]
+      }
     },
     {
       "slug": "06-building-with-claude",
@@ -128,7 +183,18 @@
         "Errors, retries, refusals, tokens and cost",
         "Exercise: A resilient Claude client",
         "Module quiz"
-      ]
+      ],
+      "customer": {
+        "company": "Harbor Bank",
+        "sector": "Regional bank",
+        "contact": "Priya Desai",
+        "role": "Head of Digital Support",
+        "replies": [
+          "Our compliance team signed off on the first review. Great work.",
+          "It handles the edge cases our old system choked on.",
+          "Fast, safe and cheaper than we budgeted. Thank you."
+        ]
+      }
     },
     {
       "slug": "07-tool-use-rag-agents",
@@ -152,7 +218,18 @@
         "Workflows vs agents: picking the simplest thing",
         "Exercise: Human-in-the-loop approvals",
         "Module quiz"
-      ]
+      ],
+      "customer": {
+        "company": "Brightway Retail",
+        "sector": "Retail",
+        "contact": "Jordan Lee",
+        "role": "VP of Customer Support",
+        "replies": [
+          "Customers are getting real answers now, with sources. Love it.",
+          "The approval gate is exactly what our policy team asked for.",
+          "This is the assistant we pictured at kickoff."
+        ]
+      }
     },
     {
       "slug": "08-evals-and-reliability",
@@ -174,7 +251,18 @@
         "Cost modeling, prompt caching and effort",
         "Exercise: Cost calculator for a deployment",
         "Module quiz"
-      ]
+      ],
+      "customer": {
+        "company": "Brightway Retail",
+        "sector": "Retail",
+        "contact": "Jordan Lee",
+        "role": "VP of Customer Support",
+        "replies": [
+          "Now I can answer 'how do we know it works?' with numbers.",
+          "The report made the go/no-go call easy. Thank you.",
+          "Finance is happy with the cost model, and so am I."
+        ]
+      }
     },
     {
       "slug": "09-shipping-to-production",
@@ -196,7 +284,18 @@
         "Exercise: Debug an incident from logs",
         "Post-mortems, runbooks and handoff",
         "Module quiz"
-      ]
+      ],
+      "customer": {
+        "company": "Brightway Retail",
+        "sector": "Retail",
+        "contact": "Jordan Lee",
+        "role": "VP of Customer Support",
+        "replies": [
+          "Our platform team said this was the cleanest handoff they've seen.",
+          "When it broke, we knew why in minutes. That's the dream.",
+          "Production-ready, documented, and calm. Thank you."
+        ]
+      }
     },
     {
       "slug": "10-capstone",
@@ -218,7 +317,18 @@
         "Exercise: Evaluate the agent",
         "The executive readout",
         "Final assessment"
-      ]
+      ],
+      "customer": {
+        "company": "NorthStar Logistics",
+        "sector": "Freight",
+        "contact": "Dana Whitfield",
+        "role": "VP Operations",
+        "replies": [
+          "This is exactly what I'll show our CEO. Thank you.",
+          "My coordinators can finally focus on the hard cases.",
+          "Halvorsen noticed the difference already. Great work."
+        ]
+      }
     }
   ]
 }

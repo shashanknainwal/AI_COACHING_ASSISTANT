@@ -53,7 +53,9 @@ Paid lesson content is rendered on the server only for learners who bought the c
 3. **Supabase** (free tier): create a project, then run `supabase/migrations/0001_init.sql` in the SQL editor. Under Authentication → URL Configuration, set the Site URL to `https://fdeplaybook.dev` and add `https://fdeplaybook.dev/auth/callback` to the redirect URLs.
 4. **Stripe**: copy the secret key. Add a webhook endpoint at `https://fdeplaybook.dev/api/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`, then copy its signing secret. Optionally create a $149 one-time Price and put its ID in `STRIPE_PRICE_ID`.
 5. **Environment variables**: fill in everything in `.env.example` in Vercel → Settings → Environment Variables (and in `.env.local` for local testing), then redeploy.
-6. **Test a purchase** in Stripe test mode with card `4242 4242 4242 4242`, then switch Stripe to live keys.
+6. **Free access for yourself**: set `FREE_ACCESS_EMAILS` to your email (comma-separate several). After you log in with that email, every module is unlocked without paying.
+7. **Test the whole course on a preview link**: in Vercel → Settings → Environment Variables, add `PREVIEW_UNLOCK_ALL` = `true` for the **Preview** environment only. Preview deployments (any branch other than `main`) then have every module unlocked; production is never affected.
+8. **Test a purchase** in Stripe test mode with card `4242 4242 4242 4242`, then switch Stripe to live keys.
 
 The price is set in one place: `PRICE_USD` in `lib/config.ts`. If you use `STRIPE_PRICE_ID`, keep that Stripe Price at the same amount.
 

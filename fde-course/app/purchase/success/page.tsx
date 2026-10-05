@@ -23,28 +23,30 @@ export default async function PurchaseSuccess({ searchParams }: { searchParams: 
   }
 
   return (
-    <main className="mx-auto max-w-lg px-6 py-24 text-center">
+    <main className="playbook-page flex min-h-screen items-center justify-center px-6 py-16 text-center">
+      <div className="w-full max-w-lg rounded-3xl border border-rule bg-white/80 p-10 shadow-[0_30px_60px_-40px_rgba(29,27,22,0.6)]">
       {ok ? (
         <>
           <div className="text-5xl">🎉</div>
-          <h1 className="mt-4 text-3xl font-bold text-white">You&apos;re in.</h1>
-          <p className="mt-3 text-gray-400">All modules are unlocked for {viewer.user.email}. A receipt is on its way to your inbox.</p>
-          <Link href="/learn" className="mt-8 inline-block rounded-lg bg-accent px-6 py-3 font-semibold text-ink hover:opacity-90">
+          <h1 className="mt-4 font-serif text-4xl font-semibold text-graphite">You&apos;re in.</h1>
+          <p className="mt-3 text-graphite-2">All modules are unlocked for {viewer.user.email}. A receipt is on its way to your inbox.</p>
+          <Link href="/learn" className="mt-8 inline-block rounded-full bg-graphite px-6 py-3 font-semibold text-paper hover:bg-black">
             Go to the course →
           </Link>
         </>
       ) : (
         <>
-          <h1 className="text-2xl font-bold text-white">Confirming your payment…</h1>
-          <p className="mt-3 text-gray-400">
+          <h1 className="font-serif text-3xl font-semibold text-graphite">Confirming your payment…</h1>
+          <p className="mt-3 text-graphite-2">
             This usually takes a few seconds. Refresh this page in a moment. If access still isn&apos;t unlocked after a few minutes,
             reply to your Stripe receipt email and we&apos;ll sort it out.
           </p>
-          <Link href="/learn" className="mt-8 inline-block text-accent-2 hover:underline">
+          <Link href="/learn" className="mt-8 inline-block font-semibold text-forest hover:underline">
             Back to the course
           </Link>
         </>
       )}
+      </div>
     </main>
   );
 }

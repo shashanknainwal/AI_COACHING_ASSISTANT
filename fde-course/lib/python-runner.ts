@@ -6,12 +6,37 @@ export interface TestResult {
   message: string;
 }
 
+export interface TraceBlock {
+  type: "text" | "tool_use" | "thinking";
+  text?: string;
+  id?: string;
+  name?: string;
+  input?: string;
+}
+
+export interface TraceStep {
+  model: string;
+  attempt: number;
+  error: string | null;
+  stop_reason?: string;
+  usage?: { input: number; output: number; cache_read: number; cache_write: number };
+  blocks?: TraceBlock[];
+  results?: { id: string; is_error: boolean; content: string }[];
+}
+
+export interface TraceRun {
+  question: string;
+  steps: TraceStep[];
+}
+
 export interface RunResult {
   ok: boolean;
   stdout: string;
   error: string | null;
   tests: TestResult[];
   passed: boolean | null;
+  /** Claude calls made by the learner's code, grouped into runs (empty when Claude wasn't called). */
+  trace?: TraceRun[];
 }
 
 type Listener = (status: string) => void;
