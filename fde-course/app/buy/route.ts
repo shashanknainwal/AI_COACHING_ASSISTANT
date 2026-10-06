@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getViewer } from "@/lib/access";
-import { PRICE_USD } from "@/lib/config";
+import { PRICE_USD, SITE_NAME } from "@/lib/config";
 import { getStripe } from "@/lib/purchases";
 
 // GET /buy → sends the learner to Stripe Checkout (or to log in first).
@@ -31,7 +31,7 @@ export async function GET(req: Request) {
                 currency: "usd",
                 unit_amount: PRICE_USD * 100,
                 product_data: {
-                  name: "Forward Deployed Engineering: The Complete Course",
+                  name: `${SITE_NAME}: Forward Deployed Engineering course`,
                   description: "Lifetime access to all modules, exercises and the AI tutor.",
                 },
               },

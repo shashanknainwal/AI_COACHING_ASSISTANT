@@ -1,6 +1,6 @@
 # FDE Playbook: project handoff
 
-Read this first when resuming. It records what exists, what's live, the decisions behind it, how to verify changes, and what's next. Last updated: 2026-10-06.
+Read this first when resuming. It records what exists, what's live, the decisions behind it, how to verify changes, and what's next. Last updated: 2026-10-06 (logins live).
 
 ## 1. The product
 
@@ -15,6 +15,8 @@ Read this first when resuming. It records what exists, what's live, the decision
 - **Repo:** `shashanknainwal/AI_COACHING_ASSISTANT`. Everything is in `fde-course/`; the root `README.md` is the owner's original file and must not be changed.
 - **Branch workflow:** develop on `claude/fde-course-platform-gf06sa`, open a PR to `main`, and the owner merges it. Vercel deploys `main` to production and every other branch to a preview URL. PR #1 (platform + modules) and PR #2 (redesign, trace viewer, diagrams, access controls) are **merged**. After a merge, restart the branch from `main` before new work.
 - **Vercel:** team `jev-a8de`, project `ai-coaching-assistant`, Root Directory `fde-course`, production branch `main`.
+- **Canonical address:** the site serves from **`https://www.fdeplaybook.dev`** (the apex redirects to www). Use the www address for Supabase redirect URLs and for the Stripe webhook, because Stripe doesn't follow redirects.
+- **Supabase:** project `etoeogxzkanrtntudvnp` ("supabase-chestnut-lens"), connected through the Vercel integration. The Site URL is `https://www.fdeplaybook.dev`; the redirect URLs include the www and apex `/auth/callback` addresses and `https://*-jev-a8de.vercel.app/**`. Login emails send through Resend SMTP if the owner set it up; otherwise Supabase's built-in sender allows about 2 emails per hour.
 
 ### Code map (inside `fde-course/`)
 
@@ -45,7 +47,7 @@ Read this first when resuming. It records what exists, what's live, the decision
 | `NEXT_PUBLIC_SITE_URL` | `https://fdeplaybook.dev` | Set in Vercel |
 | `PREVIEW_UNLOCK_ALL` | `true` on the **Preview** environment only; ignored on production | Set in Vercel (Preview) |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or `NEXT_PUBLIC_SUPABASE_ANON_KEY`), `SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`) | Logins, progress sync, purchases | Added by the Vercel–Supabase integration, which points to Supabase project `etoeogxzkanrtntudvnp`. Use that project (run the migration and URL configuration there). A second project, `xmhqjgqraxrfiyddoouf`, was created by hand and is unused. |
-| `FREE_ACCESS_EMAILS` | Comma-separated emails with full access without paying | **Not set yet** (owner's email) |
+| `FREE_ACCESS_EMAILS` | Comma-separated emails with full access without paying | Set (owner's email); verified working |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` (optional) | Payments ($149) | **Not set yet** |
 | `ANTHROPIC_API_KEY` | AI tutor | **Not set yet** |
 
@@ -57,7 +59,7 @@ Read this first when resuming. It records what exists, what's live, the decision
 | 2. Logins and payments (code) | Done; accounts not connected |
 | 3. All 10 modules of content | Done |
 | UI redesign "The Playbook" (look B) + features 1–5 | Done and merged (PR #2) |
-| 4. Deployment | Live on Vercel + fdeplaybook.dev; Supabase, Stripe, Anthropic key still to connect |
+| 4. Deployment | Live on Vercel + www.fdeplaybook.dev; **logins work** (PR #3 merged); Stripe and the Anthropic key still to connect |
 
 ### Design decisions (look B, "The Playbook")
 
@@ -67,14 +69,14 @@ Customer personas (fictional), per module: 1 Brightline Health / Dana Ruiz (VP O
 
 ## 5. Next steps, in order
 
-1. **Supabase (logins):**
+1. **Supabase (logins):** done on 2026-10-06. Owner login verified.
    1. **Done 2026-10-06:** tables created in project `etoeogxzkanrtntudvnp` ("supabase-chestnut-lens") with `supabase/setup_single_statement.sql`, through Vercel → Storage → Query. That tool runs one statement at a time, which is why the single-statement version exists.
    2. Under Authentication → URL Configuration, set the Site URL to `https://fdeplaybook.dev` and add the redirect URLs `https://fdeplaybook.dev/auth/callback` and `https://*-jev-a8de.vercel.app/**`.
    3. Copy the Project URL, the publishable key and the secret key into Vercel. Add `FREE_ACCESS_EMAILS=hybridboy11@gmail.com` too.
    4. Redeploy, then test a magic-link login.
-2. **Stripe (payments):**
+2. **Stripe (payments):** in progress
    1. Copy the secret key from the Stripe dashboard.
-   2. Add a webhook at `https://fdeplaybook.dev/api/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`, then copy its signing secret.
+   2. Add a webhook at `https://www.fdeplaybook.dev/api/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`, then copy its signing secret.
    3. Optionally create a $149 Price and put its ID in `STRIPE_PRICE_ID`.
    4. Test with card 4242 4242 4242 4242, then switch to live keys.
 3. **Anthropic API key** for the tutor. Before launch, consider a per-user tutor rate limit, which isn't built yet.
