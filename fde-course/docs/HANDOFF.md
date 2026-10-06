@@ -44,7 +44,7 @@ Read this first when resuming. It records what exists, what's live, the decision
 |---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | `https://fdeplaybook.dev` | Set in Vercel |
 | `PREVIEW_UNLOCK_ALL` | `true` on the **Preview** environment only; ignored on production | Set in Vercel (Preview) |
-| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` | Logins, progress sync, purchases | **Not set yet** (next step) |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or `NEXT_PUBLIC_SUPABASE_ANON_KEY`), `SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`) | Logins, progress sync, purchases | Added by the Vercel–Supabase integration, which points to Supabase project `etoeogxzkanrtntudvnp`. Use that project (run the migration and URL configuration there). A second project, `xmhqjgqraxrfiyddoouf`, was created by hand and is unused. |
 | `FREE_ACCESS_EMAILS` | Comma-separated emails with full access without paying | **Not set yet** (owner's email) |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` (optional) | Payments ($149) | **Not set yet** |
 | `ANTHROPIC_API_KEY` | AI tutor | **Not set yet** |

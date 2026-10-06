@@ -11,7 +11,13 @@
 export const FREE_MODULES = new Set(["01-fde-role-and-mindset"]);
 
 export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-export const SUPABASE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "";
+// The Vercel–Supabase integration names the public key NEXT_PUBLIC_SUPABASE_ANON_KEY; either works.
+export const SUPABASE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+/** Server-only key that can write purchases. The integration names it SUPABASE_SERVICE_ROLE_KEY. */
+export function supabaseSecretKey(): string {
+  return process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+}
 
 export const supabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
 
