@@ -68,7 +68,7 @@ Customer personas (fictional), per module: 1 Brightline Health / Dana Ruiz (VP O
 ## 5. Next steps, in order
 
 1. **Supabase (logins):**
-   1. In the Supabase SQL Editor, run `supabase/migrations/0001_init.sql`.
+   1. **Done 2026-10-06:** tables created in project `etoeogxzkanrtntudvnp` ("supabase-chestnut-lens") with `supabase/setup_single_statement.sql`, through Vercel → Storage → Query. That tool runs one statement at a time, which is why the single-statement version exists.
    2. Under Authentication → URL Configuration, set the Site URL to `https://fdeplaybook.dev` and add the redirect URLs `https://fdeplaybook.dev/auth/callback` and `https://*-jev-a8de.vercel.app/**`.
    3. Copy the Project URL, the publishable key and the secret key into Vercel. Add `FREE_ACCESS_EMAILS=hybridboy11@gmail.com` too.
    4. Redeploy, then test a magic-link login.
