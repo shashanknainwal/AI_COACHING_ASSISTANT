@@ -67,6 +67,13 @@ Paper reading pages with serif headings; dark "mission console" for code. Featur
 
 Customer personas (fictional), per module: 1 Brightline Health / Dana Ruiz (VP Operations); 2 Lumen Insurance / Marisol Grant (VP Claims); 3 Cobalt Supply / Owen Bradley (CFO); 4 Northwind Freight / Leah Park (Head of Integrations); 5 Pinecrest Fitness / Tom Haddad (COO); 6 Harbor Bank / Priya Desai (Head of Digital Support); 7–9 Brightway Retail / Jordan Lee (VP of Customer Support); 10 NorthStar Logistics / Dana Whitfield (VP Operations).
 
+### New direction: three tracks (decided 2026-10-08)
+
+The course is expanding into three tracks for people targeting frontier-lab jobs: Applied AI Engineer, Applied AI Architect, and a reworked Forward Deployed Engineer track. They sit on a shared core and each ends in a mock interview loop.
+
+- Owner decisions: keep the FDE Playbook brand; $249 all-access (the live site stays at $149 until the tracks launch); research and syllabus before building.
+- The research, syllabus, build order and open questions are in **`docs/TRACKS_PLAN.md`**. Read it before any track work. It is waiting on the owner's review.
+
 ## 5. Next steps, in order
 
 1. **Supabase (logins):** done on 2026-10-06. Owner login verified.

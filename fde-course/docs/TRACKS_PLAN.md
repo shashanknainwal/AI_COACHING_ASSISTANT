@@ -1,0 +1,216 @@
+# Three-track plan: syllabus draft for review
+
+Status: **draft, waiting on the owner's review**. Nothing here is built yet.
+
+## Decisions already made (2026-10-08)
+
+| # | Decision | Choice |
+|---|---|---|
+| 1 | Brand | Keep **FDE Playbook** and fdeplaybook.dev. Each track is a "Playbook". |
+| 2 | Pricing | **$249 all-access**, one-time. The live site stays at $149 until the tracks launch, then `PRICE_USD` changes to 249. |
+| 3 | Order | Research first, then this written syllabus, then build. |
+
+## The goal
+
+Teach what it takes to get hired into applied roles at frontier labs (Anthropic, OpenAI, Perplexity and similar). There are three tracks:
+
+| Track | For | The job in one line |
+|---|---|---|
+| **Applied AI Engineer** | Backend or ML engineers | Build production LLM systems: agents, RAG, evals, latency, cost |
+| **Applied AI Architect** | Senior engineers and solutions architects | Design the customer's solution, run the proof of concept, defend tradeoffs to executives |
+| **Forward Deployed Engineer** | Engineers who like customers | Ship working AI inside a customer's messy systems |
+
+Every track sits on a **shared core** and ends with a **mock interview loop**.
+
+---
+
+## 1. What the research says
+
+Confidence labels:
+
+- **Official:** the company says it.
+- **Reported:** several independent candidate accounts agree.
+- **Anecdotal:** one or two accounts.
+
+The course uses these same labels so learners know what to trust.
+
+### Anthropic
+
+| Stage | What happens | Confidence |
+|---|---|---|
+| Application | A written "Why Anthropic?" answer (reported as 200–400 words). Treat it as the first interview. | Reported |
+| AI use | First drafts must be your own. Claude may refine them. No AI in take-homes or live interviews unless Anthropic says otherwise. Using Claude for interview prep is encouraged. | **Official** ([candidate AI guidance](https://www.anthropic.com/candidate-ai-guidance)) |
+| Recruiter screen | About 30 minutes: background, motivation, level. | Reported |
+| Online assessment | One progressive CodeSignal problem, about 90 minutes, about 4 levels. Each level extends the previous one. Practical code in Python, no algorithm puzzles. The best-known variants are an in-memory database (get/set, then filtering, then TTL, then time-travel lookups) and a banking system. | Reported (many accounts) |
+| Onsite | Two loops on separate days. Loop 1: coding, system design (often LLM infrastructure), culture. Loop 2: experiences and goals, plus a project deep dive. Failing Loop 1 cancels Loop 2. | Reported |
+| Culture / values | Several guides call it the round that fails the most candidates. It is run by a nominated employee. Reported prompts include mission versus share price, and "someone you respect but disagree with on values". | Reported (Axios plus career-center guides) |
+| References and team match | Can add 2–4+ weeks. | Reported |
+
+**Essays to know** (link to them; never copy them into the course):
+
+- Dario Amodei, *Machines of Loving Grace* (Oct 2024)
+- *The Urgency of Interpretability* (Apr 2025)
+- *The Adolescence of Technology* (Jan 2026)
+- Anthropic's Responsible Scaling Policy
+- Claude's constitution
+- Anthropic's engineering posts, e.g. *Building effective agents*
+
+No public source confirms that interviewers ask about the essays directly. The course frames them as how to answer "Why Anthropic?" specifically and how to hold your own in the values round. It does not frame them as "they will quiz you on this".
+
+**Applied roles at Anthropic** (from job postings):
+
+- **Applied AI Engineer:** a customer-facing technical advisor from discovery through deployment. Builds eval frameworks, pairs with customer engineers, knows prompting, agents and retrieval. 4+ years in a technical role.
+- **Solutions Architect, Applied AI:** pre-sales architecture for large enterprises. Fits Claude into their stack, builds evals, designs scalable architectures.
+- **Forward Deployed Engineer, Applied AI:** builds production apps on Claude inside customer systems (MCP servers, sub-agents, agent skills), white-glove deployment, 25–50% travel. Python plus one more language.
+
+### OpenAI (Forward Deployed Engineer)
+
+- Recruiter screen, then two 60-minute screens or a take-home with a review call, then a virtual onsite of 4–6 interviews (reported).
+- **Coding:** practical, production-style. One account describes an AI-enabled coding screen.
+- **System design:** LLM deployment.
+- **Project deep dive:** present and defend something you built.
+- **Assessed on:** scoping ambiguous problems, building systems around models, proving them with evals, talking to non-technical stakeholders.
+- One candidate reports a one-week take-home case study, then a panel walking through it from several angles (anecdotal).
+- Solutions Architect loops are thinly documented. Plan for a case discussion plus a presentation, labelled anecdotal.
+
+### Perplexity
+
+- HR screen, then a project-style online assessment (caches, multi-part tasks with tests) or live coding, then a 4–5 round onsite (reported).
+- **Coding:** domain-flavored, e.g. tokenization, streaming, beam search.
+- **AI system design:** RAG, serving under latency limits, caching.
+- **Hiring manager deep dive.**
+- **Senior roles:** a technical founder interview.
+
+### What this means for the course
+
+1. **Practical, progressive coding is the common screen.** Build a timed, multi-level coding drill engine. Write **original** problems in that format, never reconstructions of reported questions.
+2. **LLM system design shows up everywhere.** Each track needs a design module with rubrics.
+3. **Values and mission is a real filter at Anthropic.** Treat it as a full module with practice, not a tips page.
+4. **The project deep dive appears at every lab.** The capstone doubles as the learner's deep-dive project.
+5. **No AI during assessments.** Timed drills run with the tutor turned off, mirroring the real rules.
+
+---
+
+## 2. Course structure
+
+```
+FDE Playbook
+├── Shared core: Frontier Foundations (C1–C5)   ← everyone starts here
+├── Applied AI Engineer Playbook (E1–E6 + Loop)
+├── Applied AI Architect Playbook (A1–A6 + Loop)
+└── Forward Deployed Engineer Playbook (F1–F6 + Loop)   ← reworked from today's 10 modules
+```
+
+Hours are estimates. Lesson counts include readings, exercises and quizzes.
+
+### Shared core: Frontier Foundations (about 30 lessons, about 10 hours)
+
+| # | Module | What the learner does | Reuses |
+|---|---|---|---|
+| C1 | **How frontier labs hire** | Maps the loop at Anthropic, OpenAI and Perplexity, with confidence labels. Covers levels, timelines and the AI-use rules. **Exercise:** draft your own "Why Anthropic?" answer; Claude grades it against a rubric (specificity, own experience, mission link). | New |
+| C2 | **LLM fundamentals interviewers probe** | Tokens, context, sampling, tool use, caching, structured output, model choice and cost math. **Exercises:** a cost calculator, a token budgeter, picking a model for a scenario. | Module 6 (trimmed) |
+| C3 | **Progressive coding drills** | Learns the multi-level format: data model first, extend without rewriting. Original drills: a key-value store with expiry and history, an event ledger, a rate limiter, a log aggregator, a job scheduler. **Timed mode, tutor off.** | New engine |
+| C4 | **Reading the labs** | Learns a critique framework (steelman, assumptions, strongest counterargument, what would change your mind). Applies it to Amodei's essays, the RSP and the constitution, plus OpenAI's charter for contrast. **Exercise:** a written critique graded by Claude against a rubric. | New |
+| C5 | **Values and behavioral** | Mission versus money, disagreement, failure, safety tradeoffs, STAR stories. **Exercise:** a mock values interview; Claude interviews you, then scores you. | New |
+
+### Applied AI Engineer Playbook (about 40 lessons, about 14 hours)
+
+| # | Module | Focus | Reuses |
+|---|---|---|---|
+| E1 | Production prompting and structured outputs | System prompts, JSON schemas, extraction reliability, prompt regression | Module 6 |
+| E2 | Tool use and agents | Tool loops, MCP servers, sub-agents, failure handling, traces | Module 7 |
+| E3 | Retrieval at scale | Chunking, hybrid search, reranking, retrieval evals, citations | Module 7 |
+| E4 | Evals as engineering | Golden sets, LLM-as-judge calibration, regression gates in CI | Module 8 |
+| E5 | Production concerns | Streaming, latency budgets, prompt caching, rate limits, fallbacks, observability, cost | Module 9 |
+| E6 | **LLM system design interview** | Six design prompts (e.g. a support agent at 10k tickets/day, a doc-QA service at p95 < 2s), each graded against a rubric | New |
+| Loop | **Mock loop** | Timed progressive coding, then system design, then project deep dive, then values | New |
+
+### Applied AI Architect Playbook (about 38 lessons, about 13 hours)
+
+| # | Module | Focus |
+|---|---|---|
+| A1 | The architect's job | Pre-sales to deployment, solution design docs, working with Sales and Product |
+| A2 | Enterprise deployment of Claude | Direct API versus Bedrock, Vertex AI and Foundry; data handling, security reviews, SSO, compliance questions (facts verified against current docs before writing) |
+| A3 | Choosing the approach | Prompting versus RAG versus agents versus fine-tuning; build versus buy; cost and total-cost-of-ownership models at scale |
+| A4 | Proofs of concept that close | Success criteria, bake-offs, eval-driven proofs of concept, reading results honestly |
+| A5 | Executive communication | Architecture one-pagers, objection handling. **Role-play:** a skeptical CTO and a cautious CISO, both played by Claude |
+| A6 | Reference architectures | Support automation, document processing, knowledge assistant, coding assistant, each with tradeoffs |
+| Loop | **Mock loop** | Case presentation, then architecture design, then customer role-play, then values |
+
+### Forward Deployed Engineer Playbook (rework: about 45 lessons, about 15 hours, down from 39.5)
+
+The fix for "boring": every lesson opens on a customer problem. Readings are about 40% shorter. Each module ends with a **field drill**, a timed customer scenario.
+
+| # | Module | Built from today's |
+|---|---|---|
+| F1 | Discovery and scoping under ambiguity | Modules 1 and 2 |
+| F2 | Messy data and SQL on customer systems | Modules 3 and 5 |
+| F3 | Integrations that survive production | Module 4 |
+| F4 | Shipping Claude inside customer systems (agents, MCP, evals) | Modules 7 and 8 |
+| F5 | Production and handover | Module 9 |
+| F6 | Capstone: NorthStar engagement (doubles as your deep-dive project) | Module 10 |
+| Loop | **Mock loop** | Take-home case plus debrief, then practical coding, then customer role-play, then project deep dive |
+
+**About 150 lessons in total**, about 70 of them reused or reworked. **About 52 hours.**
+
+---
+
+## 3. New platform features
+
+| Feature | What it is | Notes |
+|---|---|---|
+| Tracks | `course.json` gains `tracks[]`. Each track lists its modules; shared modules appear in every track. A track picker sits on `/learn`. | Existing lesson URLs keep working |
+| Timed progressive exercise | Levels unlock when the previous level's hidden tests pass; there is a countdown and the tutor is off | Runs in Pyodide like today, so it costs nothing |
+| Written exercise | A text answer graded by Claude against a rubric on the server, returning a score per criterion | Uses the owner's API key, server-side only |
+| Role-play | A chat with a Claude persona (interviewer, CTO, CISO), then a scored debrief | Same server route as written exercises |
+| Design exercise | A structured answer form (requirements, components, tradeoffs, failure modes) graded against a rubric | Same |
+| Per-user limits | A daily cap on Claude-graded attempts per learner | **Required before launch** |
+
+**Cost of live grading:** about 3k input and 800 output tokens per grade on Sonnet 5.5 comes to about $0.015 per grade. At around 100 graded attempts per learner, that is **about $1.50 per learner**, against $249 revenue.
+
+---
+
+## 4. Guardrails
+
+1. **No leaked or NDA-covered questions.** Every problem is original and written "in the style of" the publicly reported format.
+2. **No implied affiliation.** Lab names appear only as factual references, with a disclaimer on the home page and in C1.
+3. **Every claim about a hiring process carries a confidence label and a source,** plus a "last checked" date. Processes change, so plan a re-check every quarter.
+4. **Essays are linked and summarized in our own words,** never reproduced.
+5. **Timed drills mirror the real AI rules:** no tutor during the drill; the tutor is available for the debrief afterwards.
+
+---
+
+## 5. Build order
+
+| Phase | Work | Estimate |
+|---|---|---|
+| 1 | Platform: tracks, track picker, the three new exercise types, grading route, per-user limits | 2 sessions |
+| 2 | Shared core C1–C5 | 2–3 sessions |
+| 3 | Applied AI Engineer track plus its loop | 3 sessions |
+| 4 | Applied AI Architect track plus its loop | 3 sessions |
+| 5 | FDE rework plus its loop | 2–3 sessions |
+| 6 | Home page and pricing ($249), then launch | 1 session |
+
+**About 13–15 sessions.** Each phase ships behind the preview unlock first, so the live site never breaks.
+
+---
+
+## 6. Open questions for the owner
+
+1. **Free preview:** what is free? Recommendation: C1 plus the first lesson of each track.
+2. **Lab depth:** Anthropic in depth, with OpenAI and Perplexity as comparison chapters? (Recommended.) Or equal depth for all three?
+3. **Live grading on your Anthropic key:** about $1.50 per learner. OK?
+4. **FDE customers:** keep the existing fictional customers (Brightline, NorthStar and so on) in the rework? (Recommended.)
+5. **Your own stories:** you worked at Amazon and in an FDE role. Do you want "from my loop" notes in C1 and C5? They would be in your words, and they are the strongest differentiator.
+
+## Sources (checked 2026-10-08)
+
+- Anthropic candidate AI guidance: https://www.anthropic.com/candidate-ai-guidance
+- Anthropic loop overviews (third-party): https://cdo.som.yale.edu/blog/2026/05/18/get-a-job-at-anthropic-interview-process-and-top-questions/ · https://www.educative.io/blog/anthropic-interview-process · https://www.designgurus.io/answers/detail/what-is-the-anthropic-interview-process-like-round-by-round
+- Anthropic culture interview: https://www.axios.com/newsletters/axios-ai-plus-10f46cb9-9c35-4d55-b72c-498c853ea10b.html
+- Anthropic online assessment reports: https://www.lodely.com/blog/anthropic-oa · https://deepsunai.substack.com/p/anthropics-codesignal-assessment · https://prachub.com/interview-experiences/anthropic-software-engineer-interview-experience-a-community-compiled-guide-to-the-oa-technical-and-values-rounds
+- Anthropic role postings (aggregators): https://jobs.accel.com/companies/anthropic/jobs/81748657-applied-ai-engineer · https://jobs.accel.com/companies/anthropic/jobs/69412282-solutions-architect-applied-ai · https://jobs.generalcatalyst.com/companies/anthropic/jobs/89778489-forward-deployed-engineer
+- Dario Amodei essays: https://darioamodei.com/post/the-urgency-of-interpretability · https://darioamodei.com/llms.txt
+- OpenAI FDE: https://www.tryexponent.com/guides/openai-forward-deployed-engineer-interview · https://igotanoffer.com/en/advice/openai-forward-deployed-engineer-interview · https://www.tryexponent.com/experiences/openai-forward-deployed-engineer-interview-0b9c09
+- OpenAI Solutions roles: https://dataford.io/interview-guides/openai/solutions-engineer · https://www.tryexponent.com/blog/openai-interview-process
+- Perplexity: https://www.designgurus.io/answers/detail/what-is-the-perplexity-interview-process-like-round-by-round · https://www.interviewquery.com/prep-guides/perplexity-ai-software-engineer
