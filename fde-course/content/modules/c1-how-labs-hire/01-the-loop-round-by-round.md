@@ -16,6 +16,8 @@ Interview processes change, and most of what's written about them comes from can
 
 When you prepare, put your hours where the official and reported facts are. When a recruiter tells you something different, the recruiter wins.
 
+The tables below were last checked on 2026-10-08. Processes change, so confirm the details for your role with your recruiter.
+
 ## Anthropic
 
 | Stage | What happens | Label |
@@ -29,7 +31,7 @@ When you prepare, put your hours where the official and reported facts are. When
 | Culture / values | Run by an employee nominated for it. Several guides call it the round that fails the most candidates. Module C5 trains this. | Reported |
 | References and team match | Can add two to four weeks or more. | Reported |
 
-The official piece is worth reading in full: Anthropic publishes [guidance on using Claude during the hiring process](https://www.anthropic.com/candidate-ai-guidance). The short version: be yourself, write first drafts yourself, and assume assessments are AI-free unless told otherwise.
+The official piece is worth reading in full: Anthropic publishes [guidance on using Claude during the hiring process](https://www.anthropic.com/candidate-ai-guidance). The short version: be yourself, write first drafts yourself, and assume assessments are AI-free unless told otherwise. Lesson 3 of this module goes through it in detail.
 
 ## OpenAI (forward deployed engineering)
 
