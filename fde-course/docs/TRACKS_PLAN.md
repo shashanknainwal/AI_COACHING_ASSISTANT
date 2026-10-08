@@ -1,6 +1,6 @@
 # Three-track plan: syllabus draft for review
 
-Status: **draft, waiting on the owner's review**. Nothing here is built yet.
+Status: **approved 2026-10-08. Phase 1 (platform) built**; phases 2–6 to go. See "Build log" at the end.
 
 ## Decisions already made (2026-10-08)
 
@@ -166,7 +166,7 @@ The fix for "boring": every lesson opens on a customer problem. Readings are abo
 | Design exercise | A structured answer form (requirements, components, tradeoffs, failure modes) graded against a rubric | Same |
 | Per-user limits | A daily cap on Claude-graded attempts per learner | **Required before launch** |
 
-**Cost of live grading:** about 3k input and 800 output tokens per grade on Sonnet 5.5 comes to about $0.015 per grade. At around 100 graded attempts per learner, that is **about $1.50 per learner**, against $249 revenue.
+**Cost of live grading:** grading and role-play run on Claude Opus 5.5 (the same model as the tutor): about $0.03–0.05 per grade and about $0.01 per role-play turn. At around 100 Claude-backed actions per learner, that is **about $2–4 per learner**, against $249 revenue. The model is one constant (`MODEL` in `app/api/coach/route.ts`) if cost ever needs cutting.
 
 ---
 
@@ -195,13 +195,13 @@ The fix for "boring": every lesson opens on a customer problem. Readings are abo
 
 ---
 
-## 6. Open questions for the owner
+## 6. Owner answers (2026-10-08)
 
-1. **Free preview:** what is free? Recommendation: C1 plus the first lesson of each track.
-2. **Lab depth:** Anthropic in depth, with OpenAI and Perplexity as comparison chapters? (Recommended.) Or equal depth for all three?
-3. **Live grading on your Anthropic key:** about $1.50 per learner. OK?
-4. **FDE customers:** keep the existing fictional customers (Brightline, NorthStar and so on) in the rework? (Recommended.)
-5. **Your own stories:** you worked at Amazon and in an FDE role. Do you want "from my loop" notes in C1 and C5? They would be in your words, and they are the strongest differentiator.
+1. **Free preview:** yes. C1 is free, plus the first lesson of every track.
+2. **Lab depth:** Anthropic in depth; OpenAI and Perplexity as comparison chapters.
+3. **Live grading on the owner's Anthropic key:** yes.
+4. **FDE customers:** keep the existing fictional customers in the rework.
+5. **Owner's own stories:** yes. "From my loop" notes go in C1 and C5, **in the owner's words**. Still needed from the owner: 3–5 short true stories (the Amazon loop, an FDE engagement, a values moment). Never invent them.
 
 ## Sources (checked 2026-10-08)
 
@@ -214,3 +214,18 @@ The fix for "boring": every lesson opens on a customer problem. Readings are abo
 - OpenAI FDE: https://www.tryexponent.com/guides/openai-forward-deployed-engineer-interview · https://igotanoffer.com/en/advice/openai-forward-deployed-engineer-interview · https://www.tryexponent.com/experiences/openai-forward-deployed-engineer-interview-0b9c09
 - OpenAI Solutions roles: https://dataford.io/interview-guides/openai/solutions-engineer · https://www.tryexponent.com/blog/openai-interview-process
 - Perplexity: https://www.designgurus.io/answers/detail/what-is-the-perplexity-interview-process-like-round-by-round · https://www.interviewquery.com/prep-guides/perplexity-ai-software-engineer
+
+## Build log
+
+### Phase 1: platform (2026-10-08)
+
+- **Tracks.** `content/course.json` has `tracks[]` (core, engineer, architect, fde); each module belongs to exactly one track and may have a `code` ("C1"). `/learn?track=...` shows a track picker plus that track's map. Lesson prev/next stays inside the track.
+- **Feature flag.** `tracksEnabled()` in `lib/config.ts`: on in dev and on unlocked previews, off in production until `TRACKS_LIVE=true`. When off, only the FDE track exists (new modules 404) and the site is unchanged.
+- **New lesson types** (`lib/content.ts`, `components/LessonWorkspace.tsx`, `components/AiPractice.tsx`):
+  - `drill`: timed, multi-level Python. Frontmatter `timeLimit` and `levels`; body has one `## Level N: ...` section per level; tests are named `test_l<N>_...`. Hints and tutor are off while the clock runs.
+  - `written`: Claude grades the answer against the lesson's `rubric` (frontmatter `sections`, `rubric`, `passScore`, optional hidden `graderNotes`). Design answers are written lessons with several sections.
+  - `roleplay`: conversation with a Claude persona (`persona`, `opening`, `maxTurns`, hidden `personaBrief`, `rubric`), then a scored debrief.
+- **Grading route** `app/api/coach/route.ts`: reads rubric, persona brief and grader notes from the lesson on the server; structured JSON output; checks login and lesson access.
+- **Daily AI limit** `lib/ai-usage.ts`: tutor answers, grades and role-play turns count against `AI_DAILY_LIMIT` (default 60) per learner per day. Needs `supabase/migrations/0002_ai_usage.sql` (or `supabase/setup_ai_usage_single_statement.sql` for Vercel's Query tool). Emails in `FREE_ACCESS_EMAILS` are exempt. If the table is missing, calls are allowed and an error is logged.
+- **Free access:** C1 plus the first lesson of every track (`canAccessLesson` in `lib/access.ts`).
+- **Seed lessons:** C1 (round-by-round reading, "Why this lab?" written), C3 (format reading, feature-flag drill), C5 (values role-play), E6 (support-agent design). All other new modules show as "Coming soon".

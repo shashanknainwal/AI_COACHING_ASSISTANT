@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getViewer, toClientViewer } from "@/lib/access";
-import { getCourse } from "@/lib/content";
+import { getCourse, FDE_TRACK } from "@/lib/content";
 import { SITE_NAME } from "@/lib/config";
 import AccountBadge from "@/components/AccountBadge";
 import BuyButton from "@/components/BuyButton";
@@ -119,7 +119,9 @@ function HeroComposition() {
 }
 
 export default async function Home() {
-  const course = getCourse();
+  // The home page sells the FDE track until the three-track launch (docs/TRACKS_PLAN.md, phase 6).
+  const full = getCourse();
+  const course = { ...full, modules: full.modules.filter((m) => m.track === FDE_TRACK) };
   const viewer = toClientViewer(await getViewer());
   const totalMinutes = course.modules.reduce((s, m) => s + m.minutes, 0);
   const hours = Math.floor(totalMinutes / 60);
@@ -333,7 +335,7 @@ export default async function Home() {
                     {m.lessons.map((l) => (
                       <li key={l.slug} className="flex items-center gap-3 text-graphite-2">
                         <span className={`w-10 shrink-0 font-mono text-[10px] uppercase tracking-wider ${l.type === "exercise" ? "text-vermilion" : "text-graphite-3"}`}>
-                          {{ reading: "Read", exercise: "Task", quiz: "Quiz" }[l.type]}
+                          {{ reading: "Read", exercise: "Task", quiz: "Quiz", drill: "Drill", written: "Write", roleplay: "Talk" }[l.type]}
                         </span>
                         <span className="flex-1">{l.title.replace(/^Exercise:\s*/, "")}</span>
                         <span className="text-xs text-graphite-3">{l.minutes}m</span>

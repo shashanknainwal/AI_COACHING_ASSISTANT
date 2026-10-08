@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { canAccessModule, getViewer, toClientViewer } from "@/lib/access";
-import { getCourse } from "@/lib/content";
+import { FDE_TRACK, getCourse } from "@/lib/content";
 import AccountBadge from "@/components/AccountBadge";
 import BuyButton from "@/components/BuyButton";
 import CourseMap from "@/components/CourseMap";
@@ -14,11 +14,15 @@ const NOTICES: Record<string, string> = {
   error: "We couldn't start checkout. Please try again in a minute.",
 };
 
-export default async function LearnPage({ searchParams }: { searchParams: Promise<{ checkout?: string }> }) {
-  const { checkout } = await searchParams;
+export default async function LearnPage({ searchParams }: { searchParams: Promise<{ checkout?: string; track?: string }> }) {
+  const { checkout, track: trackParam } = await searchParams;
   const course = getCourse();
   const viewer = await getViewer();
   const clientViewer = toClientViewer(viewer);
+  const multi = course.tracks.length > 1;
+  // Everyone starts on the shared core; the FDE course is the only track until launch.
+  const track = course.tracks.find((t) => t.slug === trackParam) ?? course.tracks.find((t) => t.slug === (multi ? "core" : FDE_TRACK)) ?? course.tracks[0];
+  const modules = course.modules.filter((m) => m.track === track.slug);
 
   return (
     <div className="playbook-page min-h-screen">
@@ -37,11 +41,49 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
         {checkout && NOTICES[checkout] && (
           <p className="mb-6 rounded-xl border border-vermilion/30 bg-vermilion/5 p-3 text-sm text-graphite-2">{NOTICES[checkout]}</p>
         )}
+        {multi && (
+          <nav className="-mx-4 mb-10 flex gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0" aria-label="Tracks">
+            {course.tracks.map((t) => {
+              const mods = course.modules.filter((m) => m.track === t.slug);
+              const hours = Math.round(mods.reduce((n, m) => n + m.minutes, 0) / 60);
+              const active = t.slug === track.slug;
+              return (
+                <Link
+                  key={t.slug}
+                  href={`/learn?track=${t.slug}`}
+                  aria-current={active ? "page" : undefined}
+                  className={`min-w-[13.5rem] rounded-2xl border p-4 transition sm:min-w-0 ${
+                    active ? "border-graphite bg-graphite text-paper shadow-[0_18px_40px_-26px_rgba(29,27,22,0.8)]" : "border-rule bg-white/60 text-graphite hover:border-graphite-3"
+                  }`}
+                >
+                  <span className={`block font-mono text-[10px] uppercase tracking-[0.16em] ${active ? "text-emerald-300" : "text-vermilion"}`}>
+                    {t.slug === "core" ? "Start here" : "Track"}
+                  </span>
+                  <span className="mt-1 block font-serif text-lg font-semibold leading-snug">{t.short}</span>
+                  <span className={`mt-1 block text-xs ${active ? "text-paper-3" : "text-graphite-3"}`}>
+                    {mods.length} modules · about {hours}h
+                  </span>
+                </Link>
+              );
+            })}
+          </nav>
+        )}
+        {multi && (
+          <p className="-mt-4 mb-10 max-w-3xl text-sm leading-relaxed text-graphite-2">
+            <span className="font-semibold text-graphite">{track.title}.</span> {track.summary} <span className="text-graphite-3">For: {track.audience}</span>
+          </p>
+        )}
         <CourseMap
           viewer={clientViewer}
-          modules={course.modules.map((m) => ({
+          eyebrow={multi ? `${track.short} map` : undefined}
+          headline={track.headline}
+          sectionTitle={track.slug === FDE_TRACK ? "Engagements" : "Modules"}
+          taskLabel={track.slug === FDE_TRACK ? "cases resolved" : "graded tasks done"}
+          modules={modules.map((m) => ({
             slug: m.slug,
             number: m.number,
+            code: m.code,
+            label: m.label,
             title: m.title,
             summary: m.summary,
             status: m.status,

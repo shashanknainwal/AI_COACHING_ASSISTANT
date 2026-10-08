@@ -4,6 +4,9 @@
 //  - starter.py and solution.py both run without raising
 //  - reading-lesson scratchpads run without errors
 //  - quiz questions are well-formed
+//  - drills: every test is named test_l<level>_..., each level has tests, and the
+//    solution clears every level while the starter clears none
+//  - written and role-play lessons have a rubric (and a persona and opening for role-play)
 // Usage: npm run validate-content
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -63,10 +66,50 @@ for (const mod of readdirSync(modulesDir).sort()) {
     checked++;
 
     if (!data.title) fail(where, "missing title");
-    if (!["reading", "exercise", "quiz"].includes(data.type)) fail(where, `bad type ${data.type}`);
+    if (!["reading", "exercise", "quiz", "drill", "written", "roleplay"].includes(data.type)) fail(where, `bad type ${data.type}`);
     if (!(Number(data.minutes) > 0)) fail(where, "missing minutes");
 
-    if (data.type === "exercise") {
+    if (data.type === "drill") {
+      const levels = Array.isArray(data.levels) ? data.levels.length : 0;
+      if (!levels) fail(where, "drill needs a levels list in its frontmatter");
+      const body = read(join(modDir, file));
+      const headings = (body.match(/^## Level \d+/gm) ?? []).length;
+      if (headings !== levels) fail(where, `drill lists ${levels} levels but has ${headings} "## Level N" headings`);
+      for (const name of tests.match(/^def (test_\w+)/gm) ?? []) {
+        const n = Number(/test_l(\d+)_/.exec(name)?.[1] ?? 0);
+        if (!(n >= 1 && n <= levels)) fail(where, `${name.slice(4)} must be named test_l<1..${levels}>_...`);
+      }
+      for (let n = 1; n <= levels; n++) if (!new RegExp(`^def test_l${n}_`, "m").test(tests)) fail(where, `level ${n} has no tests`);
+      const st = JSON.parse(run(starter, setup, tests, "submit"));
+      const lvl1 = st.tests.filter((t) => /^test_l1_/.test(t.id ?? ""));
+      if (lvl1.length && lvl1.every((t) => t.passed)) fail(where, "starter code already clears level 1");
+    }
+
+    if (data.type === "written" || data.type === "roleplay") {
+      const rubric = data.rubric;
+      if (!Array.isArray(rubric) || !rubric.length) fail(where, "needs a rubric");
+      else rubric.forEach((r, i) => {
+        if (!r.name || !(r.points > 0) || !r.lookFor) fail(where, `rubric item ${i + 1} needs name, points and lookFor`);
+      });
+      if (data.type === "written" && data.sections) {
+        const keys = new Set();
+        data.sections.forEach((s, i) => {
+          if (!s.key || !s.label) fail(where, `section ${i + 1} needs key and label`);
+          if (keys.has(s.key)) fail(where, `duplicate section key ${s.key}`);
+          keys.add(s.key);
+        });
+      }
+      if (data.type === "roleplay") {
+        const p = data.persona;
+        if (!p?.name || !p?.role || !p?.company) fail(where, "role-play needs persona.name, persona.role and persona.company");
+        if (!data.opening) fail(where, "role-play needs an opening line");
+        if (!data.personaBrief) fail(where, "role-play needs a personaBrief");
+      }
+      console.log(`✓ ${where} (${data.type}, ${data.rubric?.length ?? 0} rubric lines)`);
+      continue;
+    }
+
+    if (data.type === "exercise" || data.type === "drill") {
       if (!starter || !tests || !solution) {
         fail(where, "exercise needs starter.py, solution.py and tests.py");
         continue;

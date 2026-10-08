@@ -72,7 +72,10 @@ Customer personas (fictional), per module: 1 Brightline Health / Dana Ruiz (VP O
 The course is expanding into three tracks for people targeting frontier-lab jobs: Applied AI Engineer, Applied AI Architect, and a reworked Forward Deployed Engineer track. They sit on a shared core and each ends in a mock interview loop.
 
 - Owner decisions: keep the FDE Playbook brand; $249 all-access (the live site stays at $149 until the tracks launch); research and syllabus before building.
-- The research, syllabus, build order and open questions are in **`docs/TRACKS_PLAN.md`**. Read it before any track work. It is waiting on the owner's review.
+- The research, syllabus, owner answers, build order and **build log** are in **`docs/TRACKS_PLAN.md`**. Read it before any track work.
+- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Next: phase 2, the shared core content (C1–C5).**
+- Before launch: run `supabase/setup_ai_usage_single_statement.sql` in Vercel → Storage → Query, set `ANTHROPIC_API_KEY`, then `TRACKS_LIVE=true` and `PRICE_USD = 249`.
+- The owner said yes to "from my loop" stories in C1 and C5 but hasn't written them yet. Ask for them; never invent them.
 
 ## 5. Next steps, in order
 
@@ -86,7 +89,7 @@ The course is expanding into three tracks for people targeting frontier-lab jobs
    2. Add a webhook at `https://www.fdeplaybook.dev/api/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`, then copy its signing secret.
    3. Optionally create a $149 Price and put its ID in `STRIPE_PRICE_ID`.
    4. Test with card 4242 4242 4242 4242, then switch to live keys.
-3. **Anthropic API key** for the tutor. Before launch, consider a per-user tutor rate limit, which isn't built yet.
+3. **Anthropic API key** for the tutor, grading and role-play. The per-learner daily limit is built (`AI_DAILY_LIMIT`); it needs `supabase/setup_ai_usage_single_statement.sql` run once.
 4. **Production email:** Supabase's built-in email sender is rate-limited. Before launch, set up custom SMTP (for example Resend or Postmark).
 5. **Nice to have:** certificates of completion; instructor name, photo and LinkedIn; a refund policy line (a refund already removes access).
 
@@ -94,7 +97,7 @@ The course is expanding into three tracks for people targeting frontier-lab jobs
 
 ```bash
 cd fde-course
-node scripts/validate-content.mjs     # all 107 lessons: solutions pass, starters fail, quizzes well-formed
+node scripts/validate-content.mjs     # every lesson (113 as of phase 1): solutions pass, starters fail, drills, rubrics and quizzes well-formed
 npx tsc --noEmit
 npm run build
 ```

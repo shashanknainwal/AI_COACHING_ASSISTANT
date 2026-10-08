@@ -32,6 +32,7 @@ Optional: copy `.env.example` to `.env.local` and set `ANTHROPIC_API_KEY` to tur
 - **Fake clock:** `public/py/fde_clock.py` makes `time.sleep` instant and recorded, so retry/backoff exercises run immediately and tests can check exact delays.
 - Packages the course simulates are never downloaded from the Pyodide CDN, even when learner code imports them.
 - **AI tutor:** `app/api/tutor/route.ts` calls Claude through the Anthropic TypeScript SDK to give hints without giving away the answer.
+- **AI grading and role-play:** `app/api/coach/route.ts` grades written answers and role-play sessions against each lesson's rubric, and plays role-play personas.
 - **Progress:** cached in `localStorage`, and synced to Supabase when signed in (`lib/progress.ts`, `app/api/progress`).
 
 ## Accounts and payments
@@ -61,7 +62,12 @@ The price is set in one place: `PRICE_USD` in `lib/config.ts`. If you use `STRIP
 
 Purchase flow: `/buy` → login if needed → Stripe Checkout → `/purchase/success`. The success page records the purchase immediately, and the webhook records it too as a backup (writes are idempotent). A full refund removes access.
 
+## Three tracks (in progress)
+
+The course is growing into a shared core plus three tracks (Applied AI Engineer, Applied AI Architect, FDE). The plan, owner decisions and build log are in `docs/TRACKS_PLAN.md`. The tracks show in dev and on unlocked previews; production shows them once `TRACKS_LIVE=true`.
+
+New lesson types: `drill` (timed, multi-level Python), `written` (graded by Claude against a rubric) and `roleplay` (a conversation with a Claude persona, then a scored debrief). Each Claude-backed action counts against a per-learner daily limit (`AI_DAILY_LIMIT`, table in `supabase/migrations/0002_ai_usage.sql`).
+
 ## Not built yet
 
 - Certificates of completion
-- Per-user rate limit on the AI tutor

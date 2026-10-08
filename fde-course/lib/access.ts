@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { appMode, FREE_MODULES, freeAccessEmails, stripeConfigured, type AppMode } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
+import { freeLessonIds } from "@/lib/content";
 
 export interface Viewer {
   mode: AppMode;
@@ -46,6 +47,16 @@ export const getViewer = cache(async (): Promise<Viewer> => {
 
 export function canAccessModule(viewer: Viewer, moduleSlug: string): boolean {
   return FREE_MODULES.has(moduleSlug) || viewer.hasPurchased;
+}
+
+/** Free modules, plus the first lesson of every track as a taster. */
+export function canAccessLesson(viewer: Viewer, moduleSlug: string, lessonSlug: string): boolean {
+  return canAccessModule(viewer, moduleSlug) || freeLessonIds().has(`${moduleSlug}/${lessonSlug}`);
+}
+
+/** Emails in FREE_ACCESS_EMAILS (the instructor) aren't subject to the daily AI limit. */
+export function isStaff(viewer: Viewer): boolean {
+  return Boolean(viewer.user?.email && freeAccessEmails().has(viewer.user.email.toLowerCase()));
 }
 
 /** The subset of Viewer that is safe and useful to pass to client components. */
