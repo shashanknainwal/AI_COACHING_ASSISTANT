@@ -273,10 +273,10 @@ export function getLesson(moduleSlug: string, lessonSlug: string): Lesson | null
   };
 }
 
-/** Tag the two recurring callouts so they can be styled: objectives and key takeaways. */
+/** Tag the recurring callouts so they can be styled: objectives, key takeaways and the instructor's "From my loop" notes. */
 function decorate(html: string): string {
-  return html.replace(/<blockquote>\s*<p><strong>(By the end of this lesson[^<]*|Key takeaways[^<]*)<\/strong>/g, (match, label: string) => {
-    const kind = label.startsWith("Key") ? "takeaways" : "objectives";
+  return html.replace(/<blockquote>\s*<p><strong>(By the end of this lesson[^<]*|Key takeaways[^<]*|From my loop[^<]*)<\/strong>/g, (match, label: string) => {
+    const kind = label.startsWith("Key") ? "takeaways" : label.startsWith("From my loop") ? "loop" : "objectives";
     return match.replace("<blockquote>", `<blockquote class="callout-${kind}">`);
   });
 }

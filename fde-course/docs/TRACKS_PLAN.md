@@ -238,4 +238,4 @@ The fix for "boring": every lesson opens on a customer problem. Readings are abo
 - C4 Reading the Labs: 6 lessons (critique framework, Machines of Loving Grace and The Adolescence of Technology study guides written from full texts the owner pasted, RSP and Claude's constitution, written critique, 12-question quiz). Optional later: The Urgency of Interpretability, and the OpenAI Charter contrast in 04 (needs openai.com access or pasted text). Never summarize essays from memory.
 - C5 Values & Behavioral: 7 lessons (what the round tests, story bank, two STAR stories written, mission questions, values role-play, project deep-dive role-play, quiz).
 - Verified: validator 138 lessons / 0 problems; every new exercise and drill passes in the browser with its solution and fails with its starter; no phone overflow.
-- "From my loop" owner stories: not yet supplied.
+- "From my loop" owner stories: 5 supplied 2026-10-08 and placed in C1/01, C1/05, C5/01, C5/02, C5/06 (styled as `callout-loop`). Numbers the owner wrote in [brackets] were used as given; confirm with the owner before launch.

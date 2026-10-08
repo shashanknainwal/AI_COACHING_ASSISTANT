@@ -51,6 +51,12 @@ About 8–10 hours a week. Each week lists the main focus; keep a small amount o
 
 **Your track matters for weeks 4 and 6.** Applied AI Engineers lean into E1–E6 and finish with E7. Architects lean into A1–A6 and finish with A7, where case presentation and customer role-play replace some of the coding. FDEs lean into the customer-engagement modules and use the capstone as their deep-dive project.
 
+> **From my loop**
+>
+> Big-company loops tested breadth and process: structured questions, scored rubrics. When I moved to an AI startup as an FDE architect, the interviews tested whether I could work in ambiguity. One round was a live scenario: a customer with a messy problem and half the data, and 45 minutes to scope it, pick an approach, and sketch a working prototype while talking to them.
+>
+> They were testing whether I'd ask good discovery questions, make a call without perfect information, and own the outcome. To prepare, I ran mock customer calls and practiced narrating tradeoffs out loud while building. If your target role is customer-facing, add that kind of practice to your plan.
+
 ## Picking your deep-dive project
 
 The project deep dive is **Reported** at all three labs. You choose the project, so choose well. A good one has:

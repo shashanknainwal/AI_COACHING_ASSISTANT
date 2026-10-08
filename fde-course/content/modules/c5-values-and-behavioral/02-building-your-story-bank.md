@@ -45,6 +45,14 @@ Pick a real event for each. One event can cover two slots, but aim for at least 
 
 For each, write a short note with the date, the people (roles, not names), what you did, a number, and what you'd change. Don't write full scripts. Scripts sound scripted.
 
+> **From my loop**
+>
+> My "mistake" story: I deployed a product-search assistant for a logistics customer after testing only on a snapshot of their catalog. In production the index went stale within days, and the assistant recommended discontinued items. The customer's ops team caught it, not our monitoring.
+>
+> That was on me: I skipped a freshness check. We rolled back in 2 hours, fixed it with scheduled re-indexing, and added alerts on index age. Since then, every deployment I run has three things before launch: an eval set built from real queries, monitoring on data freshness, and a documented rollback path.
+>
+> A good mistake story names who it hurt, owns it plainly, and ends with a habit you still follow.
+
 ## Mapping questions to stories
 
 Here are common question families, phrased in the style of what candidates report. These are practice phrasings, not real interview questions.

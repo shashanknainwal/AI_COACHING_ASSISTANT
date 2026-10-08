@@ -71,6 +71,12 @@ These come from Anthropic's postings (official, though wording changes as roles 
 - **Solutions Architect, Applied AI:** pre-sales architecture for large enterprises. Fits Claude into their stack, builds evals, designs architectures that scale.
 - **Forward Deployed Engineer, Applied AI:** builds production applications on Claude inside customer systems (MCP servers, sub-agents, agent skills) and spends a real share of time at customer sites.
 
+> **From my loop**
+>
+> When I interviewed at Amazon, the round that surprised me was the bar raiser. I expected a spread of questions. Instead, the interviewer took one story and spent 40 minutes on it: what I personally decided, what the data said, what I'd do differently. Every "we" answer got redirected to "what did *you* do?"
+>
+> My advice: prepare 6 to 8 stories, and for each one know your own actions, one metric, and one thing you'd change. Practice with someone who interrupts you. Write "I" in your notes and cut every "we."
+
 ## A note on this course
 
 This course isn't affiliated with any lab. Every practice question here is original, written in the style of what candidates publicly describe. Don't go looking for leaked questions: they're often wrong, they break the confidentiality candidates agree to, and interviewers can tell when an answer was memorised.

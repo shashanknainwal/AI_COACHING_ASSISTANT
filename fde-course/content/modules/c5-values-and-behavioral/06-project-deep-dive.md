@@ -49,6 +49,20 @@ On the right, **Daniel** will run a deep dive for about eight turns. Daniel is a
 3. Expect at least one pushback on a decision. Defend it with reasons, or change your mind for a reason. Both are fine. Folding without a reason isn't.
 4. When you've answered a few questions, press **End and get feedback** for a scored debrief against the rubric below.
 
+> **From my loop**
+>
+> Here's how I'd outline a deep-dive project in two minutes.
+>
+> **Problem:** an e-commerce company had 60% of support tickets about order status and returns, with a 9-hour average response time.
+>
+> **Architecture:** an intent classifier, then retrieval over policy docs plus a live order-API lookup, then an LLM that writes the response, then a guardrail layer that checks policy before anything is sent.
+>
+> **Tradeoff:** accuracy against latency and cost. The largest model was the most accurate but took 6 seconds and cost 3x as much. I routed simple intents (order status) to a small model and complex ones (disputes) to the large one, and kept the guardrail on both paths.
+>
+> **Result:** 45% of tickets resolved without a human, median response under 3 seconds, and accuracy within 1 point of the all-large-model baseline.
+>
+> Expect the interviewer to spend most of the time on the tradeoff. Know why you didn't just use the big model everywhere.
+
 ## Prepare in ten minutes
 
 Write five lines before you start:

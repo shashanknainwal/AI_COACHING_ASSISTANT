@@ -64,6 +64,14 @@ Values questions are usually tradeoff questions in disguise: speed versus safety
 
 "AI is the most exciting field right now" is true for everyone in the room. Interviewers want to hear what you specifically want to do, why at this lab, and whether you'd still want it if the job got harder or the equity got smaller. The share-price question is a direct probe of this.
 
+> **From my loop**
+>
+> Here's the kind of story I'd bring to a values round. A retail customer wanted our AI support agent live for 100% of traffic before a holiday sale. In testing, it gave wrong return-policy answers in about 4% of cases, and each wrong answer meant a refund dispute.
+>
+> I said no to the full launch and proposed a 10% canary with an eval gate: ship wider only once policy accuracy passed 99%. The customer was unhappy about the two-week delay. I showed them the failure examples and what 4% wrong answers would cost at their volume. We launched on the canary, fixed the retrieval issue, and went to full traffic before the peak. The VP later said it was why they trusted us on the next project.
+>
+> Notice what makes it work: a real tradeoff, a specific number, what I personally did, and a result that includes the cost (an unhappy customer for two weeks).
+
 ## Common ways strong candidates fail
 
 | Failure | What it sounds like | Fix |
