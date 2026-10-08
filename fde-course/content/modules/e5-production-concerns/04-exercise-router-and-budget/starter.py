@@ -4,7 +4,7 @@ OPUS, SONNET, HAIKU = "claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"
 # add them from the pricing page before Ledgerline caches anything on Haiku.
 PRICES = {
     OPUS: {"input": 4.00, "output": 20.00, "cache_write_5m": 5.00, "cache_write_1h": 8.00, "cache_read": 0.20},
-    SONNET: {"input": 2.00, "output": 10.00, "cache_write_5m": 2.50, "cache_write_1h": 4.00, "cache_read": 0.20},
+    SONNET: {"input": 2.00, "output": 10.00, "cache_write_5m": 2.50, "cache_write_1h": 4.00, "cache_read": 0.10},
     HAIKU: {"input": 0.10, "output": 0.50},
 }
 BATCH_DISCOUNT = 0.5          # the Batch API bills every token type at half price

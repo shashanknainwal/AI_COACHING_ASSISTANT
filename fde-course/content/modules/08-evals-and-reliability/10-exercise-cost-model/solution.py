@@ -5,7 +5,7 @@ from fde_datasets import brightway
 client = anthropic.Anthropic()
 PRICES = {  # dollars per million tokens
     "claude-opus-5-5": {"input": 4.00, "output": 20.00, "cache_write": 5.00, "cache_read": 0.20},
-    "claude-sonnet-5-5": {"input": 2.00, "output": 10.00, "cache_write": 2.50, "cache_read": 0.20},
+    "claude-sonnet-5-5": {"input": 2.00, "output": 10.00, "cache_write": 2.50, "cache_read": 0.10},
     "claude-haiku-4-5": {"input": 1.00, "output": 5.00, "cache_write": 1.25, "cache_read": 0.10},
 }
 BATCH_DISCOUNT = 0.5   # Message Batches: half price on every token type

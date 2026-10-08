@@ -31,7 +31,7 @@ Every response's `usage` reports four token counts. Each has its own rate. Claud
 |---|---:|---|
 | `input_tokens` (uncached remainder) | $4.00 | Only the part after the last cache hit |
 | `cache_creation_input_tokens` | $5.00 (5-minute TTL), $8.00 (1-hour TTL) | 1.25x and 2x input; `usage.cache_creation` splits it by TTL |
-| `cache_read_input_tokens` | $0.20 | 0.05x input on this model; about 0.1x on most others |
+| `cache_read_input_tokens` | $0.20 | 0.05x input on this model and on Sonnet 5.5; 0.1x on most others |
 | `output_tokens` | $20.00 | Includes thinking tokens |
 | Batch API | $2.00 input / $10.00 output | 50% off every meter, cache reads and writes included |
 
@@ -42,17 +42,17 @@ Two consequences that strong candidates mention unprompted:
 
 ## Worked example: invoice extraction at volume
 
-Ledgerline (fictional) extracts fields from 200,000 invoices a month. Each request has a 12,000-token stable prefix (instructions, schema, worked examples), a 3,000-token invoice, and a 600-token JSON answer. On Claude Sonnet 5.5 ($2 input, $10 output, $0.20 cache read):
+Ledgerline (fictional) extracts fields from 200,000 invoices a month. Each request has a 12,000-token stable prefix (instructions, schema, worked examples), a 3,000-token invoice, and a 600-token JSON answer. On Claude Sonnet 5.5 ($2 input, $10 output, $0.10 cache read):
 
 | Configuration | Per request | Per month |
 |---|---:|---:|
 | No caching: 15,000 × $2 + 600 × $10 | $0.0360 | $7,200 |
-| Prefix cached (steady state): 12,000 × $0.20 + 3,000 × $2 + 600 × $10 | $0.0144 | $2,880 |
-| Cached and sent through the Batch API (half of the line above) | $0.0072 | $1,440 |
+| Prefix cached (steady state): 12,000 × $0.10 + 3,000 × $2 + 600 × $10 | $0.0132 | $2,640 |
+| Cached and sent through the Batch API (half of the line above) | $0.0066 | $1,320 |
 
 Read the table the way an interviewer would:
 
-- Caching cut the bill by 60%. Output is now 42% of what's left, so the next lever is output length, then effort, then model choice.
+- Caching cut the bill by about 63%. Output is now 45% of what's left, so the next lever is output length, then effort, then model choice.
 - The batch line is a ceiling, not a promise: cache hits inside a concurrent batch are best-effort.
 - Per-token prices differ by 40x between Haiku 5.5 ($0.10 input) and Opus 5.5 ($4). That spread is why routing matters, and also why you must measure quality per route before trusting a cheap one.
 

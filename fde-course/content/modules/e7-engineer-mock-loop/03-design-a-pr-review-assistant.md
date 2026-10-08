@@ -65,7 +65,7 @@ You don't need all of these. You need the important ones, with reasons.
 ## Useful facts
 
 - Claude Opus 5.5 costs $4 per million input tokens and $20 per million output tokens. Claude Sonnet 5.5 is $2 and $10. Claude Haiku 5.5 is $0.10 and $0.50 for prompts up to 100K tokens.
-- Prompt caching matches a prefix of tools, then system prompt, then messages. Cache reads on Opus 5.5 and Sonnet 5.5 cost $0.20 per million tokens; a cache write costs about 1.25 times normal input for the default five-minute lifetime.
+- Prompt caching matches a prefix of tools, then system prompt, then messages. Cache reads cost $0.20 per million tokens on Opus 5.5 and $0.10 on Sonnet 5.5 (5% of base input); a cache write costs about 1.25 times normal input for the default five-minute lifetime.
 - The Message Batches API takes 50% off every token, for work nobody is waiting on.
 - Opus 5.5, Sonnet 5.5 and Haiku 5.5 have a 1-million-token context window. Fitting a whole repository in the window is possible for small repos; whether it's wise is part of your answer.
 

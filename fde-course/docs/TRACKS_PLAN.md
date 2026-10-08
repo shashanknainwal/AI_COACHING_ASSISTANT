@@ -250,3 +250,17 @@ The fix for "boring": every lesson opens on a customer problem. Readings are abo
 - E6 LLM System Design (6): how the round works, worked example (knowledge assistant), three graded designs (support agent, doc Q&A at p95 < 2 s, eval platform), quiz.
 - E7 Mock Loop (6): how to run it, 90-minute template-registry drill, PR-review assistant design, deep-dive role-play (Marcus Feld), experiences-and-goals role-play (Elena Sorokin), scorecard and fix plan.
 - Verified: validator 181 lessons / 0 problems; all 12 new exercises pass with solutions and fail with starters in the browser; the E7 drill completes; no CDN requests; no phone overflow.
+
+### Phase 4: Applied AI Architect track (2026-10-08)
+
+- A1 The Architect's Job: the role (Anthropic now titles it "Applied AI Architect" on anthropic.com/jobs), technical discovery, discovery-call role-play (hidden constraints), the solution design doc, one-page design (written), quiz.
+- A2 Enterprise Deployment: five deployment options compared, data handling and security reviews, platform-fit checker exercise, CISO role-play, security questionnaire (written), quiz. Facts only from platform.claude.com docs, the claude-api skill and Anthropic's commercial terms; certifications and default retention are deliberately not stated (trust/privacy sites unreachable from the build environment).
+- A3 Choosing the Approach: decision ladder, build/buy/partner, 12-month TCO exercise, cost at enterprise scale, recommendation memo (written), quiz.
+- A4 Proofs of Concept That Close: why POCs stall and the POC plan, scorecard exercise, fair bake-offs, bake-off scorer exercise, honest readout (written), quiz.
+- A5 Executive Communication: how executives decide, CTO one-pager (written), objection handling, three role-plays (skeptical CTO, saying no to a sponsor, cautious CISO), quiz.
+- A6 Reference Architectures: support automation, document processing, knowledge assistant, coding assistant, pattern-matcher exercise, adapt-a-pattern memo (written), quiz.
+- A7 Mock Loop: how to run it, case prep (written), panel presentation role-play, claims-platform design (written), hospital COO role-play, scorecard.
+
+### Pricing correction (2026-10-08)
+
+The writer briefs said Sonnet 5.5 cache reads cost $0.20/MTok; Anthropic's pricing page says **$0.10** (0.05x, same multiplier as Opus 5.5's $0.20). Fixed everywhere, with derived numbers recomputed, including three FDE exercises and `public/py/fde_datasets/incident.py`. Always check prices against https://platform.claude.com/docs/en/about-claude/pricing (reachable from the build environment).

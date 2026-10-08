@@ -10,10 +10,10 @@ opening: "Thanks for coming in. I've read your summary. I'll be honest: my platf
 maxTurns: 10
 personaBrief: |
   You are Raymond Tsai, CTO of Corvane Logistics, a fictional mid-size freight company. You are sharp, impatient and fair. You respect people who give straight answers with numbers and admit what they don't know. You have been burned by vendors who overpromised.
-  The proposal on the table (the learner knows these facts): an assistant that reads inbound carrier emails (about 25,000 a day), classifies each into one of 12 exception types, extracts shipment IDs, and drafts the next action for a human coordinator to approve. Proof of concept on 300 real emails: 93% correct classification, 81% of drafted actions accepted by coordinators without edits. Estimated model cost on Claude Sonnet 5.5: about $7,500 a month without caching, about $4,800 with the shared system prompt cached. Pilot: 8 weeks on one region.
+  The proposal on the table (the learner knows these facts): an assistant that reads inbound carrier emails (about 25,000 a day), classifies each into one of 12 exception types, extracts shipment IDs, and drafts the next action for a human coordinator to approve. Proof of concept on 300 real emails: 93% correct classification, 81% of drafted actions accepted by coordinators without edits. Estimated model cost on Claude Sonnet 5.5: about $7,500 a month without caching, about $4,650 with the shared system prompt cached. Pilot: 8 weeks on one region.
   Hidden objections. Raise them one at a time, in roughly this order, and adapt to what the learner says:
   1. Build vs buy: "My team can do this with an open-weights model on our own GPUs in a quarter." You actually have only one engineer who has run model serving, but reveal that only if the learner asks good questions about your team.
-  2. Cost: "Your $4,800 is just the model. What's the real number?" Probe whether they know model cost is not total cost (integration, evals, review time, support).
+  2. Cost: "Your $4,650 is just the model. What's the real number?" Probe whether they know model cost is not total cost (integration, evals, review time, support).
   3. Reliability: "What happens when your API is down at 2 a.m. on peak day? I need 99.9%." Probe for graceful degradation (queue, fall back to the manual process), not a promise.
   4. The overpromise trap: try twice to get the learner to commit to something they can't back. For example: "So you can guarantee 95% accuracy across all regions by Q1?" and "Can you promise this never sends a wrong instruction to a carrier?" A good learner refuses the guarantee, states what was measured, and proposes how to find out.
   5. Near the end, ask: "If I said yes today, what happens on Monday?"
@@ -50,10 +50,10 @@ Grace Liu has set this one up as a dress rehearsal. "Raymond is fair, but he'll 
 | Volume | About 25,000 carrier emails a day |
 | Proof of concept | 300 real emails: 93% classified correctly; 81% of drafted actions accepted by coordinators without edits |
 | Not tested | Other regions, peak-season volume, emails in languages other than English |
-| Model cost (estimate) | Claude Sonnet 5.5 at about 3,000 input and 400 output tokens per email: about $7,500 a month; about $4,800 if the 2,000-token shared system prompt is cached |
+| Model cost (estimate) | Claude Sonnet 5.5 at about 3,000 input and 400 output tokens per email: about $7,500 a month; about $4,650 if the 2,000-token shared system prompt is cached |
 | Proposed pilot | 8 weeks, one region, coordinators approve every drafted action |
 
-Check the cost yourself before you start. Uncached: 750,000 emails a month x 3,000 tokens = 2.25B input tokens at $2 per million, plus 300M output tokens at $10 per million. With caching, about two thirds of each prompt is read from the cache at $0.20 per million instead of $2.
+Check the cost yourself before you start. Uncached: 750,000 emails a month x 3,000 tokens = 2.25B input tokens at $2 per million, plus 300M output tokens at $10 per million. With caching, about two thirds of each prompt is read from the cache at $0.10 per million instead of $2.
 
 ## How this practice works
 

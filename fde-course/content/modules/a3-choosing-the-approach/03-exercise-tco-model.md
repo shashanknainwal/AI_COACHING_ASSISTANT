@@ -52,7 +52,7 @@ An **option** looks like this (three are given in `OPTIONS`):
 **5. `compare(options, months=12, baseline_name=None)`**: one row per option, sorted by total ascending (ties by name):
 
 ```python
-{"name": "build_api", "total": 1239708.28, "monthly_run": 35300.92, "break_even_month": 5, "rank": 1}
+{"name": "build_api", "total": 1239564.64, "monthly_run": 35284.96, "break_even_month": 5, "rank": 1}
 ```
 
 - `total` is the last cumulative value. Each non-baseline option uses the baseline for its pre-live months.
@@ -65,7 +65,7 @@ Press **Run** to print Harborview's comparison, then **Submit**.
 
 Once it passes, look at what the numbers say. They are the point of the exercise:
 
-- **Model spend is about $500 a month.** Human review is $16,800 and fixed costs are $18,000. On most document workflows the API bill is the smallest line. The decision turns on review rate and time to value, not token prices.
+- **Model spend is under $500 a month.** Human review is $16,800 and fixed costs are $18,000. On most document workflows the API bill is the smallest line. The decision turns on review rate and time to value, not token prices.
 - **The horizon flips the answer.** Over 12 months the build is cheapest. Over 6 months, buying wins because it goes live in month 2. State the horizon in the first line of your recommendation.
 - **Every input is an assumption.** The 15% review rate is a guess until a proof of concept measures it. Run the model at 25% and see how the ranking moves. That is your sensitivity analysis, and the subject of lesson 4.
 

@@ -3,14 +3,14 @@ title: "Module Quiz: Retrieval at Scale"
 type: quiz
 minutes: 10
 questions:
-  - q: "A 400K-token help center sits in a prompt-cached system prompt on Claude Sonnet 5.5 (cache reads $0.20 per million tokens). Roughly what does the cached corpus cost per question once the cache is warm?"
+  - q: "A 400K-token help center sits in a prompt-cached system prompt on Claude Sonnet 5.5 (cache reads $0.10 per million tokens). Roughly what does the cached corpus cost per question once the cache is warm?"
     options:
-      - "$0.008"
-      - "$0.08"
+      - "$0.004"
+      - "$0.04"
       - "$0.80"
       - "$8.00"
     answer: 1
-    explain: "0.4M tokens x $0.20 per million = $0.08. Uncached it would be 0.4M x $2 = $0.80. Caching makes long context a real option, but only while the prefix stays byte-identical."
+    explain: "0.4M tokens x $0.10 per million = $0.04. Uncached it would be 0.4M x $2 = $0.80. Caching makes long context a real option, but only while the prefix stays byte-identical."
   - q: "In BM25, what does the k1 parameter control?"
     options:
       - "How many results the search returns"

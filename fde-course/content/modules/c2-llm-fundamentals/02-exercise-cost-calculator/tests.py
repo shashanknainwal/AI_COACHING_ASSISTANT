@@ -1,6 +1,6 @@
 # Prices here are passed in explicitly, in dollars per million tokens.
 OPUS = {"input": 4.00, "output": 20.00, "cache_read": 0.20, "cache_write": 5.00}
-SONNET = {"input": 2.00, "output": 10.00, "cache_read": 0.20, "cache_write": 2.50}
+SONNET = {"input": 2.00, "output": 10.00, "cache_read": 0.10, "cache_write": 2.50}
 MADE_UP = {"input": 3.00, "output": 15.00, "cache_read": 0.30, "cache_write": 3.75}
 
 
@@ -28,7 +28,7 @@ def test_uses_the_prices_passed_in():
 def test_cache_read_and_write():
     """request_cost() bills cache reads and cache writes at their own prices"""
     warm = request_cost(_usage(inp=1000, out=400, read=20000), SONNET)
-    assert warm == 0.01, f"a cache-hit request should cost $0.01 (20,000 x $0.20/M + 1,000 x $2/M + 400 x $10/M), got {warm!r}"
+    assert warm == 0.008, f"a cache-hit request should cost $0.008 (20,000 x $0.10/M + 1,000 x $2/M + 400 x $10/M), got {warm!r}"
     cold = request_cost(_usage(inp=1000, out=400, write=20000), SONNET)
     assert cold == 0.056, f"a cache-write request should cost $0.056 (20,000 x $2.50/M + 1,000 x $2/M + 400 x $10/M), got {cold!r}"
 

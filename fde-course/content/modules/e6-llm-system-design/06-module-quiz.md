@@ -27,14 +27,14 @@ questions:
       - "At retrieval time, filtering chunks by the user's groups before ranking"
     answer: 3
     explain: "If a restricted chunk reaches the model, the model has already read it. Filter in the search query so it is never retrieved, ranked or shown."
-  - q: "An answer step uses 2,500 cached tokens, 4,900 fresh input tokens and 350 output tokens on Claude Sonnet 5.5 ($2 / $10 per million, cache reads $0.20). Roughly what does one question cost?"
+  - q: "An answer step uses 2,500 cached tokens, 4,900 fresh input tokens and 350 output tokens on Claude Sonnet 5.5 ($2 / $10 per million, cache reads $0.10). Roughly what does one question cost?"
     options:
       - "About $0.0014"
       - "About $0.014"
       - "About $0.14"
       - "About $1.40"
     answer: 1
-    explain: "2,500 x $0.20/M = $0.0005; 4,900 x $2/M = $0.0098; 350 x $10/M = $0.0035. Total about $0.014."
+    explain: "2,500 x $0.10/M = $0.00025; 4,900 x $2/M = $0.0098; 350 x $10/M = $0.0035. Total about $0.0136, so about $0.014."
   - q: "Your prompt puts today's date and the user's name at the very start, before a 3,000-token block of fixed rules. What happens to prompt caching?"
     options:
       - "Nothing; caching ignores small changes"

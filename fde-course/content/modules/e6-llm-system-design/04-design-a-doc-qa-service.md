@@ -60,6 +60,6 @@ Answer in the five sections on the right, as you'd talk through it in a 45-minut
 5. **Measure retrieval on its own.** If the right page never reaches the model, no prompt will fix it.
 6. **Do the cost math.** Tokens per question times price times volume.
 
-Useful facts: Claude Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100K tokens; Claude Sonnet 5.5 is $2 and $10; Claude Opus 5.5 is $4 and $20. Cache reads on Sonnet 5.5 and Opus 5.5 cost $0.20 per million tokens. Prompt caching is a prefix match, so keep the stable instructions first. Claude Haiku 5.5 supports an `effort` setting from `low` to `max`; lower effort is faster. Any latency figure for a model call is something you assume and then measure, so label it that way.
+Useful facts: Claude Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100K tokens; Claude Sonnet 5.5 is $2 and $10; Claude Opus 5.5 is $4 and $20. Cache reads cost $0.20 per million tokens on Opus 5.5 and $0.10 on Sonnet 5.5 (5% of base input). Prompt caching is a prefix match, so keep the stable instructions first. Claude Haiku 5.5 supports an `effort` setting from `low` to `max`; lower effort is faster. Any latency figure for a model call is something you assume and then measure, so label it that way.
 
 When you submit, Claude grades your design against the interviewer rubric below.

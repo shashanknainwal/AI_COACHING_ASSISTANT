@@ -84,19 +84,19 @@ The break-even math, in units of "one uncached prefix":
 - **5-minute TTL, two requests:** 1.25 (write) + 0.1 (read) = 1.35, against 2.0 uncached. Caching wins from the second request.
 - **1-hour TTL, three requests:** 2.0 + 0.1 + 0.1 = 2.2, against 3.0 uncached.
 
-Reads are even cheaper on some models. On Claude Opus 5.5, a cache read is $0.20 per million tokens, a twentieth of its $4 input price.
+Reads are even cheaper on some models. On Claude Opus 5.5 and Sonnet 5.5, a cache read is 5% of base input: $0.20 per million tokens on Opus 5.5 (against $4 input) and $0.10 on Sonnet 5.5 (against $2).
 
 ### Worked example
 
-A support assistant on Sonnet 5.5 ($2 input, $10 output, $0.20 cache read, $2.50 cache write, per million tokens). Each request has a 20,000-token stable prefix, a 1,000-token question and a 400-token answer.
+A support assistant on Sonnet 5.5 ($2 input, $10 output, $0.10 cache read, $2.50 cache write, per million tokens). Each request has a 20,000-token stable prefix, a 1,000-token question and a 400-token answer.
 
 | Request | Prefix | Question | Output | Total |
 |---|---:|---:|---:|---:|
 | No caching | 20,000 x $2/M = $0.040 | $0.002 | $0.004 | **$0.046** |
 | First request (cache write) | 20,000 x $2.50/M = $0.050 | $0.002 | $0.004 | **$0.056** |
-| Later requests (cache read) | 20,000 x $0.20/M = $0.004 | $0.002 | $0.004 | **$0.010** |
+| Later requests (cache read) | 20,000 x $0.10/M = $0.002 | $0.002 | $0.004 | **$0.008** |
 
-At volume, the cached request costs under a quarter of the uncached one. That's the number to say: "Caching takes this from about 4.6 cents to about 1 cent per request, and the output is now 40% of the bill, so output length is the next lever."
+At volume, the cached request costs under a fifth of the uncached one. That's the number to say: "Caching takes this from about 4.6 cents to under 1 cent per request, and the output is now half of the bill, so output length is the next lever."
 
 ## Latency: what the user feels
 
@@ -128,6 +128,6 @@ And for debugging any of this, log the `request-id` header that every API respon
 >
 > - Caching is a prefix match over tools, then system, then messages. Any byte change invalidates everything after it, so put stable content first and volatile content last.
 > - Verify with `usage.cache_read_input_tokens`, and keep a standing check, because cache failures are silent.
-> - Writes cost about 1.25x input (5-minute TTL) or 2x (1-hour); reads about 0.1x, and less on Opus 5.5. The 5-minute cache pays off from the second request.
+> - Writes cost about 1.25x input (5-minute TTL) or 2x (1-hour); reads about 0.1x, and 0.05x on Opus 5.5 and Sonnet 5.5. The 5-minute cache pays off from the second request.
 > - Latency is time to first token plus generation time. Caching, effort, output length and streaming each attack a different part.
 > - Cache reads don't count toward input-token rate limits on most models, so caching also buys throughput.

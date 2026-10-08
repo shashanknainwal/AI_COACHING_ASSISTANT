@@ -2,7 +2,7 @@ import copy
 
 _OPTIONS_BEFORE = copy.deepcopy(OPTIONS)
 
-_P = {"input": 2.00, "output": 10.00, "cache_write": 2.50, "cache_read": 0.20}
+_P = {"input": 2.00, "output": 10.00, "cache_write": 2.50, "cache_read": 0.10}
 
 
 def _raises(fn, exc_type, contains=""):
@@ -28,9 +28,9 @@ def test_api_cost_caching():
     w = {"requests": 10_000, "prefix_tokens": 5_000, "caching": True, "cache_hit_rate": 0.9,
          "input_tokens": 1_000, "output_tokens": 500}
     got = monthly_api_cost(w, _P)
-    assert got == 91.5, (
-        "prefix rate = 0.9 x $0.20 + 0.1 x $2.50 = $0.43 per million; "
-        f"(5,000 x 0.43 + 1,000 x 2 + 500 x 10) / 1M x 10,000 = $91.50; got {got}"
+    assert got == 87.0, (
+        "prefix rate = 0.9 x $0.10 + 0.1 x $2.50 = $0.34 per million; "
+        f"(5,000 x 0.34 + 1,000 x 2 + 500 x 10) / 1M x 10,000 = $87.00; got {got}"
     )
     cold = dict(w, cache_hit_rate=0.0)
     assert monthly_api_cost(cold, _P) == 195.0, \
@@ -47,9 +47,9 @@ def test_api_cost_batch():
 
 
 def test_build_option_api_cost():
-    """Harborview's build option: about $500 a month of model spend"""
+    """Harborview's build option: under $500 a month of model spend"""
     got = monthly_api_cost(OPTIONS[2]["workload"], OPTIONS[2]["prices"])
-    assert got == 500.92, f"expected 500.92, got {got}"
+    assert got == 484.96, f"expected 484.96, got {got}"
 
 
 def test_review_cost():
@@ -66,7 +66,7 @@ def test_monthly_run_cost():
     assert monthly_run_cost(OPTIONS[0]) == 224000.0
     assert monthly_run_cost(OPTIONS[1]) == 93600.0, "buy_isv: $60,000 licence + $0 API + $33,600 review"
     got = monthly_run_cost(OPTIONS[2])
-    assert got == 35300.92, f"build_api: $18,000 + $500.92 + $16,800 = $35,300.92; got {got}"
+    assert got == 35284.96, f"build_api: $18,000 + $484.96 + $16,800 = $35,284.96; got {got}"
 
 
 def test_cumulative_costs_go_live():
@@ -76,7 +76,7 @@ def test_cumulative_costs_go_live():
     assert isinstance(got, list) and len(got) == 6, f"expected a list of 6 monthly totals, got {got!r}"
     assert got[:3] == [474000.0, 698000.0, 922000.0], \
         f"months 1-3: $250,000 one-time plus the status quo's $224,000 each month; got {got[:3]}"
-    assert got[3:] == [957300.92, 992601.84, 1027902.76], f"from month 4 the option's own run cost applies; got {got[3:]}"
+    assert got[3:] == [957284.96, 992569.92, 1027854.88], f"from month 4 the option's own run cost applies; got {got[3:]}"
     no_base = cumulative_costs(OPTIONS[1], 3)
     assert no_base == [40000.0, 133600.0, 227200.0], \
         f"with no baseline, pre-live months cost nothing extra; got {no_base}"
@@ -89,7 +89,7 @@ def test_compare_ranked_with_break_even():
     assert isinstance(rows, list) and len(rows) == 3, f"expected 3 rows, got {rows!r}"
     assert [r["name"] for r in rows] == ["build_api", "buy_isv", "status_quo"], \
         f"cheapest 12-month total first; got {[r['name'] for r in rows]}"
-    assert rows[0] == {"name": "build_api", "total": 1239708.28, "monthly_run": 35300.92,
+    assert rows[0] == {"name": "build_api", "total": 1239564.64, "monthly_run": 35284.96,
                        "break_even_month": 5, "rank": 1}, f"got {rows[0]}"
     assert rows[1] == {"name": "buy_isv", "total": 1293600.0, "monthly_run": 93600.0,
                        "break_even_month": 2, "rank": 2}, f"got {rows[1]}"
@@ -100,7 +100,7 @@ def test_horizon_changes_the_answer():
     """Over 6 months buying wins; the horizon is part of the recommendation"""
     rows = compare(OPTIONS, months=6, baseline_name="status_quo")
     assert [r["name"] for r in rows] == ["buy_isv", "build_api", "status_quo"], \
-        f"over 6 months: buy $732,000, build $1,027,902.76; got {[(r['name'], r['total']) for r in rows]}"
+        f"over 6 months: buy $732,000, build $1,027,854.88; got {[(r['name'], r['total']) for r in rows]}"
 
 
 def test_never_breaks_even_and_errors():

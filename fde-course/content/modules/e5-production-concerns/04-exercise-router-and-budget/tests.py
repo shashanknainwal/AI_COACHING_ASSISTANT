@@ -40,7 +40,7 @@ def test_call_cost_four_meters():
                            "cache_creation_input_tokens": 50_000, "cache_read_input_tokens": 0})
     assert got == 0.33, f"10K x $4 + 2K x $20 + 50K x $5 (5-minute writes) per million = $0.33; got {got}"
     got = call_cost(SONNET, {"input_tokens": 3_000, "output_tokens": 600, "cache_read_input_tokens": 12_000})
-    assert got == 0.0144, f"missing fields count as 0; got {got}"
+    assert got == 0.0132, f"missing fields count as 0; got {got}"
     got = call_cost(HAIKU, {"input_tokens": 3_000, "output_tokens": 500,
                             "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0})
     assert got == 0.00055, f"zero cache tokens need no cache price; got {got}"
@@ -54,7 +54,7 @@ def test_call_cost_ttl_split_and_batch():
     got = call_cost(OPUS, usage)
     assert got == 0.264, f"10K at the 5-minute rate ($5) and 20K at the 1-hour rate ($8): expected 0.264, got {got}"
     got = call_cost(SONNET, {"input_tokens": 3_000, "output_tokens": 600, "cache_read_input_tokens": 12_000}, batch=True)
-    assert got == 0.0072, f"batch is 50% off every token type: expected 0.0072, got {got}"
+    assert got == 0.0066, f"batch is 50% off every token type: expected 0.0066, got {got}"
 
 
 def test_call_cost_refuses_to_guess():
@@ -111,7 +111,7 @@ def test_budget_counts_actual_spend_per_day():
     got = g.admit("draft_reply", 6_000, "d2")
     assert got is not None and got["degraded"] is False, "a different day has its own budget"
     assert g.record("d2", "classify_email", SONNET, {"input_tokens": 3_000, "output_tokens": 600,
-                                                     "cache_read_input_tokens": 12_000}, True, batch=True) == 0.0072
+                                                     "cache_read_input_tokens": 12_000}, True, batch=True) == 0.0066
 
 
 def test_report_cost_per_completed_task():
@@ -125,9 +125,9 @@ def test_report_cost_per_completed_task():
     g.record(d, "audit_anomaly", OPUS, {"input_tokens": 5_000, "output_tokens": 1_000}, False)
     got = g.report(d)
     expected = {
-        "spent": 0.071204,
-        "remaining": 0.928796,
-        "by_model": {HAIKU: 0.001844, SONNET: 0.02936, OPUS: 0.04},
-        "cost_per_completed": {"extract_invoice": 0.004102, "draft_reply": 0.023, "audit_anomaly": None},
+        "spent": 0.071024,
+        "remaining": 0.928976,
+        "by_model": {HAIKU: 0.001844, SONNET: 0.02918, OPUS: 0.04},
+        "cost_per_completed": {"extract_invoice": 0.004012, "draft_reply": 0.023, "audit_anomaly": None},
     }
     assert got == expected, f"expected {expected}\n got {got}"

@@ -10,7 +10,7 @@ minutes: 22
 
 Below is a model answer to an original practice prompt, written as a transcript. The interviewer and the company are fictional. After each stage, a **Why this scores** note explains what the interviewer is listening for. Read it once straight through, then a second time covering the notes and predicting them.
 
-The numbers are the candidate's assumptions, stated out loud. The model prices are real: Claude Haiku 5.5 at $0.10 / $0.50 per million input / output tokens (prompts up to 100K tokens), Claude Sonnet 5.5 at $2 / $10, Claude Opus 5.5 at $4 / $20, and cache reads at $0.20 per million on Sonnet 5.5 and Opus 5.5. Latency figures are labelled as assumptions to measure, because they depend on prompt size, load and region.
+The numbers are the candidate's assumptions, stated out loud. The model prices are real: Claude Haiku 5.5 at $0.10 / $0.50 per million input / output tokens (prompts up to 100K tokens), Claude Sonnet 5.5 at $2 / $10, Claude Opus 5.5 at $4 / $20, and cache reads at $0.20 per million on Opus 5.5 and $0.10 on Sonnet 5.5 (5% of base input). Latency figures are labelled as assumptions to measure, because they depend on prompt size, load and region.
 
 > **Practice prompt:** Design an internal knowledge assistant for a 5,000-person software company. Employees ask questions in chat and get answers drawn from the wiki, shared drives and the HR policy site.
 
@@ -132,12 +132,12 @@ After launch: thumbs up or down, citation click-through, the "couldn't find this
 
 | Part | Tokens | Rate per million | Cost |
 |---|---|---|---|
-| Cached prefix (instructions, rules) | 2,500 | $0.20 | $0.0005 |
+| Cached prefix (instructions, rules) | 2,500 | $0.10 | $0.00025 |
 | Fresh input (chunks, history, question) | 4,900 | $2.00 | $0.0098 |
 | Output | 350 | $10.00 | $0.0035 |
-| **Total** | | | **about $0.014** |
+| **Total** | | | **about $0.0136** |
 
-At 6,000 questions a day that's about $83 a day, or roughly $1,800 a month over 22 working days: around 36 cents per employee per month. The query rewrite on Claude Haiku 5.5 (about 600 tokens in, 60 out) adds less than a hundredth of a cent per question.
+At 6,000 questions a day that's about $81 a day, or roughly $1,800 a month over 22 working days: around 36 cents per employee per month. The query rewrite on Claude Haiku 5.5 (about 600 tokens in, 60 out) adds less than a hundredth of a cent per question.
 
 Cache writes cost about 1.25 times the input price, so the first request after the cache expires pays a little more. At 0.2 questions a second during the day, the 5-minute cache stays warm. I'd confirm with `usage.cache_read_input_tokens` in the logs.
 

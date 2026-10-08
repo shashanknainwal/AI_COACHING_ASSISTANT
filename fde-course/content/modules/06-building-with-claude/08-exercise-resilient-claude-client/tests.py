@@ -86,7 +86,7 @@ def test_cost_math():
     assert cost(u) == 0.114, f"1000*4 + 20000*5 + 500*20 = 114,000 per million = 0.114; got {cost(u)}"
     u = anthropic.Usage(input_tokens=1000, output_tokens=500, cache_creation_input_tokens=0, cache_read_input_tokens=20000)
     assert cost(u) == 0.018, f"got {cost(u)}"
-    assert cost(u, model="claude-sonnet-5-5") == 0.011, f"Sonnet prices: got {cost(u, model='claude-sonnet-5-5')}"
+    assert cost(u, model="claude-sonnet-5-5") == 0.009, f"Sonnet prices (1000*2 + 20000*0.10 + 500*10 = 9,000 per million): got {cost(u, model='claude-sonnet-5-5')}"
 
 
 def test_caching_works_end_to_end():

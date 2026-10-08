@@ -31,7 +31,7 @@ usage = {
 `prices` is one model's row, in **dollars per million tokens**:
 
 ```python
-prices = {"input": 2.00, "output": 10.00, "cache_read": 0.20, "cache_write": 2.50}
+prices = {"input": 2.00, "output": 10.00, "cache_read": 0.10, "cache_write": 2.50}
 ```
 
 ## Your task
@@ -49,19 +49,19 @@ prices = {"input": 2.00, "output": 10.00, "cache_read": 0.20, "cache_write": 2.5
 ## Example
 
 ```python
-sonnet = {"input": 2.00, "output": 10.00, "cache_read": 0.20, "cache_write": 2.50}
+sonnet = {"input": 2.00, "output": 10.00, "cache_read": 0.10, "cache_write": 2.50}
 
 warm = {"input_tokens": 1000, "output_tokens": 400,
         "cache_read_input_tokens": 20000, "cache_creation_input_tokens": 0}
-request_cost(warm, sonnet)            # -> 0.01   (0.004 cache read + 0.002 input + 0.004 output)
+request_cost(warm, sonnet)            # -> 0.008  (0.002 cache read + 0.002 input + 0.004 output)
 
 cold = {"input_tokens": 1000, "output_tokens": 400,
         "cache_read_input_tokens": 0, "cache_creation_input_tokens": 20000}
 request_cost(cold, sonnet)            # -> 0.056  (the first request pays the cache write)
 
-monthly_cost(50_000, warm, sonnet)    # -> 15000.0
+monthly_cost(50_000, warm, sonnet)    # -> 12000.0
 ```
 
 Press **Run** to try the sample at the bottom of the file, then **Submit** to grade it.
 
-> **Interview tip:** When you give a cost estimate, say the per-request number first, then the monthly total, then the biggest lever. "About a cent a request, $15K a month, and most of the input is cached already, so the next lever is output length."
+> **Interview tip:** When you give a cost estimate, say the per-request number first, then the monthly total, then the biggest lever. "Under a cent a request, $12K a month, and most of the input is cached already, so the next lever is output length."

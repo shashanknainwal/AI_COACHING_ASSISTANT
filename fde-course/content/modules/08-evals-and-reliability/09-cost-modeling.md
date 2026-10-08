@@ -32,7 +32,7 @@ Price all four (Module 6 covered the formula). Then **project**:
 monthly cost = cost per request × requests per day × 30
 ```
 
-Write down every assumption: traffic (and peaks), average input and output size, cache hit rate, model and effort. Show a range: "$380 at today's volume; $1,140 if caching stops working; $760 at double the volume." Customers trust models that show their assumptions.
+Write down every assumption: traffic (and peaks), average input and output size, cache hit rate, model and effort. Show a range: "$340 at today's volume; $1,140 if caching stops working; $680 at double the volume." Customers trust models that show their assumptions.
 
 ## The levers, roughly by impact
 
@@ -73,12 +73,12 @@ Put eval results and cost side by side:
 |---|---|---|
 | Opus 5.5, medium effort | 95% | $1,518 |
 | Opus 5.5, low effort | 94% | $768 |
-| Sonnet 5.5, low effort | 93% | $382 |
+| Sonnet 5.5, low effort | 93% | $339 |
 | Haiku 4.5 | 86% | $161 |
 
-With a 92% bar agreed with the customer, Sonnet at low effort wins: it clears the bar at a quarter of the top option's cost. Haiku is cheapest but fails the bar, so it isn't an option, however tempting the price. Also check the slices: a configuration that clears the overall bar but fails the critical-slice rules from lesson 7 doesn't qualify either.
+With a 92% bar agreed with the customer, Sonnet at low effort wins: it clears the bar at under a quarter of the top option's cost. Haiku is cheapest but fails the bar, so it isn't an option, however tempting the price. Also check the slices: a configuration that clears the overall bar but fails the critical-slice rules from lesson 7 doesn't qualify either.
 
-Present it as a decision with options: "Sonnet at low effort: 93%, $382 a month. Opus would add one to two points for an extra $386-1,136 a month. We recommend Sonnet and will re-check quarterly."
+Present it as a decision with options: "Sonnet at low effort: 93%, $339 a month. Opus would add one to two points for an extra $429-1,179 a month. We recommend Sonnet and will re-check quarterly."
 
 ## Cost in production
 

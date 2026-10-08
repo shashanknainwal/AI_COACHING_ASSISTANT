@@ -51,7 +51,7 @@ def _generate():
                                "version": version, "error_type": "RateLimitError", "attempt": 2})
                 status = 503
         if status == 200:
-            cost = round((200 * 2 + write * 2.5 + read * 0.2 + 120 * 10) / 1e6, 6)
+            cost = round((200 * 2 + write * 2.5 + read * 0.1 + 120 * 10) / 1e6, 6)
             events.append({"ts": _iso(t + timedelta(milliseconds=base_latency + (2500 if limited else 0))), "level": "info",
                            "event": "llm_call", "request_id": rid, "version": version, "model": "claude-sonnet-5-5",
                            "input_tokens": 200, "cache_write_tokens": write, "cache_read_tokens": read, "output_tokens": 120,

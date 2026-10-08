@@ -39,7 +39,7 @@ def test_by_version():
     got = by_version(records)
     assert got == {
         "v1.7.3": {"calls": 180, "errors": 0, "cache_hit_rate": 0.933, "cache_write_rate": 0.067,
-                   "avg_cost_usd": 0.00266, "avg_latency_ms": 974},
+                   "avg_cost_usd": 0.00238, "avg_latency_ms": 974},
         "v1.8.0": {"calls": 119, "errors": 51, "cache_hit_rate": 0.0, "cache_write_rate": 1.0,
                    "avg_cost_usd": 0.0091, "avg_latency_ms": 1434},
     }, f"got {got}"
@@ -50,7 +50,7 @@ def test_incident_summary():
     records, _ = _parsed()
     got = incident_summary(records)
     assert got == {"bad_version": "v1.8.0", "deployed_at": "14:00:00", "rolled_back_at": "14:45:00",
-                   "first_error_at": "14:20:24", "failed_requests": 16, "extra_cost_usd": 0.7664}, f"got {got}"
+                   "first_error_at": "14:20:24", "failed_requests": 16, "extra_cost_usd": 0.7997}, f"got {got}"
 
 
 def test_root_cause():

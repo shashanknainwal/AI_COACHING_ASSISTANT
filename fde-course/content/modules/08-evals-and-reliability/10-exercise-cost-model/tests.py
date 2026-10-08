@@ -20,7 +20,7 @@ def test_request_cost():
     u = U(input_tokens=200, output_tokens=120, cache_creation_input_tokens=3000)
     assert request_cost("claude-sonnet-5-5", u) == 0.0091, f"got {request_cost('claude-sonnet-5-5', u)}"
     u = U(input_tokens=200, output_tokens=120, cache_read_input_tokens=3000)
-    assert request_cost("claude-sonnet-5-5", u) == 0.0022
+    assert request_cost("claude-sonnet-5-5", u) == 0.0019
     assert request_cost("claude-opus-5-5", U(input_tokens=1_000_000)) == 4.0
     assert request_cost("claude-haiku-4-5", U(output_tokens=1000, cache_read_input_tokens=10_000)) == 0.006
 
@@ -44,7 +44,7 @@ def test_measure():
     expected = 0.0
     for t in brightway.EVAL_TICKETS:
         u = triage_cached(c, t["text"]).usage
-        expected += (u.input_tokens * 2 + u.cache_creation_input_tokens * 2.5 + u.cache_read_input_tokens * 0.2
+        expected += (u.input_tokens * 2 + u.cache_creation_input_tokens * 2.5 + u.cache_read_input_tokens * 0.1
                      + u.output_tokens * 10) / 1e6
     _fresh()
     got = measure(c, brightway.EVAL_TICKETS)
@@ -58,8 +58,8 @@ def test_measure():
 def test_monthly_cost():
     """monthly_cost() projects cost with caching, batching and days"""
     assert monthly_cost("claude-sonnet-5-5", 5000, 3200, 120) == 1140.0
-    assert monthly_cost("claude-sonnet-5-5", 5000, 3200, 120, cached_tokens=3000, cache_hit_rate=0.95) == 381.75
-    assert monthly_cost("claude-sonnet-5-5", 5000, 3200, 120, cached_tokens=3000, cache_hit_rate=0.95, batch=True) == 190.88
+    assert monthly_cost("claude-sonnet-5-5", 5000, 3200, 120, cached_tokens=3000, cache_hit_rate=0.95) == 339.0
+    assert monthly_cost("claude-sonnet-5-5", 5000, 3200, 120, cached_tokens=3000, cache_hit_rate=0.95, batch=True) == 169.5
     assert monthly_cost("claude-opus-5-5", 1000, 2000, 500, days=1) == 18.0
     assert monthly_cost("claude-haiku-4-5", 100, 5000, 100, cached_tokens=5000, cache_hit_rate=0.0) == 20.25, \
         "a 0% hit rate pays the cache-write price on every request"

@@ -44,9 +44,9 @@ You'll build two things the CFO can understand. A **router** that sends each tas
 - `report(day)`:
 
 ```python
-{"spent": 0.071204, "remaining": 0.928796,
- "by_model": {"claude-haiku-5-5": 0.001844, "claude-sonnet-5-5": 0.02936, "claude-opus-5-5": 0.04},
- "cost_per_completed": {"extract_invoice": 0.004102, "draft_reply": 0.023, "audit_anomaly": None}}
+{"spent": 0.071024, "remaining": 0.928976,
+ "by_model": {"claude-haiku-5-5": 0.001844, "claude-sonnet-5-5": 0.02918, "claude-opus-5-5": 0.04},
+ "cost_per_completed": {"extract_invoice": 0.004012, "draft_reply": 0.023, "audit_anomaly": None}}
 ```
 
 `cost_per_completed` divides **all** of a task's spend, failures included, by the number of completed tasks (`None` if none completed).

@@ -24,17 +24,17 @@ Current Claude models have a 1M-token context window. Many corpora fit. The ques
 
 ### Worked numbers
 
-A help center of 300 articles, about **400K tokens**. **10,000 questions a day**. Claude Sonnet 5.5: $2 per million input tokens, $10 per million output, cache reads $0.20 per million, cache writes about 1.25x input ($2.50).
+A help center of 300 articles, about **400K tokens**. **10,000 questions a day**. Claude Sonnet 5.5: $2 per million input tokens, $10 per million output, cache reads $0.10 per million, cache writes about 1.25x input ($2.50).
 
 | Approach | Input per question | Cost per question | Per day |
 |---|---|---|---|
 | Whole corpus in the prompt, no caching | 400K tokens | $0.80 | about $8,000 |
-| Whole corpus, prompt-cached (steady traffic keeps the cache warm) | 400K cache-read tokens | about $0.08 | about $800 |
+| Whole corpus, prompt-cached (steady traffic keeps the cache warm) | 400K cache-read tokens | about $0.04 | about $400 |
 | RAG: 8 chunks of 500 tokens plus 1K of instructions | about 5K tokens | about $0.01 | about $100 + search infrastructure |
 
 Output (say 300 tokens, $0.003 per answer) is the same in every row, so it doesn't change the decision.
 
-Caching changes the math by 10x, which is why "just use long context" is a real option now. But caching only works while the prefix is byte-identical. Edit one article and the next request pays a full cache write.
+Caching changes the math by 20x, which is why "just use long context" is a real option now. But caching only works while the prefix is byte-identical. Edit one article and the next request pays a full cache write.
 
 ### When long context wins
 

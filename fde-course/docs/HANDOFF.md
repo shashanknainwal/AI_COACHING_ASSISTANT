@@ -73,7 +73,7 @@ The course is expanding into three tracks for people targeting frontier-lab jobs
 
 - Owner decisions: keep the FDE Playbook brand; $249 all-access (the live site stays at $149 until the tracks launch); research and syllabus before building.
 - The research, syllabus, owner answers, build order and **build log** are in **`docs/TRACKS_PLAN.md`**. Read it before any track work.
-- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Phase 2 (shared core C1–C5) is done: 32 lessons.** The cloud environment can't reach darioamodei.com or openai.com; essay lessons were written from full texts the owner pasted. **Phase 3 (Applied AI Engineer track, E1–E7, 42 lessons) is done.** **Next: phase 4, the Applied AI Architect track (A1–A7).**
+- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Phase 2 (shared core C1–C5) is done: 32 lessons.** The cloud environment can't reach darioamodei.com or openai.com; essay lessons were written from full texts the owner pasted. **Phase 3 (Applied AI Engineer track, E1–E7, 42 lessons) is done.** **Phase 4 (Applied AI Architect track, A1–A7) is done.** **Next: phase 5, the FDE track rework, then phase 6 (launch).**
 - Before launch: run `supabase/setup_ai_usage_single_statement.sql` in Vercel → Storage → Query, set `ANTHROPIC_API_KEY`, then `TRACKS_LIVE=true` and `PRICE_USD = 249`.
 - Owner "From my loop" stories are in C1 and C5 (blockquotes starting with **From my loop**). Add more only from the owner's own words; never invent them.
 
@@ -120,7 +120,7 @@ For UI changes:
   - Tests reset simulator state with `_sim.calls.clear(); _sim._queue.clear()`.
 - **Quizzes:** pass mark is ceil(0.8 × N); vary which option position is correct.
 - **Facts about Claude models and the API:** check them with the `claude-api` skill, never from memory.
-  - Current models and prices: claude-opus-5-5 at $4/$20 per million tokens, claude-sonnet-5-5 at $2/$10, claude-haiku-5-5 at $0.10/$0.50 (prompts up to 100K tokens); the older claude-haiku-4-5 is $1/$5.
+  - Current models and prices: claude-opus-5-5 at $4/$20 per million tokens, claude-sonnet-5-5 at $2/$10 (cache reads: $0.20 on Opus 5.5, $0.10 on Sonnet 5.5; check platform.claude.com/docs/en/about-claude/pricing), claude-haiku-5-5 at $0.10/$0.50 (prompts up to 100K tokens); the older claude-haiku-4-5 is $1/$5.
   - Opus 5.5 rejects forced `tool_choice` and assistant prefill.
   - Structured outputs use `output_config.format`.
 - **Commits:** end with the `Co-Authored-By` and `Claude-Session` lines. Open a PR only when the owner asks.

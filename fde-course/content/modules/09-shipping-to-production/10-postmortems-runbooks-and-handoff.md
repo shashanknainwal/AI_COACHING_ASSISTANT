@@ -20,9 +20,9 @@ After every significant incident, write a post-mortem within a few days, while m
 
 Here's a post-mortem for the incident you debugged:
 
-> **Summary.** On March 10, 14:00-14:45 UTC, ticket triage was slow (average model latency up from 974 ms to 1,434 ms, and several seconds more for requests that hit rate limits) and 16 tickets failed. The cost per request rose about 3.4×. The cause was release v1.8.0, which added the current date and time to the system prompt.
+> **Summary.** On March 10, 14:00-14:45 UTC, ticket triage was slow (average model latency up from 974 ms to 1,434 ms, and several seconds more for requests that hit rate limits) and 16 tickets failed. The cost per request rose about 3.8×. The cause was release v1.8.0, which added the current date and time to the system prompt.
 >
-> **Impact.** 16 tickets failed and were re-processed by 15:30; about 120 tickets were triaged slowly; about $0.77 of extra API cost (it would have been about $32 a day at 5,000 tickets a day).
+> **Impact.** 16 tickets failed and were re-processed by 15:30; about 120 tickets were triaged slowly; about $0.80 of extra API cost (it would have been about $34 a day at 5,000 tickets a day).
 >
 > **Timeline.** 14:00 v1.8.0 deployed · 14:20 first rate-limit errors · 14:38 latency alert fires · 14:45 rollback to v1.7.3 · 14:52 customer update · 15:30 failed tickets re-processed.
 >

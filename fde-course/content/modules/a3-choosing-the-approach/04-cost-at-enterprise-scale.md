@@ -19,8 +19,8 @@ Claude list prices per million tokens, from [claude.com/pricing](https://claude.
 | Model | Input | Output | Cache read |
 |---|---:|---:|---:|
 | Claude Opus 5.5 | $4.00 | $20.00 | $0.20 |
-| Claude Sonnet 5.5 | $2.00 | $10.00 | $0.20 |
-| Claude Haiku 5.5 (prompts up to 100K tokens) | $0.10 | $0.50 | not used below |
+| Claude Sonnet 5.5 | $2.00 | $10.00 | $0.10 |
+| Claude Haiku 5.5 (prompts up to 100K tokens) | $0.10 | $0.50 | $0.01 (not used below) |
 
 Cache writes cost 1.25x the input price for the default 5-minute lifetime. The Batch API is 50% off. Output tokens include thinking.
 
@@ -36,10 +36,10 @@ Proposed design on Sonnet 5.5: about 4 model calls per ticket. Each call sends a
 
 | Line | Per call | Per ticket (x4) | Per month (300K tickets) |
 |---|---:|---:|---:|
-| Cached prefix: 10,000 x $0.20 / 1M | $0.0020 | $0.0080 | $2,400 |
+| Cached prefix: 10,000 x $0.10 / 1M | $0.0010 | $0.0040 | $1,200 |
 | New input: 2,500 x $2 / 1M | $0.0050 | $0.0200 | $6,000 |
 | Output: 400 x $10 / 1M | $0.0040 | $0.0160 | $4,800 |
-| **Total, cached** | **$0.0110** | **$0.044** | **$13,200** |
+| **Total, cached** | **$0.0100** | **$0.040** | **$12,000** |
 | Same without caching (12,500 x $2 + 400 x $10) | $0.0290 | $0.116 | $34,800 |
 | Opus 5.5, cached (10,000 x $0.20 + 2,500 x $4 + 400 x $20) | $0.0200 | $0.080 | $24,000 |
 
@@ -47,21 +47,21 @@ Now the value side. Suppose the assistant resolves 35% of tickets end to end and
 
 - Resolved: 0.35 x $6.00 = $2.10
 - Drafted: 0.65 x (3 / 60 x $36) = 0.65 x $1.80 = $1.17
-- **Gross saving: $3.27 per ticket. Model cost: $0.044. Net: about $3.23 per ticket**, or roughly $970,000 a month before fixed costs (engineering, operations, review).
+- **Gross saving: $3.27 per ticket. Model cost: $0.040. Net: about $3.23 per ticket**, or roughly $970,000 a month before fixed costs (engineering, operations, review).
 
 The model is about 1% of the value it creates here. That changes which questions matter.
 
 ## Sensitivity analysis: which assumption matters?
 
-Change one assumption at a time and watch the net saving per ticket (base: $3.226).
+Change one assumption at a time and watch the net saving per ticket (base: $3.230).
 
 | Change | Net per ticket | Change vs base |
 |---|---:|---:|
-| Token prices up 50% | $3.204 | -0.7% |
-| Calls per ticket double (4 to 8) | $3.182 | -1.4% |
-| 2% of AI-resolved tickets come back and cost $15 each to fix | $3.121 | -3.3% |
-| Resolution rate 35% to 25% | $2.806 | -13.0% |
-| Time saved per draft 3 to 1.5 minutes | $2.641 | -18.1% |
+| Token prices up 50% | $3.210 | -0.6% |
+| Calls per ticket double (4 to 8) | $3.190 | -1.2% |
+| 2% of AI-resolved tickets come back and cost $15 each to fix | $3.125 | -3.3% |
+| Resolution rate 35% to 25% | $2.810 | -13.0% |
+| Time saved per draft 3 to 1.5 minutes | $2.645 | -18.1% |
 
 The business case rides on resolution rate and time saved, not on token prices. So the proof of concept must measure those two numbers on real tickets (module A4), and the go/no-go threshold should be written in them. Present the table to the executive sponsor. It shows you know where the risk is.
 
@@ -84,7 +84,7 @@ Anthropic's cost-optimization guidance splits levers into two kinds and puts the
 
 | Order | Lever | Kind | Typical effect | Architect's note |
 |---|---|---|---|---|
-| 1 | **Prompt caching** | Free | Biggest saving on repeated prefixes; above, $34,800 to $13,200 | Stays on permanently. Needs a stable prefix, so design prompts for it. |
+| 1 | **Prompt caching** | Free | Biggest saving on repeated prefixes; above, $34,800 to $12,000 | Stays on permanently. Needs a stable prefix, so design prompts for it. |
 | 2 | **Input hygiene** | Free | Removes tokens you don't need to send | Load reference material on demand instead of in every call. |
 | 3 | **Output length** | Free | Output costs 5x input on these models | Specify the exact output shape. `max_tokens` is a backstop, not a tuning knob. |
 | 4 | **Batch** | Free | 50% off for work nobody is waiting on | Nightly jobs, backfills, eval runs. Not for users waiting on an answer. |

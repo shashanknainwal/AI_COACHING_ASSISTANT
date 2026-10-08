@@ -27,7 +27,7 @@ Write logs as JSON objects with consistent field names, not prose:
 ```json
 {"ts": 1773004803.2, "level": "info", "service": "triage", "event": "llm_call", "request_id": "req-7f3a",
  "model": "claude-sonnet-5-5", "input_tokens": 212, "cache_read_tokens": 3000, "output_tokens": 118,
- "stop_reason": "end_turn", "latency_ms": 840, "cost_usd": 0.00226, "version": "v1.7.3"}
+ "stop_reason": "end_turn", "latency_ms": 840, "cost_usd": 0.001904, "version": "v1.7.3"}
 ```
 
 - **A request ID on every line**, passed through every service and call, so one request's story can be reassembled. Also record the API's own request ID (the `request-id` response header, available in the SDK) for support conversations with the provider.

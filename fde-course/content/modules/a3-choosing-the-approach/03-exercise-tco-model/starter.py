@@ -1,4 +1,4 @@
-SONNET_PRICES = {"input": 2.00, "output": 10.00, "cache_write": 2.50, "cache_read": 0.20}
+SONNET_PRICES = {"input": 2.00, "output": 10.00, "cache_write": 2.50, "cache_read": 0.10}
 BATCH_DISCOUNT = 0.5  # the Batch API bills every token type at half price
 
 # Harborview Mutual (fictional): 40,000 claim documents a month.

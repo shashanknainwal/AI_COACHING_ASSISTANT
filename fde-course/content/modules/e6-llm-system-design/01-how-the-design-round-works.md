@@ -109,7 +109,7 @@ Do the arithmetic out loud. Tokens per request multiplied by price, multiplied b
 
 Two facts that move the numbers a lot:
 
-- **Prompt caching.** On Claude Sonnet 5.5 and Claude Opus 5.5, cache reads cost $0.20 per million tokens, against $2 and $4 for fresh input. Cache writes cost about 1.25 times the base input price for the default 5-minute lifetime, and a 1-hour lifetime exists. Check hits with `usage.cache_read_input_tokens`.
+- **Prompt caching.** Cache reads cost $0.20 per million tokens on Claude Opus 5.5 and $0.10 on Claude Sonnet 5.5 (5% of base input), against $4 and $2 for fresh input. Cache writes cost about 1.25 times the base input price for the default 5-minute lifetime, and a 1-hour lifetime exists. Check hits with `usage.cache_read_input_tokens`.
 - **Batch processing.** Work nobody is waiting on (eval runs, backfills) can go through the Message Batches API at half price.
 
 ### 8. Iteration plan (4 minutes)
