@@ -37,7 +37,7 @@ passScore: 70
 graderNotes: "This is the round that guides say fails the most candidates. Be strict about vagueness and rehearsed answers. Reward candidates who say 'I don't know' honestly or describe real discomfort over candidates who give perfect-sounding answers without detail."
 ---
 
-Several interview guides single out the culture or values interview as the round that fails the most candidates at mission-driven labs. Reported questions include whether you'd prioritise the mission over the company's future share price, and asking you to describe someone you respect but disagree with on values. Nobody can tell you the "right" answers, because there aren't any. What interviewers look for is **specific, honest evidence of how you behave**.
+Several interview guides single out the culture or values interview as the round that fails the most candidates at mission-driven labs (**Reported**; see lesson 01). Reported questions include whether you'd prioritize the mission over the company's future share price, and describing someone you respect but disagree with on values. Nobody can tell you the "right" answers, because there aren't any. What interviewers look for is **specific, honest evidence of how you behave**.
 
 ## How this practice works
 
@@ -49,7 +49,7 @@ On the right, **Sam** will interview you for about eight turns. Sam is a fiction
 
 ## The shape of a strong answer
 
-Use **STAR** loosely, and spend most of your words on the last two letters:
+Use **STAR** loosely (lesson 02 covers it in depth), and spend most of your words on the last two letters:
 
 - **Situation:** one or two sentences of context.
 - **Task:** what was at stake and what was yours to do.
@@ -58,4 +58,4 @@ Use **STAR** loosely, and spend most of your words on the last two letters:
 
 ## Before you start
 
-Have three true stories ready: a disagreement on principle, a mistake that affected other people, and a time you slowed something down (or wished you had) because it wasn't ready. Most values questions can be answered with one of the three.
+Have three true stories from your story bank ready: a disagreement on principle, a mistake that affected other people, and a time you slowed something down (or wished you had) because it wasn't ready. If you did lesson 03, you've already written two of them. Most values questions can be answered with one of the three. For the mission question, use the four moves from lesson 04.
