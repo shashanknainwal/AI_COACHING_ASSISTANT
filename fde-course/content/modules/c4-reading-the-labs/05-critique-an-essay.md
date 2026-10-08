@@ -49,9 +49,9 @@ This is the six-note framework from lesson 1, written up. It's also practice for
 
 Choose one, read it in full, and take your six notes before you write:
 
-- Dario Amodei, [Machines of Loving Grace](https://darioamodei.com/machines-of-loving-grace) (October 2024)
+- Dario Amodei, [Machines of Loving Grace](https://darioamodei.com/essay/machines-of-loving-grace) (October 2024)
 - Dario Amodei, [The Urgency of Interpretability](https://darioamodei.com/post/the-urgency-of-interpretability) (April 2025)
-- Dario Amodei, The Adolescence of Technology (January 2026), linked from [darioamodei.com](https://darioamodei.com)
+- Dario Amodei, [The Adolescence of Technology](https://darioamodei.com/essay/the-adolescence-of-technology) (January 2026); study guide in lesson 03
 - Anthropic, [Responsible Scaling Policy version 3.0 announcement](https://www.anthropic.com/news/responsible-scaling-policy-v3) (February 2026)
 - Anthropic, [Claude's constitution](https://www.anthropic.com/constitution) (January 2026)
 

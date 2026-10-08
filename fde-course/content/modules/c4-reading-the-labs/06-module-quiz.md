@@ -67,6 +67,23 @@ questions:
       - "I haven't read it, but I trust the team"
     answer: 0
     explain: "Accurate facts, the document's own tension, one honest question and a link to the job beat both flattery and cynicism."
+  - q: "In The Adolescence of Technology, why does the author argue AI changes the risk of biological attacks?"
+    options:
+      - "Because AI makes pathogens more contagious"
+      - "Because the people able to build such weapons have rarely wanted to, and an AI that walks anyone through the process breaks that link between ability and motive"
+      - "Because gene synthesis is already fully regulated, so AI is the only remaining gap"
+      - "Because cyberattacks are now harder, pushing attackers toward biology"
+    answer: 1
+    explain: "The essay argues ability and motive have been negatively correlated, and a 'genius in everyone's pocket' removes the ability barrier for people who have the motive."
+  - q: "You want to critique The Adolescence of Technology in an interview. Which line of attack is strongest?"
+    options:
+      - "Labor markets always adapt, so job loss won't happen"
+      - "Misalignment experiments are artificial traps"
+      - "Under its own 1–2 year timeline, can 'transparency first, stronger rules once evidence arrives' move fast enough?"
+      - "AI can't go rogue because it has no goals of its own"
+    answer: 2
+    explain: "The other three are objections the essay already answers. A strong critique targets something the argument relies on, like its regulatory sequencing under short timelines."
+
 ---
 
-Eight questions on the reading framework and the two Anthropic policies from this module. You need 7 correct to pass.
+Ten questions on the reading framework, The Adolescence of Technology and the two Anthropic policies from this module.
