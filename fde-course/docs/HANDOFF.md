@@ -73,7 +73,7 @@ The course is expanding into three tracks for people targeting frontier-lab jobs
 
 - Owner decisions: keep the FDE Playbook brand; $249 all-access (the live site stays at $149 until the tracks launch); research and syllabus before building.
 - The research, syllabus, owner answers, build order and **build log** are in **`docs/TRACKS_PLAN.md`**. Read it before any track work.
-- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Next: phase 2, the shared core content (C1–C5).**
+- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Phase 2 (shared core C1–C5) is written** except C4 lessons 02–03 (blocked on network access to darioamodei.com and openai.com). **Next: finish C4, then phase 3, the Applied AI Engineer track.**
 - Before launch: run `supabase/setup_ai_usage_single_statement.sql` in Vercel → Storage → Query, set `ANTHROPIC_API_KEY`, then `TRACKS_LIVE=true` and `PRICE_USD = 249`.
 - The owner said yes to "from my loop" stories in C1 and C5 but hasn't written them yet. Ask for them; never invent them.
 
@@ -120,7 +120,7 @@ For UI changes:
   - Tests reset simulator state with `_sim.calls.clear(); _sim._queue.clear()`.
 - **Quizzes:** pass mark is ceil(0.8 × N); vary which option position is correct.
 - **Facts about Claude models and the API:** check them with the `claude-api` skill, never from memory.
-  - Current models and prices: claude-opus-5-5 at $4/$20 per million tokens, claude-sonnet-5-5 at $2/$10, claude-haiku-4-5 at $1/$5 (no effort parameter).
+  - Current models and prices: claude-opus-5-5 at $4/$20 per million tokens, claude-sonnet-5-5 at $2/$10, claude-haiku-5-5 at $0.10/$0.50 (prompts up to 100K tokens); the older claude-haiku-4-5 is $1/$5.
   - Opus 5.5 rejects forced `tool_choice` and assistant prefill.
   - Structured outputs use `output_config.format`.
 - **Commits:** end with the `Co-Authored-By` and `Claude-Session` lines. Open a PR only when the owner asks.

@@ -229,3 +229,13 @@ The fix for "boring": every lesson opens on a customer problem. Readings are abo
 - **Daily AI limit** `lib/ai-usage.ts`: tutor answers, grades and role-play turns count against `AI_DAILY_LIMIT` (default 60) per learner per day. Needs `supabase/migrations/0002_ai_usage.sql` (or `supabase/setup_ai_usage_single_statement.sql` for Vercel's Query tool). Emails in `FREE_ACCESS_EMAILS` are exempt. If the table is missing, calls are allowed and an error is logged.
 - **Free access:** C1 plus the first lesson of every track (`canAccessLesson` in `lib/access.ts`).
 - **Seed lessons:** C1 (round-by-round reading, "Why this lab?" written), C3 (format reading, feature-flag drill), C5 (values role-play), E6 (support-agent design). All other new modules show as "Coming soon".
+
+### Phase 2: shared core content (2026-10-08)
+
+- C1 How Frontier Labs Hire: 6 lessons (loop overview, "Why this lab?" written, preparing with Claude under the official AI rules, label-the-claims exercise, prep plan, quiz).
+- C2 LLM Fundamentals: 7 lessons (tokens and cost, cost-calculator exercise, thinking and effort, tool use and structured outputs, pick-the-model exercise, prompt caching and latency, quiz).
+- C3 Progressive Coding: 6 lessons (format, feature-flag drill, data models that survive Level 4, ranking warm-up, LLM gateway drill, quiz).
+- C4 Reading the Labs: **4 of 6 lessons** (critique framework, RSP and Claude's constitution, written critique, quiz). **Still to do:** 02 (Machines of Loving Grace) and 03 (The Urgency of Interpretability, The Adolescence of Technology), the OpenAI Charter contrast in 04, and essay questions in the quiz. Blocked because the cloud environment's network policy denies darioamodei.com and openai.com; the owner needs to allow those domains. Never summarize the essays from memory.
+- C5 Values & Behavioral: 7 lessons (what the round tests, story bank, two STAR stories written, mission questions, values role-play, project deep-dive role-play, quiz).
+- Verified: validator 138 lessons / 0 problems; every new exercise and drill passes in the browser with its solution and fails with its starter; no phone overflow.
+- "From my loop" owner stories: not yet supplied.
