@@ -84,6 +84,22 @@ questions:
     answer: 2
     explain: "The other three are objections the essay already answers. A strong critique targets something the argument relies on, like its regulatory sequencing under short timelines."
 
+  - q: "In Machines of Loving Grace, what does 'marginal returns to intelligence' ask?"
+    options:
+      - "How much it costs to train a smarter model"
+      - "How much being smarter helps with a task, and which other factors (data, physical speed, complexity, human constraints, physical laws) become the bottleneck"
+      - "Whether AI will replace all human intelligence"
+      - "How quickly AI companies earn back their investment"
+    answer: 1
+    explain: "The essay borrows the economist's idea of marginal returns to a factor of production and asks which complementary factors limit progress once intelligence is abundant."
+  - q: "Which area is Machines of Loving Grace LEAST confident about?"
+    options:
+      - "Curing infectious disease"
+      - "Treating most mental illness"
+      - "Peace, governance and economic development, where human constraints dominate"
+      - "Speeding up tool-like discoveries such as CRISPR"
+    answer: 2
+    explain: "The essay is most confident about biology and neuroscience, and explicitly less confident where human institutions, corruption and adversarial politics are the bottleneck."
 ---
 
-Ten questions on the reading framework, The Adolescence of Technology and the two Anthropic policies from this module.
+Twelve questions on the reading framework, the two Amodei essays and the two Anthropic policies from this module.

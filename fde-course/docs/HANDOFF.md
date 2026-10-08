@@ -73,7 +73,7 @@ The course is expanding into three tracks for people targeting frontier-lab jobs
 
 - Owner decisions: keep the FDE Playbook brand; $249 all-access (the live site stays at $149 until the tracks launch); research and syllabus before building.
 - The research, syllabus, owner answers, build order and **build log** are in **`docs/TRACKS_PLAN.md`**. Read it before any track work.
-- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Phase 2 (shared core C1–C5) is written** except C4 lessons 02–03 (blocked on network access to darioamodei.com and openai.com). **Next: finish C4, then phase 3, the Applied AI Engineer track.**
+- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Phase 2 (shared core C1–C5) is done: 32 lessons.** The cloud environment can't reach darioamodei.com or openai.com; essay lessons were written from full texts the owner pasted. **Next: phase 3, the Applied AI Engineer track.**
 - Before launch: run `supabase/setup_ai_usage_single_statement.sql` in Vercel → Storage → Query, set `ANTHROPIC_API_KEY`, then `TRACKS_LIVE=true` and `PRICE_USD = 249`.
 - The owner said yes to "from my loop" stories in C1 and C5 but hasn't written them yet. Ask for them; never invent them.
 
