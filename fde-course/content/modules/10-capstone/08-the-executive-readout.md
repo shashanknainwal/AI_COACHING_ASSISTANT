@@ -1,34 +1,29 @@
 ---
 title: "The Executive Readout"
 type: reading
-minutes: 15
+minutes: 3
 ---
 
 > **By the end of this lesson you will be able to:**
-> - Structure a readout that leads with the decision executives need to make
-> - Present results honestly, including failures and limits, in a way that builds trust
-> - Turn the engagement into a clear next step: expand, change course or stop
-> - Handle the hard questions executives ask
+> - Structure a readout that leads with the decision
+> - Present results honestly, including what failed
+> - End with a clear ask and answer the hard questions
 
-## What a readout is for
-
-The readout isn't a demo or a summary of your work. It's a **decision meeting**. Dana and the CEO need to decide: do we roll this out, change it, or stop? Everything in the readout should help them make that decision with confidence.
-
-Executives have little time and many priorities. Assume you'll get the first five minutes of attention, and maybe not the rest.
+Dana's CEO wants one answer: roll out, change, or stop? You get about five minutes of attention, and your numbers must survive an analyst.
 
 ## Structure: answer first
 
-1. **The recommendation** (one sentence). *"Roll out exception triage to all three Midwest hubs over the next six weeks."*
-2. **The headline results** (three to five numbers, against the baseline and the targets agreed at the start).
-3. **What it means for the business** (time, money, customers).
-4. **What didn't work, and what we did about it.**
-5. **Risks and how they're managed.**
-6. **The ask:** decisions, people, budget, dates.
-7. **Appendix:** method, eval details, assumptions. Available, not presented.
+The readout is a **decision meeting**, not a demo.
 
-### Results against the targets you agreed
+1. **Recommendation**, one sentence: *"Roll out exception triage to all three Midwest hubs over the next six weeks."*
+2. **Headline results** against baseline and agreed targets.
+3. **Business meaning**: time, money, customers.
+4. **What didn't work** and what you did.
+5. **Risks** and mitigations.
+6. **The ask**: decisions, people, budget, dates.
+7. **Appendix** (not presented): method, evals, assumptions.
 
-Show the scoreboard from the brief. It's the strongest evidence that you did what you said you would:
+### The scoreboard you agreed
 
 | Metric | Baseline | Target | Pilot |
 |---|---|---|---|
@@ -36,55 +31,44 @@ Show the scoreboard from the brief. It's the strongest evidence that you did wha
 | SLA breach rate | 20.7% | 10.3% | 8.2% ✓ |
 | Automation rate | 0% | 40% | 45% ✓ |
 
-\*Be precise about comparisons: the pilot measured an average, the baseline a median. Say so in a footnote, or measure the same way. An executive's analyst will notice.
+\*Average vs median: footnote it or measure the same way.
 
-### Translate into business terms
+### Business terms
 
-- **Time:** "309 coordinator hours a month go back to the hard cases." (Not "we saved 2.2 FTE," unless the customer wants to frame it that way: it can sound like a layoff plan, and Dana's team is in the room.)
-- **Customers:** "Platinum SLA breaches fell from 39% to 5%." This is the line Dana will repeat to the CEO, because Halvorsen nearly left.
-- **Money:** "About $14,800 a month net, so the engagement pays for itself in under three months." Show the assumptions (loaded cost per hour, volume) in the appendix.
+- **Time:** "309 coordinator hours a month go back to the hard cases." Avoid "we saved 2.2 FTE": it sounds like a layoff plan, and Dana's team is in the room.
+- **Customers:** "Platinum SLA breaches fell from 39% to 5%." The line Dana will repeat, because Halvorsen nearly left.
+- **Money:** "About $14,800 a month net; the engagement pays back in under three months." Assumptions go in the appendix.
 
-### Show what didn't work
+### What didn't work
 
-Trust comes from honesty about limits. Include:
+Only good news sounds like hidden bad news.
 
-- **The eval failures** and their fixes: "Our first version treated a platinum delay as routine, and once forgot to notify a customer about damage. We added rules and tests; P1 recall is now 100% on the eval set, and the release gate blocks any version that regresses."
-- **Guardrail activity:** "The guardrail blocked 9 messages that promised credits; in each case the agent rewrote the message. No message has promised compensation."
-- **Limits:** "Customs holds still need a broker; the agent opens the ticket and informs the customer, but doesn't resolve them."
+- **Eval failures:** "Version one treated a platinum delay as routine. We added rules and tests; P1 recall is now 100% on the eval set, and the gate blocks regressions."
+- **Guardrails:** "9 messages promising credits were blocked and rewritten."
+- **Limits:** "Customs holds still need a broker."
 
-An executive who hears only good news assumes you're hiding the bad news.
-
-### Check every number
-
-You saw in the last exercise how a fluent draft can contain a number nobody gave it. Before the readout, check every number on every slide against its source: the eval report, the pilot data, the finance assumptions. Have someone else check them too.
+**Check every number** against its source, and have someone else check too. The last exercise showed how a fluent draft invents one.
 
 ## The ask
 
-End with specific decisions:
-
 > *"We're asking for three decisions today: (1) approve the rollout to Kansas City and Detroit in May and June; (2) assign one ops lead per hub to label 50 cases for the eval set; (3) move the Phase 2 items, proactive ETAs and claims automation, into next quarter's plan, with a scoping session in two weeks."*
 
-Notice it includes the asks you said no to in week one. Out-of-scope items are not forgotten; they become the next phase. That's how engagements grow.
+Week-one out-of-scope asks become the next phase.
 
-## Hard questions to prepare for
+## Hard questions
 
 | Question | Good answer includes |
 |---|---|
-| "What happens when it's wrong?" | Guardrails, approvals, audit log, fallback to coordinators, eval gate on every change |
-| "What if the AI provider has an outage?" | Circuit breaker and fallback: exceptions go to the coordinator queue as today |
-| "Does our customer data leave our cloud?" | Data flow, deployment through their cloud account, what's logged |
-| "Will this replace my team?" | Time goes to hard cases and customer relationships; coordinators approve and oversee |
-| "How do we know it keeps working?" | Monitoring, sampled review, eval suite and release gate the customer's team owns |
-| "What does it cost at full scale?" | API cost per exception and monthly projection with assumptions |
+| "What happens when it's wrong?" | Guardrails, approvals, audit log, fallback, eval gate |
+| "What if the AI provider is down?" | Circuit breaker; exceptions go to coordinators as today |
+| "Does our data leave our cloud?" | Deployed in their account; metadata-only logs |
+| "Will this replace my team?" | Time goes to hard cases; coordinators oversee |
+| "How do we know it keeps working?" | Monitoring, sampled review, an eval gate they own |
+| "What does it cost at full scale?" | Cost per exception and monthly projection |
 
-## After the readout
-
-- **Send a written summary** the same day: decisions made, owners, dates.
-- **Hand off** (Module 9): runbooks, eval suite, operations guide, and drills with their team.
-- **Measure again** in 30 days, and share the results. The best references come from customers whose results held up after you left.
+Afterwards: send a written summary the same day (decisions, owners, dates), hand off (Module 9), and measure again in 30 days.
 
 > **Key takeaways**
-> - A readout is a decision meeting: lead with the recommendation, then results against the agreed targets, business impact, failures, risks and the ask.
-> - Translate results into time, customers and money, with assumptions in the appendix; frame time savings with care for the team in the room.
-> - Show what didn't work and what you did about it; check every number against its source.
-> - End with specific decisions, including the next phase built from earlier out-of-scope asks.
+> - Lead with the recommendation, then results against agreed targets, impact, failures, risks and the ask.
+> - Frame time savings with care for the team in the room; check every number against its source.
+> - End with specific decisions, including a next phase built from earlier out-of-scope asks.
