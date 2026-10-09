@@ -67,7 +67,8 @@
         "07-tool-use-rag-agents",
         "08-evals-and-reliability",
         "09-shipping-to-production",
-        "10-capstone"
+        "10-capstone",
+        "11-fde-mock-loop"
       ]
     }
   ],
@@ -853,6 +854,30 @@
           "The CTO will sign off on that.",
           "Clear tradeoffs, honest numbers. That's an architect.",
           "That's the conversation the customer needed."
+        ]
+      }
+    },
+    {
+      "slug": "11-fde-mock-loop",
+      "title": "FDE Mock Interview Loop",
+      "summary": "A full practice loop for forward deployed engineering roles: a take-home customer case, a timed coding drill, a live customer call, and a deep dive on what you built, scored like the real thing.",
+      "outcomes": [
+        "Run a full FDE interview loop end to end",
+        "Handle a messy customer case under time pressure",
+        "Defend your own project in a deep dive",
+        "Find and fix your weakest round"
+      ],
+      "plannedMinutes": 240,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Mock loop",
+        "sector": "FDE interview practice",
+        "contact": "Theo Brandt",
+        "role": "FDE hiring manager (practice)",
+        "replies": [
+          "That's the round that gets offers.",
+          "You scoped it like someone who's done this before.",
+          "Clear, honest, and you owned the outcome. Strong signal."
         ]
       }
     }
