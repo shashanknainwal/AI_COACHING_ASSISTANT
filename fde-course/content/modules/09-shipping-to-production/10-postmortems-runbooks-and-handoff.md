@@ -1,7 +1,7 @@
 ---
 title: "Post-Mortems, Runbooks and Handoff"
 type: reading
-minutes: 4
+minutes: 7
 ---
 
 > **By the end of this lesson you will be able to:**

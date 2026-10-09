@@ -1,7 +1,7 @@
 ---
 title: Running a Discovery Call
 type: reading
-minutes: 5
+minutes: 9
 ---
 
 > **By the end of this lesson you will be able to:**

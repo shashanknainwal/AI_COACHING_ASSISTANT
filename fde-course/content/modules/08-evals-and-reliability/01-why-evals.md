@@ -1,7 +1,7 @@
 ---
 title: "Why Evals Are the FDE's Superpower"
 type: reading
-minutes: 3
+minutes: 5
 ---
 
 > **By the end of this lesson you will be able to:**

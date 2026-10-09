@@ -1,7 +1,7 @@
 ---
 title: Your First Week on an Engagement
 type: reading
-minutes: 2
+minutes: 5
 ---
 
 > **By the end of this lesson** you will be able to run a kickoff, find the four key people, and write a one-page engagement brief.

@@ -1,7 +1,7 @@
 ---
 title: Data-Quality Reports That Drive Action
 type: reading
-minutes: 3
+minutes: 5
 ---
 
 > **By the end of this lesson you will be able to:**

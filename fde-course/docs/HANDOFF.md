@@ -6,7 +6,7 @@ Read this first when resuming. It records what exists, what's live, the decision
 
 - **What:** a browser-based course on Forward Deployed Engineering (FDE), sold at **$149 one-time**. Brand: **FDE Playbook**. Domain: **https://fdeplaybook.dev** (Cloudflare Registrar, DNS pointed at Vercel).
 - **Layout:** DataCamp-style split view: lesson on the left, Monaco code editor + console on the right. Python only, run in the browser with Pyodide and graded by hidden tests.
-- **Content:** 10 modules, 107 lessons, 48 graded exercises, 10 module quizzes + a 20-question final assessment, about 39.5 hours. Module 1 is free.
+- **Content:** four tracks (Foundations C1–C5, Applied AI Engineer E1–E7, Applied AI Architect A1–A7, FDE modules 1–11), 241 lessons. The original FDE course (modules 1–10) is the only track visible on production until TRACKS_LIVE=true. See docs/TRACKS_PLAN.md.
 - **Owner/instructor:** "Who I am" section (first person, no name yet): seasoned AI architect, worked at Amazon, now FDE Architect at an AI startup, works in the FDE model, has shipped AI solutions to enterprise customers. The owner may later add name, photo and LinkedIn.
 - **Owner's email:** hybridboy11@gmail.com (to go in `FREE_ACCESS_EMAILS` in Vercel, not in code).
 
@@ -73,7 +73,7 @@ The course is expanding into three tracks for people targeting frontier-lab jobs
 
 - Owner decisions: keep the FDE Playbook brand; $249 all-access (the live site stays at $149 until the tracks launch); research and syllabus before building.
 - The research, syllabus, owner answers, build order and **build log** are in **`docs/TRACKS_PLAN.md`**. Read it before any track work.
-- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Phase 2 (shared core C1–C5) is done: 32 lessons.** The cloud environment can't reach darioamodei.com or openai.com; essay lessons were written from full texts the owner pasted. **Phase 3 (Applied AI Engineer track, E1–E7, 42 lessons) is done.** **Phase 4 (Applied AI Architect track, A1–A7) is done.** **Next: phase 5, the FDE track rework, then phase 6 (launch).**
+- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Phase 2 (shared core C1–C5) is done: 32 lessons.** The cloud environment can't reach darioamodei.com or openai.com; essay lessons were written from full texts the owner pasted. **Phase 3 (Applied AI Engineer track, E1–E7, 42 lessons) is done.** **Phase 4 (Applied AI Architect track, A1–A7) is done.** **Phase 5 (FDE rework + module 11 mock loop) is done.** **Next: phase 6, launch (home page, $249, TRACKS_LIVE=true, AI-usage table, PR to main).**
 - Before launch: run `supabase/setup_ai_usage_single_statement.sql` in Vercel → Storage → Query, set `ANTHROPIC_API_KEY`, then `TRACKS_LIVE=true` and `PRICE_USD = 249`.
 - Owner "From my loop" stories are in C1 and C5 (blockquotes starting with **From my loop**). Add more only from the owner's own words; never invent them.
 

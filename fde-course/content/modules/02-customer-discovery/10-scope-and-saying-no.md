@@ -1,7 +1,7 @@
 ---
 title: Scope, Change Requests, and the Art of Saying No
 type: reading
-minutes: 3
+minutes: 6
 ---
 
 > **By the end of this lesson you will be able to:**

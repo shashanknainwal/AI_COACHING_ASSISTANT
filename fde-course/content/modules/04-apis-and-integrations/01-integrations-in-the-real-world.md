@@ -1,7 +1,7 @@
 ---
 title: "Integrations in the Real World: REST, Auth, and Sessions"
 type: reading
-minutes: 4
+minutes: 7
 ---
 
 > **By the end of this lesson you will be able to:**

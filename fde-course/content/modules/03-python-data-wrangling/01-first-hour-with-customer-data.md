@@ -1,7 +1,7 @@
 ---
 title: Your First Hour with Customer Data
 type: reading
-minutes: 3
+minutes: 7
 ---
 
 > **By the end of this lesson you will be able to:**

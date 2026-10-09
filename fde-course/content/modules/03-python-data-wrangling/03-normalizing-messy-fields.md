@@ -1,7 +1,7 @@
 ---
 title: "Normalization: Dates, Money, Phones, IDs, and Text"
 type: reading
-minutes: 3
+minutes: 6
 ---
 
 > **By the end of this lesson you will be able to:**

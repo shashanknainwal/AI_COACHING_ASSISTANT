@@ -11,7 +11,7 @@ hints:
   - "Q5: `SUM(s.status = 'cancelled')` counts cancellations in SQLite (a true comparison is 1). Multiply by `100.0` before dividing so you get decimals, and `ROUND(..., 1)`."
 ---
 
-Pinecrest's COO, Dana, sent five questions before Thursday's leadership meeting. She wants numbers she can trust, and she's going to ask how you got them. Write one SQL query for each.
+Pinecrest's COO, Tom Haddad, sent five questions before Thursday's leadership meeting. He wants numbers he can trust, and he's going to ask how you got them. Write one SQL query for each.
 
 Each query is a Python string constant. The `run(con, sql)` helper (already written) executes it and returns a list of tuples. The tests check the **exact rows, columns and order**, so read each question's spec carefully.
 
@@ -34,6 +34,6 @@ Columns: `location`, `members` (all subscriptions), `cancelled`, `churn_pct` (`1
 
 Finally, **`biggest_churn_location(con)`** returns the name of the location with the highest churn, using your Q5 query.
 
-Press **Run** to print all five answers. Read them together: what's the story you'd tell Dana? Then **Submit**.
+Press **Run** to print all five answers. Read them together: what's the story you'd tell Tom? Then **Submit**.
 
 > **The FDE habit:** when you send numbers to an executive, include the query (or a one-line definition) with each one. "Active = subscriptions with status active, by home location." It prevents a week of "your number doesn't match my dashboard" arguments.

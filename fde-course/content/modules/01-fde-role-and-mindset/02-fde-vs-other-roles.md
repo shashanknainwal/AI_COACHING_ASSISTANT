@@ -1,7 +1,7 @@
 ---
 title: FDE vs. SWE, Solutions Engineer, and Consultant
 type: reading
-minutes: 2
+minutes: 5
 ---
 
 > **By the end of this lesson** you will be able to tell the FDE role apart from product SWE, solutions engineering and consulting, and spot the consultant trap.

@@ -1,7 +1,7 @@
 ---
 title: The FDE Operating Loop
 type: reading
-minutes: 2
+minutes: 5
 ---
 
 > **By the end of this lesson** you will be able to run the discover, build, deploy, measure, feed back loop and pick the right first build.

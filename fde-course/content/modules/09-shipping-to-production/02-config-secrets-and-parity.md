@@ -1,7 +1,7 @@
 ---
 title: "Config, Secrets and Environment Parity"
 type: reading
-minutes: 3
+minutes: 5
 ---
 
 > **By the end of this lesson you will be able to:**

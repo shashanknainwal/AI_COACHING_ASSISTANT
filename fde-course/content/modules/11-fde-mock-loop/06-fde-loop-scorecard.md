@@ -1,7 +1,7 @@
 ---
 title: "Your FDE Loop Scorecard and Fix Plan"
 type: reading
-minutes: 15
+minutes: 16
 ---
 
 > **By the end of this lesson** you'll be able to turn your round scores into one honest verdict, trace each weak signal to the FDE or shared-core module that fixes it, and follow a two-week plan that ends with a second loop on fresh material.

@@ -1,7 +1,7 @@
 ---
 title: What is a Forward Deployed Engineer?
 type: reading
-minutes: 2
+minutes: 5
 ---
 
 > **By the end of this lesson** you will be able to define the FDE role, describe a typical week, and name the six skill areas this course trains.

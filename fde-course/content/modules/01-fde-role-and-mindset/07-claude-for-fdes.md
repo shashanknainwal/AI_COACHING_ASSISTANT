@@ -1,7 +1,7 @@
 ---
 title: "Claude in the FDE Toolkit: Your First API Call"
 type: reading
-minutes: 2
+minutes: 5
 ---
 
 > **By the end of this lesson** you will be able to make a Messages API call, read the response blocks safely, check `stop_reason`, and work out the cost of a call.

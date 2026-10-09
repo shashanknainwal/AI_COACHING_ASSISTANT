@@ -1,7 +1,7 @@
 ---
 title: "Retrieval-Augmented Generation (RAG)"
 type: reading
-minutes: 3
+minutes: 7
 ---
 
 > **By the end of this lesson you will be able to:**

@@ -264,3 +264,12 @@ The fix for "boring": every lesson opens on a customer problem. Readings are abo
 ### Pricing correction (2026-10-08)
 
 The writer briefs said Sonnet 5.5 cache reads cost $0.20/MTok; Anthropic's pricing page says **$0.10** (0.05x, same multiplier as Opus 5.5's $0.20). Fixed everywhere, with derived numbers recomputed, including three FDE exercises and `public/py/fde_datasets/incident.py`. Always check prices against https://platform.claude.com/docs/en/about-claude/pricing (reachable from the build environment).
+
+### Phase 5: FDE track rework (2026-10-09)
+
+- Kept all 10 modules and their lesson slugs (learner progress and links survive) instead of merging into six; only quiz files moved up one number.
+- Readings cut about 37–40% (e.g. module 2: 6,733 → 4,090 words) and each opens on the module's customer problem. Reading minutes re-estimated at about 100 words per minute (minimum 5): about 318 reading minutes across the track, down from about 720.
+- One field-drill role-play per module with its customer: kickoff with Dana Ruiz, discovery call with Marisol Grant (now Head of Claims Operations, reporting to Joan Pierce, VP Claims, matching the exercises), data findings with Owen Bradley, integration incident with Leah Park, churn numbers with Tom Haddad, prototype demo with Priya Desai, auto-refund guardrails and eval readout with Jordan Lee, outage update with Jordan Lee, executive readout with Dana Whitfield.
+- New module 11, FDE Mock Interview Loop: how to run it, Marlow & Pike take-home case (written), 75-minute ticket-router drill, customer call with Ines Carvalho, deep dive with Theo Brandt, scorecard.
+- Fixes found during the rework: a wrong cost-per-100-tickets figure in module 8, a wrong prompt-caching minimum in module 6 (now 512 tokens on current models), and Haiku 5.5 added to the model table.
+- Verified: validator 241 lessons / 0 problems; all 48 FDE exercises and the module 11 drill pass in the browser with solutions and fail with starters.

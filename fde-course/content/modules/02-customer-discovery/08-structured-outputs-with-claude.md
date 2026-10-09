@@ -1,7 +1,7 @@
 ---
 title: "Structured Outputs: Turning Messy Notes into Data with Claude"
 type: reading
-minutes: 3
+minutes: 6
 ---
 
 > **By the end of this lesson you will be able to:**
