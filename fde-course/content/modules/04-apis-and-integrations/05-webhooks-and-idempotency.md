@@ -1,34 +1,27 @@
 ---
 title: "Webhooks, Signatures, and Idempotent Processing"
 type: reading
-minutes: 16
+minutes: 3
 ---
 
 > **By the end of this lesson you will be able to:**
-> - Choose between polling and webhooks for a given integration
-> - Verify webhook signatures with HMAC, and reject replayed requests
-> - Process events that arrive twice or out of order without corrupting data
-> - Design a webhook endpoint that stays fast and reliable under load
+> - Choose between polling and webhooks
+> - Verify webhook signatures with HMAC and reject replays
+> - Process duplicate and out-of-order events without corrupting data
+
+Leah wants the ERP updated within seconds when a shipment is delivered, so Northwind will POST a webhook to your endpoint on every change. That endpoint is public, the sender retries, and events don't arrive in order. Get any of that wrong and a customer gets two "delivered" emails, or a delivered shipment flips back to "in transit".
 
 ## Polling vs. webhooks
-
-There are two ways to learn that something changed in another system:
-
-- **Polling:** you ask on a schedule. "Any shipments updated since 10:00?" Simple, and you control the pace. But you're always a little behind, and most requests return nothing new.
-- **Webhooks:** the other system calls *you* when something happens. Near real-time and efficient. But now you're running a public endpoint that receives traffic you don't control.
 
 | | Polling | Webhooks |
 |---|---|---|
 | Freshness | Minutes behind | Seconds |
-| Complexity | Low | Higher: public endpoint, security, retries |
-| Missed changes | Easy to catch up (query by time) | Possible if your endpoint was down |
-| Load | Constant, mostly wasted | Proportional to real changes |
+| Complexity | Low | Public endpoint, security, retries |
+| Missed changes | Easy to catch up by time | Possible if your endpoint was down |
 
-Most robust integrations use **both**: webhooks for speed, plus a periodic poll (the next lesson's incremental sync) to catch anything missed while your endpoint was down.
+Robust integrations use **both**: webhooks for speed, plus a periodic poll (next lesson) to catch what was missed.
 
 ## What a webhook looks like
-
-Northwind sends an HTTP POST to a URL you give them whenever a shipment changes:
 
 ```http
 POST /webhooks/northwind
@@ -40,13 +33,11 @@ Content-Type: application/json
  "data": {"shipment_id": "SHP-1003", "status": "delivered"}}
 ```
 
-Your endpoint must answer quickly with a 2xx status. If it doesn't (an error, or a timeout), Northwind **retries**, possibly several times over hours.
+If you don't answer 2xx quickly, Northwind **retries**, possibly for hours.
 
-## Rule 1: verify the signature before trusting anything
+## Rule 1: verify the signature first
 
-Your webhook URL is public. Anyone who discovers it can POST fake events ("SHP-1003 delivered!"). Senders prevent this by **signing** each request with a secret shared only with you.
-
-The most common scheme is **HMAC-SHA256** over the timestamp and the raw body:
+Anyone who finds your URL can POST fake events. The sender signs each request with a shared secret, commonly **HMAC-SHA256** over the timestamp and raw body:
 
 ```python
 import hashlib
@@ -60,68 +51,54 @@ expected = sign(secret, timestamp, raw_body)
 valid = hmac.compare_digest(expected, received_signature)
 ```
 
-Three details that matter:
+- **Sign the raw body** as received; re-serialized JSON may differ.
+- **Use `hmac.compare_digest`**, not `==`. A normal comparison stops at the first difference, and that timing leak lets an attacker guess a signature character by character.
+- **Reject timestamps older than about 5 minutes**, so a captured request can't be **replayed**. The timestamp is inside the signed message, so it can't be altered.
 
-- **Sign the raw body**, exactly as received. If you parse the JSON and re-serialize it, spacing or key order may change and the signature won't match.
-- **Use `hmac.compare_digest`**, not `==`. A normal string comparison stops at the first different character, and an attacker can measure that timing difference to guess a valid signature one character at a time. `compare_digest` takes the same time regardless.
-- **Check the timestamp.** Reject requests older than about 5 minutes. Otherwise an attacker who captures one valid request can **replay** it later, and the signature will still be valid. Including the timestamp in the signed message means it can't be changed without breaking the signature.
-
-Exact header names and formats vary by sender (Stripe, GitHub, and Shopify each do it slightly differently), so follow the sender's documentation. The principles are always the same.
+Header names vary by sender; follow their docs.
 
 ## Rule 2: expect duplicates
 
-Webhook delivery is almost always **at-least-once**. If your endpoint processed an event but the response was lost, the sender retries, and you get the same event again. If you blindly apply it twice, you might send a customer two "delivered" emails or double-count something.
-
-The fix is **idempotent processing**: record each event ID you've handled, and skip any ID you've already seen.
+Delivery is **at-least-once**. Record each event ID and skip ones you've seen:
 
 ```python
 if event["id"] in processed_ids:
-    return 200, "duplicate"      # still return 2xx so the sender stops retrying
+    return 200, "duplicate"      # still 2xx so the sender stops retrying
 processed_ids.add(event["id"])
 ```
 
-In production, `processed_ids` lives in a database table with a unique constraint on the event ID, so it survives restarts and works across multiple servers.
+In production that's a table with a unique constraint on the event ID.
 
 ## Rule 3: expect events out of order
 
-Network delays and retries mean events can arrive in a different order than they happened:
-
 ```
-08:00  shipment.updated  SHP-1003 → in_transit   (delayed, arrives second)
-08:15  shipment.updated  SHP-1003 → delivered    (arrives first)
+08:00  SHP-1003 → in_transit   (delayed, arrives second)
+08:15  SHP-1003 → delivered    (arrives first)
 ```
 
-If you apply events in arrival order, SHP-1003 ends up "in_transit," which is wrong. Protect against this by comparing timestamps (or version numbers): **only apply an event if it's newer than what you already have.** Otherwise, mark it **stale** and ignore it.
-
-ISO 8601 timestamps in the same format and time zone (`2026-03-10T08:15:00Z`) sort correctly as plain strings, which makes this check a one-liner. If formats might differ, parse them into datetimes first.
+**Apply an event only if it's newer than what you have**; otherwise mark it **stale**. ISO 8601 timestamps in the same format and zone sort correctly as strings; otherwise parse them first.
 
 ## Rule 4: respond fast, process later
 
-Senders usually time out after a few seconds. If your endpoint calls the ERP, waits for Claude, and writes to three databases before answering, you'll time out under load, and the sender will retry, which adds even more load.
-
-The standard pattern:
-
 ```
-receive → verify signature → store the raw event in a queue/table → return 200
+receive → verify signature → store raw event in a queue/table → return 200
                                           │
                      background worker ───┘→ dedupe → order check → apply
 ```
 
-In the exercise you'll do the processing inline to keep things simple, but in production, separate receiving from processing.
+Slow endpoints time out under load, which triggers retries, which adds load. (The exercise processes inline for simplicity.)
 
-## The status codes you return matter
+## Return the right status
 
-| Situation | Return | Why |
-|---|---|---|
-| Bad or missing signature | 401 | Don't process; the sender (or attacker) shouldn't retry forever |
-| Malformed body | 400 | It won't get better on retry |
-| Duplicate event | 200 | You already handled it; stop retries |
-| Event type you don't care about | 200 | Acknowledge so it isn't retried |
-| Stale (older than current state) | 200 | Handled correctly by ignoring it |
-| Your database is down | 500 | You *want* the sender to retry later |
+| Situation | Return |
+|---|---|
+| Bad or missing signature | 401 |
+| Malformed body | 400 |
+| Duplicate, ignored type, or stale event | 200 |
+| Your database is down | 500 (you want a retry) |
 
 > **Key takeaways**
-> - Use webhooks for speed and a periodic poll as a safety net.
-> - Verify an HMAC signature over the timestamp and raw body with `compare_digest`, and reject old timestamps.
-> - Delivery is at-least-once: dedupe by event ID. Events can arrive out of order: apply only newer ones.
-> - Acknowledge quickly with the right status code; process heavy work in the background.
+> - Webhooks for speed, a periodic poll as a safety net.
+> - HMAC over timestamp and raw body, `compare_digest`, reject old timestamps.
+> - Dedupe by event ID; apply only newer events.
+> - Acknowledge fast with the right status; do heavy work in the background.
