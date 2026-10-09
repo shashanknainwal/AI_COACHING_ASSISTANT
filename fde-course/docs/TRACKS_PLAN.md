@@ -273,3 +273,11 @@ The writer briefs said Sonnet 5.5 cache reads cost $0.20/MTok; Anthropic's prici
 - New module 11, FDE Mock Interview Loop: how to run it, Marlow & Pike take-home case (written), 75-minute ticket-router drill, customer call with Ines Carvalho, deep dive with Theo Brandt, scorecard.
 - Fixes found during the rework: a wrong cost-per-100-tickets figure in module 8, a wrong prompt-caching minimum in module 6 (now 512 tokens on current models), and Haiku 5.5 added to the model table.
 - Verified: validator 241 lessons / 0 problems; all 48 FDE exercises and the module 11 drill pass in the browser with solutions and fail with starters.
+
+### Phase 6: launch preparation (2026-10-09)
+
+- `priceUsd()` replaces `PRICE_USD`: $149 while only the FDE course is visible, $249 once `tracksEnabled()` (dev, unlocked previews, or `TRACKS_LIVE=true`). Checkout uses it inline unless `STRIPE_PRICE_ID` is set (which must then match).
+- New four-track home page (`components/TracksHome.tsx`), shown when tracks are enabled; the original FDE home page is served otherwise. Site title and description switch the same way.
+- Learn page, lock page and checkout copy adapt to tracks.
+- Verified: with the flag off, production serves the FDE home at $149 and track lessons 404; with `TRACKS_LIVE=true`, the four-track home at $249, C1 open, paid lessons locked; no phone overflow.
+- Owner launch steps (Vercel, production): run `supabase/setup_ai_usage_single_statement.sql`; set `ANTHROPIC_API_KEY`; set `TRACKS_LIVE=true`; remove or update `STRIPE_PRICE_ID`; redeploy; test a purchase with card 4242 4242 4242 4242.

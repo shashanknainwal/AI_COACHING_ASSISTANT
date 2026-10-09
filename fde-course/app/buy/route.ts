@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getViewer } from "@/lib/access";
-import { PRICE_USD, SITE_NAME } from "@/lib/config";
+import { priceUsd, SITE_NAME, tracksEnabled } from "@/lib/config";
 import { getStripe } from "@/lib/purchases";
 
 // GET /buy → sends the learner to Stripe Checkout (or to log in first).
@@ -18,7 +18,9 @@ export async function GET(req: Request) {
     return NextResponse.redirect(new URL("/learn", origin), 303);
   }
 
+  // A Stripe Price must match priceUsd(); without one, checkout charges priceUsd() inline.
   const priceId = process.env.STRIPE_PRICE_ID;
+  const allTracks = tracksEnabled();
   try {
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",
@@ -29,10 +31,12 @@ export async function GET(req: Request) {
               quantity: 1,
               price_data: {
                 currency: "usd",
-                unit_amount: PRICE_USD * 100,
+                unit_amount: priceUsd() * 100,
                 product_data: {
-                  name: `${SITE_NAME}: Forward Deployed Engineering course`,
-                  description: "Lifetime access to all modules, exercises and the AI tutor.",
+                  name: allTracks ? `${SITE_NAME}: all tracks` : `${SITE_NAME}: Forward Deployed Engineering course`,
+                  description: allTracks
+                    ? "Lifetime access to Foundations and the Applied AI Engineer, Applied AI Architect and Forward Deployed Engineer tracks."
+                    : "Lifetime access to all modules, exercises and the AI tutor.",
                 },
               },
             },

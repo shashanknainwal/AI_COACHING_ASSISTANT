@@ -52,7 +52,10 @@ export function stripeConfigured(): boolean {
   return Boolean(process.env.STRIPE_SECRET_KEY);
 }
 
-export const PRICE_USD = 149;
+/** One-time price: the original FDE course is $149; all four tracks are $249 once TRACKS_LIVE is on. */
+export function priceUsd(): number {
+  return tracksEnabled() ? 249 : 149;
+}
 
 /** Emails that get full access without paying (comma-separated in FREE_ACCESS_EMAILS), e.g. the instructor. */
 export function freeAccessEmails(): Set<string> {

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
-import { PRICE_USD, tracksEnabled } from "./config";
+import { priceUsd, tracksEnabled } from "./config";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
@@ -212,7 +212,7 @@ export function getCourse(): Course {
       });
     });
   }
-  const course = { title: json.title, tagline: json.tagline, priceUsd: PRICE_USD, tracks, modules };
+  const course = { title: json.title, tagline: json.tagline, priceUsd: priceUsd(), tracks, modules };
   courseCache = { enabled, course };
   return course;
 }

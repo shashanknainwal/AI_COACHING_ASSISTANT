@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { getViewer, toClientViewer } from "@/lib/access";
 import { getCourse, FDE_TRACK } from "@/lib/content";
-import { SITE_NAME } from "@/lib/config";
+import { SITE_NAME, tracksEnabled } from "@/lib/config";
 import AccountBadge from "@/components/AccountBadge";
 import BuyButton from "@/components/BuyButton";
+import TracksHome from "@/components/TracksHome";
 import { Avatar, Mark } from "@/components/Playbook";
 
 export const dynamic = "force-dynamic";
@@ -119,7 +120,12 @@ function HeroComposition() {
 }
 
 export default async function Home() {
-  // The home page sells the FDE track until the three-track launch (docs/TRACKS_PLAN.md, phase 6).
+  // The three-track home page once tracks are live; the original FDE page until then.
+  if (tracksEnabled()) return <TracksHome course={getCourse()} viewer={toClientViewer(await getViewer())} />;
+  return <FdeHome />;
+}
+
+async function FdeHome() {
   const full = getCourse();
   const course = { ...full, modules: full.modules.filter((m) => m.track === FDE_TRACK) };
   const viewer = toClientViewer(await getViewer());

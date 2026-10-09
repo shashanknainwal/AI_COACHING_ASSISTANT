@@ -10,7 +10,7 @@ export const metadata = { title: "Your course" };
 export const dynamic = "force-dynamic";
 
 const NOTICES: Record<string, string> = {
-  unavailable: "Purchases aren't open yet. Module 1 is free to take right now.",
+  unavailable: "Purchases aren't open yet. The free lessons are open to everyone right now.",
   error: "We couldn't start checkout. Please try again in a minute.",
 };
 
@@ -96,8 +96,10 @@ export default async function LearnPage({ searchParams }: { searchParams: Promis
         {!viewer.hasPurchased && (
           <div className="mt-12 flex flex-wrap items-center gap-4 rounded-3xl bg-graphite p-6 text-paper">
             <p className="flex-1 text-sm text-paper-3">
-              <span className="block font-serif text-xl text-paper">Unlock every engagement.</span>
-              Module 1 is free. Get all {course.modules.length} modules, every exercise and the AI tutor with a one-time payment.
+              <span className="block font-serif text-xl text-paper">{multi ? "Unlock every track." : "Unlock every engagement."}</span>
+              {multi
+                ? "The first lessons of every track are free. Get all four tracks, every graded task and three mock loops with a one-time payment."
+                : `Module 1 is free. Get all ${course.modules.length} modules, every exercise and the AI tutor with a one-time payment.`}
             </p>
             <BuyButton viewer={clientViewer} price={course.priceUsd} />
           </div>

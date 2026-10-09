@@ -34,13 +34,14 @@ export default async function LessonPage({ params }: { params: Promise<{ module:
           </p>
           <h1 className="mt-2 font-serif text-3xl font-semibold leading-tight text-graphite">{lesson.title}</h1>
           <p className="mt-4 text-graphite-2">
-            This lesson is part of the full course. Get lifetime access to all {course.modules.length} modules, every exercise and the AI tutor for a
-            one-time ${course.priceUsd}.
+            This lesson is part of the full course. Get lifetime access to{" "}
+            {course.tracks.length > 1 ? "all four tracks, every graded task and the mock loops" : `all ${course.modules.length} modules, every exercise and the AI tutor`} for
+            a one-time ${course.priceUsd}.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3">
             <BuyButton viewer={clientViewer} price={course.priceUsd} />
             <Link href={`/learn?track=${mod.track}`} className="text-sm text-graphite-3 hover:text-graphite">
-              Back to your engagement map
+              Back to your map
             </Link>
           </div>
         </div>
