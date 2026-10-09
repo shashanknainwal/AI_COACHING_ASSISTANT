@@ -32,7 +32,7 @@ The time is characters 11-19 of `ts`. `llm_call` lines end with `"<latency_ms>ms
 
 ```python
 {"calls": 180, "errors": 0, "cache_hit_rate": 0.933, "cache_write_rate": 0.067,
- "avg_cost_usd": 0.00266, "avg_latency_ms": 974}
+ "avg_cost_usd": 0.00238, "avg_latency_ms": 974}
 ```
 
 `calls` counts `llm_call` events and `errors` counts `llm_error` events. The other values come from `llm_call` events: the share with `cache_read_tokens > 0`, the share with `cache_write_tokens > 0`, mean cost (6 decimals) and mean latency (whole ms).
@@ -41,7 +41,7 @@ The time is characters 11-19 of `ts`. `llm_call` lines end with `"<latency_ms>ms
 
 ```python
 {"bad_version": "v1.8.0", "deployed_at": "14:00:00", "rolled_back_at": "14:45:00",
- "first_error_at": "14:20:24", "failed_requests": 16, "extra_cost_usd": 0.7664}
+ "first_error_at": "14:20:24", "failed_requests": 16, "extra_cost_usd": 0.7997}
 ```
 
 - `bad_version`: the version with the most errors.

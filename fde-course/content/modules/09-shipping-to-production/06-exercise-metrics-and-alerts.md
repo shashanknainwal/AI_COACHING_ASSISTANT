@@ -27,7 +27,7 @@ Your structured logs from the last exercise are flowing. Now turn them into the 
  "p50_ms": 1194,         # percentiles of llm_call latency_ms (None if no calls)
  "p95_ms": 4671,
  "cache_hit_rate": 0.92, # share of llm_call with cache_read_tokens > 0, 3 decimals (None if no calls)
- "cost_usd": 0.0786}     # sum of llm_call cost_usd, 4 decimals
+ "cost_usd": 0.0619}     # sum of llm_call cost_usd, 4 decimals
 ```
 
 **3. `evaluate_alerts(metrics, rules)`** returns one string per firing rule, in rule order:

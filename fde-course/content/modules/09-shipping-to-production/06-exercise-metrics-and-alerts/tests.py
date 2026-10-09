@@ -36,7 +36,7 @@ def test_window_metrics_real_data():
     """window_metrics() on the service's records"""
     got = window_metrics(RECORDS, START + 75 * 60, START + 90 * 60)
     assert got == {"requests": 30, "errors": 5, "error_rate": 0.167, "p50_ms": 1194, "p95_ms": 4671,
-                   "cache_hit_rate": 0.92, "cost_usd": 0.0786}, f"got {got}"
+                   "cache_hit_rate": 0.92, "cost_usd": 0.0619}, f"got {got}"
 
 
 def test_evaluate_alerts():

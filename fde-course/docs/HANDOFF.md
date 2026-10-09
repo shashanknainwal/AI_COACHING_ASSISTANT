@@ -1,12 +1,12 @@
 # FDE Playbook: project handoff
 
-Read this first when resuming. It records what exists, what's live, the decisions behind it, how to verify changes, and what's next. Last updated: 2026-10-06.
+Read this first when resuming. It records what exists, what's live, the decisions behind it, how to verify changes, and what's next. Last updated: 2026-10-06 (logins live).
 
 ## 1. The product
 
-- **What:** a browser-based course on Forward Deployed Engineering (FDE), sold at **$149 one-time**. Brand: **FDE Playbook**. Domain: **https://fdeplaybook.dev** (Cloudflare Registrar, DNS pointed at Vercel).
+- **What:** a browser-based course on Forward Deployed Engineering (FDE), sold at **$149 one-time** for the original FDE course and **$249** for all four tracks once `TRACKS_LIVE=true`. Brand: **FDE Playbook**. Domain: **https://fdeplaybook.dev** (Cloudflare Registrar, DNS pointed at Vercel).
 - **Layout:** DataCamp-style split view: lesson on the left, Monaco code editor + console on the right. Python only, run in the browser with Pyodide and graded by hidden tests.
-- **Content:** 10 modules, 107 lessons, 48 graded exercises, 10 module quizzes + a 20-question final assessment, about 39.5 hours. Module 1 is free.
+- **Content:** four tracks (Foundations C1–C5, Applied AI Engineer E1–E7, Applied AI Architect A1–A7, FDE modules 1–11), 241 lessons. The original FDE course (modules 1–10) is the only track visible on production until TRACKS_LIVE=true. See docs/TRACKS_PLAN.md.
 - **Owner/instructor:** "Who I am" section (first person, no name yet): seasoned AI architect, worked at Amazon, now FDE Architect at an AI startup, works in the FDE model, has shipped AI solutions to enterprise customers. The owner may later add name, photo and LinkedIn.
 - **Owner's email:** hybridboy11@gmail.com (to go in `FREE_ACCESS_EMAILS` in Vercel, not in code).
 
@@ -15,6 +15,8 @@ Read this first when resuming. It records what exists, what's live, the decision
 - **Repo:** `shashanknainwal/AI_COACHING_ASSISTANT`. Everything is in `fde-course/`; the root `README.md` is the owner's original file and must not be changed.
 - **Branch workflow:** develop on `claude/fde-course-platform-gf06sa`, open a PR to `main`, and the owner merges it. Vercel deploys `main` to production and every other branch to a preview URL. PR #1 (platform + modules) and PR #2 (redesign, trace viewer, diagrams, access controls) are **merged**. After a merge, restart the branch from `main` before new work.
 - **Vercel:** team `jev-a8de`, project `ai-coaching-assistant`, Root Directory `fde-course`, production branch `main`.
+- **Canonical address:** the site serves from **`https://www.fdeplaybook.dev`** (the apex redirects to www). Use the www address for Supabase redirect URLs and for the Stripe webhook, because Stripe doesn't follow redirects.
+- **Supabase:** project `etoeogxzkanrtntudvnp` ("supabase-chestnut-lens"), connected through the Vercel integration. The Site URL is `https://www.fdeplaybook.dev`; the redirect URLs include the www and apex `/auth/callback` addresses and `https://*-jev-a8de.vercel.app/**`. Login emails send through Resend SMTP if the owner set it up; otherwise Supabase's built-in sender allows about 2 emails per hour.
 
 ### Code map (inside `fde-course/`)
 
@@ -22,8 +24,8 @@ Read this first when resuming. It records what exists, what's live, the decision
 |---|---|
 | Syllabus and personas | `content/course.json` (modules, summaries, outcomes, `customer` persona per module) |
 | Lessons | `content/modules/<NN-module>/<NN-lesson>.md`; exercises have a folder with `starter.py`, `solution.py`, `tests.py`, optional `setup.py` |
-| Content loading | `lib/content.ts` (splits an exercise's intro into `briefHtml`, tags objectives/takeaways callouts, `PRICE_USD` from config) |
-| Config | `lib/config.ts`: `PRICE_USD = 149`, `SITE_NAME`, `SITE_URL`, `FREE_MODULES`, `freeAccessEmails()`, `previewUnlocked()`, `appMode()` |
+| Content loading | `lib/content.ts` (splits an exercise's intro into `briefHtml`, tags objectives/takeaways callouts, price from `priceUsd()`) |
+| Config | `lib/config.ts`: `priceUsd()` ($149, or $249 when `tracksEnabled()`), `tracksEnabled()`, `aiDailyLimit()`, `SITE_NAME`, `SITE_URL`, `FREE_MODULES`, `freeAccessEmails()`, `previewUnlocked()`, `appMode()` |
 | Access | `lib/access.ts` (`getViewer`, `canAccessModule`); every gate goes through `getViewer` |
 | Payments | `app/buy/route.ts`, `app/api/stripe/webhook/route.ts`, `lib/purchases.ts`, `app/purchase/success/page.tsx` |
 | Auth | `lib/supabase/{server,client}.ts`, `proxy.ts`, `app/login/*`, `app/auth/{callback,signout}` |
@@ -45,8 +47,8 @@ Read this first when resuming. It records what exists, what's live, the decision
 | `NEXT_PUBLIC_SITE_URL` | `https://fdeplaybook.dev` | Set in Vercel |
 | `PREVIEW_UNLOCK_ALL` | `true` on the **Preview** environment only; ignored on production | Set in Vercel (Preview) |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or `NEXT_PUBLIC_SUPABASE_ANON_KEY`), `SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`) | Logins, progress sync, purchases | Added by the Vercel–Supabase integration, which points to Supabase project `etoeogxzkanrtntudvnp`. Use that project (run the migration and URL configuration there). A second project, `xmhqjgqraxrfiyddoouf`, was created by hand and is unused. |
-| `FREE_ACCESS_EMAILS` | Comma-separated emails with full access without paying | **Not set yet** (owner's email) |
-| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` (optional) | Payments ($149) | **Not set yet** |
+| `FREE_ACCESS_EMAILS` | Comma-separated emails with full access without paying | Set (owner's email); verified working |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` (optional) | Payments (price from `priceUsd()`) | **Not set yet** |
 | `ANTHROPIC_API_KEY` | AI tutor | **Not set yet** |
 
 ## 4. Status
@@ -57,7 +59,7 @@ Read this first when resuming. It records what exists, what's live, the decision
 | 2. Logins and payments (code) | Done; accounts not connected |
 | 3. All 10 modules of content | Done |
 | UI redesign "The Playbook" (look B) + features 1–5 | Done and merged (PR #2) |
-| 4. Deployment | Live on Vercel + fdeplaybook.dev; Supabase, Stripe, Anthropic key still to connect |
+| 4. Deployment | Live on Vercel + www.fdeplaybook.dev; **logins work** (PR #3 merged); Stripe and the Anthropic key still to connect |
 
 ### Design decisions (look B, "The Playbook")
 
@@ -65,19 +67,29 @@ Paper reading pages with serif headings; dark "mission console" for code. Featur
 
 Customer personas (fictional), per module: 1 Brightline Health / Dana Ruiz (VP Operations); 2 Lumen Insurance / Marisol Grant (VP Claims); 3 Cobalt Supply / Owen Bradley (CFO); 4 Northwind Freight / Leah Park (Head of Integrations); 5 Pinecrest Fitness / Tom Haddad (COO); 6 Harbor Bank / Priya Desai (Head of Digital Support); 7–9 Brightway Retail / Jordan Lee (VP of Customer Support); 10 NorthStar Logistics / Dana Whitfield (VP Operations).
 
+### New direction: three tracks (decided 2026-10-08)
+
+The course is expanding into three tracks for people targeting frontier-lab jobs: Applied AI Engineer, Applied AI Architect, and a reworked Forward Deployed Engineer track. They sit on a shared core and each ends in a mock interview loop.
+
+- Owner decisions: keep the FDE Playbook brand; $249 all-access (the live site stays at $149 until the tracks launch); research and syllabus before building.
+- The research, syllabus, owner answers, build order and **build log** are in **`docs/TRACKS_PLAN.md`**. Read it before any track work.
+- **Phase 1 (platform) is built** on the branch: tracks behind `TRACKS_LIVE`, drill/written/roleplay lesson types, `/api/coach` grading, the daily AI limit, and seed lessons in C1, C3, C5 and E6. **Phase 2 (shared core C1–C5) is done: 32 lessons.** The cloud environment can't reach darioamodei.com or openai.com; essay lessons were written from full texts the owner pasted. **Phase 3 (Applied AI Engineer track, E1–E7, 42 lessons) is done.** **Phase 4 (Applied AI Architect track, A1–A7) is done.** **Phase 5 (FDE rework + module 11 mock loop) is done.** **Next: phase 6, launch (home page, $249, TRACKS_LIVE=true, AI-usage table, PR to main).**
+- Before launch: run `supabase/setup_ai_usage_single_statement.sql` in Vercel → Storage → Query, set `ANTHROPIC_API_KEY`, then `TRACKS_LIVE=true` (the price switches to $249 automatically; if `STRIPE_PRICE_ID` is set, point it at a $249 Price or remove it).
+- Owner "From my loop" stories are in C1 and C5 (blockquotes starting with **From my loop**). Add more only from the owner's own words; never invent them.
+
 ## 5. Next steps, in order
 
-1. **Supabase (logins):**
+1. **Supabase (logins):** done on 2026-10-06. Owner login verified.
    1. **Done 2026-10-06:** tables created in project `etoeogxzkanrtntudvnp` ("supabase-chestnut-lens") with `supabase/setup_single_statement.sql`, through Vercel → Storage → Query. That tool runs one statement at a time, which is why the single-statement version exists.
    2. Under Authentication → URL Configuration, set the Site URL to `https://fdeplaybook.dev` and add the redirect URLs `https://fdeplaybook.dev/auth/callback` and `https://*-jev-a8de.vercel.app/**`.
    3. Copy the Project URL, the publishable key and the secret key into Vercel. Add `FREE_ACCESS_EMAILS=hybridboy11@gmail.com` too.
    4. Redeploy, then test a magic-link login.
-2. **Stripe (payments):**
+2. **Stripe (payments):** in progress
    1. Copy the secret key from the Stripe dashboard.
-   2. Add a webhook at `https://fdeplaybook.dev/api/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`, then copy its signing secret.
-   3. Optionally create a $149 Price and put its ID in `STRIPE_PRICE_ID`.
+   2. Add a webhook at `https://www.fdeplaybook.dev/api/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`, then copy its signing secret.
+   3. Optionally create a Price matching `priceUsd()` and put its ID in `STRIPE_PRICE_ID`.
    4. Test with card 4242 4242 4242 4242, then switch to live keys.
-3. **Anthropic API key** for the tutor. Before launch, consider a per-user tutor rate limit, which isn't built yet.
+3. **Anthropic API key** for the tutor, grading and role-play. The per-learner daily limit is built (`AI_DAILY_LIMIT`); it needs `supabase/setup_ai_usage_single_statement.sql` run once.
 4. **Production email:** Supabase's built-in email sender is rate-limited. Before launch, set up custom SMTP (for example Resend or Postmark).
 5. **Nice to have:** certificates of completion; instructor name, photo and LinkedIn; a refund policy line (a refund already removes access).
 
@@ -85,7 +97,7 @@ Customer personas (fictional), per module: 1 Brightline Health / Dana Ruiz (VP O
 
 ```bash
 cd fde-course
-node scripts/validate-content.mjs     # all 107 lessons: solutions pass, starters fail, quizzes well-formed
+node scripts/validate-content.mjs     # every lesson (113 as of phase 1): solutions pass, starters fail, drills, rubrics and quizzes well-formed
 npx tsc --noEmit
 npm run build
 ```
@@ -108,7 +120,7 @@ For UI changes:
   - Tests reset simulator state with `_sim.calls.clear(); _sim._queue.clear()`.
 - **Quizzes:** pass mark is ceil(0.8 × N); vary which option position is correct.
 - **Facts about Claude models and the API:** check them with the `claude-api` skill, never from memory.
-  - Current models and prices: claude-opus-5-5 at $4/$20 per million tokens, claude-sonnet-5-5 at $2/$10, claude-haiku-4-5 at $1/$5 (no effort parameter).
+  - Current models and prices: claude-opus-5-5 at $4/$20 per million tokens, claude-sonnet-5-5 at $2/$10 (cache reads: $0.20 on Opus 5.5, $0.10 on Sonnet 5.5; check platform.claude.com/docs/en/about-claude/pricing), claude-haiku-5-5 at $0.10/$0.50 (prompts up to 100K tokens); the older claude-haiku-4-5 is $1/$5.
   - Opus 5.5 rejects forced `tool_choice` and assistant prefill.
   - Structured outputs use `output_config.format`.
 - **Commits:** end with the `Co-Authored-By` and `Claude-Session` lines. Open a PR only when the owner asks.

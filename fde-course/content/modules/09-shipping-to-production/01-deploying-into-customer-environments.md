@@ -1,76 +1,61 @@
 ---
 title: "Deploying into Customer Environments"
 type: reading
-minutes: 16
+minutes: 5
 ---
 
 > **By the end of this lesson you will be able to:**
-> - Map out a customer's environment and its constraints before you write deployment code
-> - Choose how the customer reaches Claude (the Claude API or their cloud provider) and why it matters to them
-> - Get through a security review by preparing answers before the questions arrive
-> - Plan a rollout that customers' IT and change-management processes will accept
+> - Map a customer's environment before writing deployment code
+> - Choose with the customer how they reach Claude
+> - Prepare a security brief and a rollout plan
 
-## You don't own production
-
-At a startup you deploy to your own cloud account, with your own rules. As an FDE, production usually belongs to the **customer**: their cloud account, their network, their identity system, their change-approval board. The code that worked on your laptop now has to run where:
-
-- Outbound internet is blocked except for an **allowlist** of hosts, often through a proxy.
-- Secrets live in **their** secrets manager (AWS Secrets Manager, Google Secret Manager, Azure Key Vault, HashiCorp Vault).
-- Logs must go to **their** logging and monitoring tools (Datadog, Splunk, CloudWatch, Grafana).
-- Users sign in through **their** identity provider (Okta, Microsoft Entra ID) with single sign-on.
-- Every production change needs a ticket, a reviewer, and sometimes a weekly change window.
-
-None of this is a nuisance to work around. It's how a large company keeps its customers' data safe, and fitting into it is a core FDE skill.
+Jordan Lee wants Brightway's ticket-triage assistant live before the holiday peak. It works on your laptop, but production is Brightway's cloud account, behind their proxy, under their change board.
 
 ## Map the environment first
 
-In week one, before deployment code, get answers to these questions:
+Their allowlists, secrets manager, logging tools, identity provider and change tickets set the rules. In week one, ask:
 
 | Area | Ask |
 |---|---|
-| **Compute** | Where will this run? Containers (Kubernetes, ECS, Cloud Run), serverless functions, or VMs? Who operates it? |
-| **Network** | Which outbound hosts are allowed? Is there a proxy (and a custom TLS certificate)? How do internal services reach ours? |
-| **Data** | Which data may leave their environment? Is there a data-residency requirement (EU only, US only)? What personal data is involved? |
-| **Identity** | How do users and services authenticate? Who grants access to production? |
-| **Secrets** | Which secrets manager? How are secrets injected (environment variables, mounted files)? Who rotates them? |
-| **Observability** | Where do logs, metrics and alerts go? Who is on call, us or them? |
-| **Change process** | How does a change reach production? Approvals, change windows, freeze periods? |
+| **Compute** | Containers, serverless or VMs? Who operates it? |
+| **Network** | Allowed outbound hosts? Proxy with custom TLS certificate? |
+| **Data** | What may leave? Residency rules? Personal data? |
+| **Identity** | How do users and services authenticate? |
+| **Secrets** | Which manager? Env vars or files? Who rotates? |
+| **Observability** | Where do logs and alerts go? Who is on call? |
+| **Change process** | Approvals, change windows, freezes? |
 
-Write the answers in a one-page **environment doc**. It prevents the classic week-six surprise: "Oh, production can't reach the internet."
+Put the answers in a one-page **environment doc**. It prevents the week-six surprise: "production can't reach the internet."
 
 ## How the customer reaches Claude
 
-Claude is available directly through the **Claude API** and through major cloud platforms: **Amazon Bedrock**, **Google Cloud Vertex AI** and **Microsoft Foundry**. For many enterprises, that choice matters a lot:
+Claude is available through the **Claude API**, **Amazon Bedrock**, **Google Cloud Vertex AI** and **Microsoft Foundry**. Using a cloud they already have can skip months of procurement, stay inside an approved security setup, and offer regional options.
 
-- **Existing contracts and billing.** Spending through a cloud provider they already have a contract with can avoid months of new-vendor procurement.
-- **Security and network posture.** Traffic and access controls can stay within the cloud environment and identity system their security team already approved.
-- **Data residency.** Regional options may help meet residency requirements.
+The trade-off: features and models can differ or arrive later by platform, and each has its own client, model IDs and auth. **Check every feature you depend on (structured outputs, caching, batches, specific tools) on their platform before building.** The SDKs have a client per platform, so most code stays the same.
 
-The trade-off: features and model availability can differ by platform and arrive at different times, and each platform has its own client class, model IDs and authentication. Check that every feature your design depends on (structured outputs, prompt caching, batches, specific tools) is available on the customer's platform **before** you build on it. The Anthropic SDKs have dedicated clients for each platform, so most application code stays the same.
+## The security brief
 
-## The security review
+Write it before the questionnaire arrives:
 
-Expect a security questionnaire, often long. Prepare a short **security brief** before anyone asks:
+- **Data flow diagram:** what goes to the model, what is logged.
+- **Data handling:** personal data touched, fields minimized, retention (yours and the provider's published terms).
+- **Access control:** who can reach the system, logs and secrets; least privilege.
+- **Secrets:** where they live, how they rotate, none in code or logs.
+- **LLM threat model:** prompt injection, exfiltration through tools, over-permissioned agents, and your guardrails (Module 7).
+- **Logging and audit:** metadata not conversations, redaction, audit trails for actions.
 
-- **Data flow diagram:** what data goes where, including what is sent to the model and what is logged.
-- **Data handling:** what personal data the system touches, how it's minimized (send only the fields needed), and how long anything is retained, by you and by the model provider (point to the provider's published data-retention terms).
-- **Access control:** who can access the system, the logs and the secrets; least privilege for service accounts.
-- **Secrets:** where they live, how they're rotated, and that none are in code or logs.
-- **Threat model for LLM features:** prompt injection, data exfiltration through tools, over-permissioned agents, and the guardrails from Module 7.
-- **Logging and audit:** what's logged (metadata, not conversations, unless agreed), redaction of personal data, and audit trails for actions.
-
-Answering clearly and early shortens reviews from months to weeks.
+Early answers cut reviews from months to weeks.
 
 ## Packaging and rollout
 
-- **Ship a container image** with pinned dependency versions, and configure it entirely through environment variables (next lesson). The same image runs in dev, staging and prod.
-- **Health checks:** a `/healthz` endpoint that checks the service itself, and a readiness check that verifies required configuration and dependencies at startup.
-- **Infrastructure as code** (Terraform, CloudFormation, Helm charts), so the customer's platform team can review and reproduce the deployment.
-- **Staged rollout:** dev → staging (with realistic data) → a pilot group → everyone. Pair it with the shadow and canary techniques from Module 8.
-- **A rollback plan** written before the first deploy. "Redeploy the previous image tag" is fine, as long as someone has tested it.
+- **One container image** with pinned dependencies, configured only through environment variables, running in dev, staging and prod.
+- **Health checks:** `/healthz` for liveness, plus a readiness check that verifies config and dependencies at startup.
+- **Infrastructure as code** (Terraform, CloudFormation, Helm) their platform team can review.
+- **Staged rollout:** dev → staging → pilot group → everyone, with shadow and canary from Module 8.
+- **A tested rollback plan** before the first deploy.
 
 > **Key takeaways**
-> - In customer environments, their network, secrets, identity, observability and change process set the rules; map them in week one.
-> - Claude is available through the Claude API, Amazon Bedrock, Google Cloud Vertex AI and Microsoft Foundry. Choose with the customer, and check feature availability before you depend on it.
-> - Prepare a security brief (data flow, data handling, access, secrets, LLM threat model, logging) before the questionnaire arrives.
-> - Ship one configurable container image, add health checks and infrastructure as code, roll out in stages, and test the rollback.
+> - Map compute, network, data, identity, secrets, observability and change process in week one.
+> - Claude runs on the Claude API, Bedrock, Vertex AI and Foundry; check feature availability on the customer's platform first.
+> - Have a security brief ready before the questionnaire.
+> - One configurable image, health checks, IaC, staged rollout, tested rollback.

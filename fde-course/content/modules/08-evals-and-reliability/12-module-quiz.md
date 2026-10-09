@@ -99,11 +99,11 @@ questions:
       - "The batch API is disabled"
     answer: 0
     explain: "Short prefixes are silently not cached, and any change in the prefix (like a timestamp) breaks the match. Always verify with usage."
-  - q: "Evals show: Opus 95% ($1,518/mo), Sonnet low effort 93% ($382/mo), Haiku 86% ($161/mo). The agreed bar is 92%. What do you recommend?"
+  - q: "Evals show: Opus 95% ($1,518/mo), Sonnet low effort 93% ($339/mo), Haiku 86% ($161/mo). The agreed bar is 92%. What do you recommend?"
     options:
       - "Haiku, because it's cheapest"
       - "Opus, because it's best"
-      - "Sonnet at low effort: it clears the bar at a quarter of Opus's cost; present Opus as an option with its extra cost"
+      - "Sonnet at low effort: it clears the bar at under a quarter of Opus's cost; present Opus as an option with its extra cost"
       - "Run all three and average the answers"
     answer: 2
     explain: "Pick the cheapest configuration that clears the quality bar (including critical slices) and present the trade-off as a decision."

@@ -1,40 +1,28 @@
 ---
 title: "Claude as an Integration Assistant"
 type: reading
-minutes: 14
+minutes: 5
 ---
 
 > **By the end of this lesson you will be able to:**
-> - Identify the integration tasks where Claude saves hours, and the ones where it shouldn't be in the loop
-> - Use Claude at *design time* to propose mappings that become reviewed, deterministic code
-> - Share the minimum data needed, and validate every suggestion before it's used
-> - Recognize when an integration should call Claude at *run time*
+> - Use Claude at design time to propose mappings that become reviewed code
+> - Validate every suggestion and share the minimum data
+> - Recognize when an integration should call Claude at run time
+
+Northwind is onboarding a new carrier partner, and Leah's team has to map yet another schema onto the ERP: dozens of fields, tedious and error-prone. Claude can do the first pass in minutes, if you keep it out of places it doesn't belong.
 
 ## Design time vs. run time
 
-There are two very different ways to use Claude in integration work:
-
 | | Design time | Run time |
 |---|---|---|
-| When | While you build the integration | On every record, every sync |
-| Example | "Propose a field mapping between these two schemas" | "Read this carrier email and extract the delivery date" |
-| Output | Code or config that a human reviews and commits | Data that flows straight into the target |
+| Example | "Propose a field mapping between these schemas" | "Extract the delivery date from this carrier email" |
+| Output | Code or config a human reviews and commits | Data flowing straight into the target |
 | Cost | A few cents, once | Per record, forever |
-| Risk | Low: a human checks it | Higher: needs validation, monitoring, fallbacks |
+| Risk | Low: a human checks it | Needs validation, monitoring, fallbacks |
 
-**Prefer design time whenever the problem is deterministic.** If a field mapping is fixed (`status_code: DL → delivered`), have Claude help you write it once, review it, test it, and run plain code forever. It's cheaper, faster, reproducible, and easier to debug. Use Claude at run time only for inputs that genuinely need reading comprehension, like free-text emails, PDFs, or wildly inconsistent partner data.
-
-## Where Claude saves real time
-
-- **Reading API docs:** paste the relevant section and ask for a client function with pagination and error handling. Then review it as carefully as you'd review a colleague's code.
-- **Proposing field mappings:** given both schemas and a few sample records, Claude is very good at suggesting which field maps to which, including transformations (units, code lookups, date formats).
-- **Explaining unfamiliar formats:** EDI segments, SOAP envelopes, legacy fixed-width files.
-- **Generating test fixtures:** "Give me 10 realistic edge-case records for this schema: missing fields, unusual units, unknown codes."
-- **Decoding errors:** a cryptic 422 body from an ERP, explained in plain English with likely causes.
+**Prefer design time when the problem is deterministic.** Have Claude help write `DL → delivered` once, review it, test it, and run plain code forever. Also useful at design time: drafting a client from API docs (review it like a colleague's code), explaining EDI or SOAP formats, generating edge-case fixtures, and decoding a cryptic 422 body.
 
 ## The mapping workflow
-
-Onboarding a new carrier means mapping their schema onto the ERP's, again. With dozens of fields, it's tedious and error-prone. A good workflow:
 
 ```
 source samples + target schema ──► Claude (structured output)
@@ -50,34 +38,24 @@ source samples + target schema ──► Claude (structured output)
                         └───────► reviewed mapping config ──► committed, tested code
 ```
 
-Three things make this safe:
+1. **Structured outputs with an enum of target fields**, so Claude can only suggest targets that exist.
+2. **Validation in code**: reject unknown source fields (a hallucinated `amount` when samples have `amt_usd`) and two sources mapped to one target; flag required targets left uncovered.
+3. **A confidence threshold and a human**: low confidence goes to review, and *every* mapping gets sign-off before commit.
 
-1. **Structured outputs with an enum of target fields.** Claude can only suggest targets that exist.
-2. **Validation in code.** Reject suggestions that reference source fields that don't exist, or map two sources to the same target.
-3. **A confidence threshold and a human.** Low-confidence suggestions are routed to review; *all* of them get human sign-off before the mapping is committed.
-
-Claude's confidence numbers aren't calibrated probabilities. Treat them as a useful *ranking* ("look at these first"), not as a guarantee. The validation rules and the human review are what make the result trustworthy.
+Claude's confidence numbers aren't calibrated probabilities. Use them to rank what to review first; validation and review make the result trustworthy.
 
 ## Share the minimum data
 
-When you send customer data to any external service, including an LLM API, follow the customer's data policies and send only what's needed:
+- Field names, types and 2–3 sample values are usually enough; redact or fake real names and addresses.
+- **Never send secrets** in prompts.
+- Confirm the customer's data-handling requirements for AI services before sending production data (a discovery question for the security team).
 
-- For mapping, **field names, types, and 2-3 sample values** are usually enough. You rarely need real customer names or addresses; redact or fake them.
-- **Never send secrets** (API keys, tokens) in prompts.
-- Check whether the customer requires specific data-handling terms for AI services, and confirm before sending production data. This is a conversation to have in discovery, with the security team you mapped in Module 2.
+## When run time is right
 
-## When run time is the right call
-
-Some integrations genuinely need Claude per record:
-
-- A carrier sends delivery exceptions as free-text emails.
-- Partner invoices arrive as PDFs in 40 different layouts.
-- Product descriptions from suppliers must be categorized into the retailer's taxonomy.
-
-For these, apply everything from Modules 2 and 3: structured outputs, rules first, batching, validation, fallbacks for failures, cost estimates, and an evaluation set before go-live. And in Module 7, you'll go one step further: giving Claude **tools** (like your integration's `get_shipment` function) so it can look things up itself while answering questions.
+Free-text exception emails, invoice PDFs in 40 layouts, supplier descriptions to categorize: these need Claude per record. Apply Modules 2 and 3: structured outputs, rules first, batching, validation, fallbacks, cost estimates and an evaluation set. Module 7 adds tools, like your `get_shipment` function.
 
 > **Key takeaways**
-> - Prefer design-time use: Claude helps you write mappings and code that a human reviews and commits.
-> - Constrain suggestions with structured outputs, validate them in code, and route low-confidence ones to review.
-> - Confidence scores are a ranking, not a guarantee; human sign-off makes mappings trustworthy.
-> - Send the minimum data, never secrets, and follow the customer's data policies.
+> - Prefer design time: Claude drafts, a human reviews, plain code runs.
+> - Constrain with an enum, validate in code, route low confidence to review.
+> - Confidence is a ranking, not a guarantee.
+> - Send the minimum data and never secrets.

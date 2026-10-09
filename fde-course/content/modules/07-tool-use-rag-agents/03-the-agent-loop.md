@@ -1,27 +1,15 @@
 ---
 title: "The Agent Loop"
 type: reading
-minutes: 16
+minutes: 6
 ---
 
 > **By the end of this lesson you will be able to:**
-> - Write the agent loop that lets Claude chain several tool calls to finish a task
-> - Bound the loop so it can't run forever or run up a surprise bill
-> - Trace an agent's run step by step for debugging and audits
-> - Explain when to use the SDK's tool runner instead of a hand-written loop
+> - Write the loop that lets Claude chain tool calls
+> - Bound it so it can't run forever or run up a bill
+> - Trace each run, and know when to use the SDK's tool runner
 
-## From one tool call to many
-
-In the last exercise, Claude made at most one round of tool calls. Real requests often need a chain:
-
-> *"My lamp order is late. Can you check what's going on and make it right?"*
-
-1. Look up the order → get the shipment ID.
-2. Track the shipment → it's delayed.
-3. Check the policy and issue a late-delivery credit.
-4. Explain what happened and what was done.
-
-Claude decides each next step based on what the previous one returned. Running that decision-making repeatedly is the **agent loop**.
+Jordan forwards a real ticket: *"My lamp order is late. Can you check what's going on and make it right?"* Answering it takes a chain: look up the order, track the shipment, check the policy and issue a credit, then explain. Claude picks each step from what the last one returned. Running that repeatedly is the **agent loop**.
 
 ## The loop
 
@@ -43,22 +31,24 @@ def run_agent(client, question, max_steps=6):
     raise RuntimeError("agent did not finish within max_steps")
 ```
 
-That's the whole pattern: **call → if Claude wants tools, run them all and send all results back → repeat until Claude stops asking.** Everything else is about making it safe and observable.
+Everything else is safety and observability.
 
 <div data-diagram="agent-loop"></div>
 
 ## Bound everything
 
-An unbounded loop is a production incident waiting to happen. A confused agent can call the same failing tool over and over, and every iteration resends a growing history (more tokens, more cost).
+A confused agent can call the same failing tool forever, and each step resends a growing history.
 
-- **Maximum steps:** stop after N iterations and fail clearly (or hand off to a human). 5-10 is typical for customer-service tasks.
-- **Maximum cost or tokens:** track `usage` across iterations and stop if a budget is exceeded.
-- **Time limits:** a user waiting in chat won't wait two minutes.
-- **Limits inside tools:** caps on refund amounts, rate limits on emails. The loop's limits protect against runaway behavior; the tools' limits protect against harmful behavior.
+| Limit | Typical setting |
+|---|---|
+| Max steps | 5-10 for support tasks; fail clearly or hand off to a human |
+| Token or cost budget | Sum `usage` across steps; stop when exceeded |
+| Time | A customer in chat won't wait two minutes |
+| Limits inside tools | Credit caps, email rate limits |
+
+Loop limits stop runaway behavior; tool limits stop harmful behavior.
 
 ## Make it traceable
-
-When an agent does something surprising, you need to know exactly what happened. Record a **trace** for every run:
 
 ```
 step 1  tool_use  lookup_order(order_id="B-1001")         → shipped, SHP-1003
@@ -67,25 +57,16 @@ step 3  tool_use  issue_store_credit(C-100, 25, late_delivery) → new balance $
 step 4  end_turn  "I'm sorry your lamp is delayed..."
 ```
 
-Log the tool name, input, result (or error), and timing for each call, plus the final answer and total tokens. Traces are how you debug, how you answer "why did the assistant give this customer $25?", and the raw material for evaluations in Module 8.
+Log each call's name, input, result or error and timing, plus the final answer and total tokens. The trace answers "why did the assistant give this customer $25?" and feeds the evals in Module 8.
 
-## Errors inside the loop
-
-When a tool fails, return an `is_error` result and let the loop continue. Claude can often recover: retry with a corrected input, try a different tool, or explain the problem. Only stop the loop for problems Claude can't fix (the max-step limit, an exhausted budget, or a failure in your own infrastructure).
-
-## Context grows with every step
-
-Each iteration appends Claude's turn and the tool results. Large tool results (a full order history, a 50-page document) quickly fill the context and raise cost. Keep tool results **compact**: return the fields Claude needs, not entire database rows. For very long-running agents, the API also offers context-management features (such as clearing old tool results and server-side compaction) that you can read about when you need them.
+When a tool fails, return an `is_error` result and keep looping; Claude often recovers. Stop only for what Claude can't fix: the step limit, the budget, or your own infrastructure failing. Keep tool results **compact** (the fields Claude needs, not whole rows); for very long runs the API offers context management such as clearing old tool results and server-side compaction.
 
 ## The SDK's tool runner
 
-Writing the loop yourself is the best way to understand it, and you'll do that in the next exercise. In production code, the Anthropic SDK offers a **tool runner** (a beta feature) that runs this loop for you: you write plain Python functions, decorate them, and the runner handles calling the API, running tools, and sending results back.
+In production, the SDK's **tool runner** (beta) runs this loop for you from decorated functions:
 
 ```python
-import anthropic
 from anthropic import beta_tool
-
-client = anthropic.Anthropic()
 
 @beta_tool
 def lookup_order(order_id: str) -> str:
@@ -96,28 +77,17 @@ def lookup_order(order_id: str) -> str:
     """
     return json.dumps(find_order(order_id))
 
-runner = client.beta.messages.tool_runner(
-    model="claude-opus-5-5",
-    max_tokens=16000,
-    tools=[lookup_order],
-    messages=[{"role": "user", "content": "Where is order B-1001?"}],
-)
-for message in runner:        # one message per step; the loop ends when Claude stops calling tools
+runner = client.beta.messages.tool_runner(model="claude-opus-5-5", max_tokens=16000,
+    tools=[lookup_order], messages=[{"role": "user", "content": "Where is order B-1001?"}])
+for message in runner:        # one message per step
     print(message)
 ```
 
-The runner generates tool schemas from your function signatures and docstrings, and still lets you inspect each step, so you can log traces and add approval gates. (The course's in-browser simulator supports the manual loop; use the tool runner on your own machine with the real SDK.)
+It builds schemas from docstrings and still lets you inspect each step. (The in-browser simulator supports the manual loop only.)
 
-## Agents aren't always the answer
-
-Agents are powerful and genuinely expensive: multiple calls per request, harder to test, harder to predict. Before building one, check:
-
-- **Is the task truly multi-step and hard to specify in advance?** If the steps are always "look up order, then track shipment," write that as plain code that calls Claude once at the end. (Lesson 7 covers this trade-off.)
-- **Is the value worth the cost and latency?**
-- **Can mistakes be caught and undone?**
+Before building an agent, check that the steps really can't be written in advance, that the value is worth several calls per request, and that mistakes can be caught and undone (lesson 7).
 
 > **Key takeaways**
-> - The agent loop: call, run every requested tool, send all results back in one message, repeat until Claude stops asking.
-> - Bound it: max steps, token/cost budgets, time limits, and hard limits inside risky tools.
-> - Record a trace of every step; keep tool results compact; let Claude recover from tool errors.
-> - In production, the SDK's tool runner implements this loop for you; use an agent only when the task really needs one.
+> - Loop: call, run every tool, send all results in one message, repeat until Claude stops.
+> - Bound steps, tokens, time, and risky tools.
+> - Trace every step, keep results compact, let Claude recover from tool errors.

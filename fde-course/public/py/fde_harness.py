@@ -133,7 +133,7 @@ def run(user_code, setup_code="", test_code="", mode="run"):
             try:
                 _exec(test_code, test_ns, "tests.py")
             except BaseException as exc:  # noqa: BLE001
-                tests.append({"name": "load tests", "passed": False, "message": f"{type(exc).__name__}: {exc}"})
+                tests.append({"id": "load_tests", "name": "load tests", "passed": False, "message": f"{type(exc).__name__}: {exc}"})
             for name, fn in list(test_ns.items()):
                 if not (name.startswith("test_") and callable(fn)):
                     continue
@@ -141,13 +141,13 @@ def run(user_code, setup_code="", test_code="", mode="run"):
                 try:
                     with contextlib.redirect_stdout(io.StringIO()):
                         fn()
-                    tests.append({"name": label, "passed": True, "message": ""})
+                    tests.append({"id": name, "name": label, "passed": True, "message": ""})
                 except AssertionError as exc:
-                    tests.append({"name": label, "passed": False, "message": str(exc) or "Assertion failed"})
+                    tests.append({"id": name, "name": label, "passed": False, "message": str(exc) or "Assertion failed"})
                 except BaseException as exc:  # noqa: BLE001
-                    tests.append({"name": label, "passed": False, "message": f"{type(exc).__name__}: {exc}"})
+                    tests.append({"id": name, "name": label, "passed": False, "message": f"{type(exc).__name__}: {exc}"})
         else:
-            tests.append({"name": "Your code ran without errors", "passed": False, "message": "Fix the error above first."})
+            tests.append({"id": "runs", "name": "Your code ran without errors", "passed": False, "message": "Fix the error above first."})
         result["tests"] = tests
         result["passed"] = bool(tests) and all(t["passed"] for t in tests)
 

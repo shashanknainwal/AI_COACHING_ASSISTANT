@@ -20,7 +20,7 @@ The eval suite says several configurations are good enough. Brightway's CFO asks
 **2. `measure(client, tickets, model="claude-sonnet-5-5")`** runs `triage_cached` on every ticket and returns:
 
 ```python
-{"requests": 20, "total_cost": 0.010109, "per_request": 0.000505, "cache_hit_rate": 0.95}
+{"requests": 20, "total_cost": 0.008038, "per_request": 0.000402, "cache_hit_rate": 0.95}
 ```
 
 Round costs to 6 decimals and the hit rate to 3. A hit is a response that read from the cache.

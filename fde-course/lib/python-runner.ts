@@ -1,6 +1,8 @@
 "use client";
 
 export interface TestResult {
+  /** The test function's name, e.g. test_l2_scan_prefix. */
+  id?: string;
   name: string;
   passed: boolean;
   message: string;

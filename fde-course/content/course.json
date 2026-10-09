@@ -1,6 +1,77 @@
 {
   "title": "Forward Deployed Engineering: The Complete Course",
   "tagline": "Discovery, messy data, integrations, LLM systems built with Claude, and production support — the full FDE playbook, taught through hands-on Python exercises you complete right in your browser.",
+  "tracks": [
+    {
+      "slug": "core",
+      "title": "Frontier Foundations",
+      "short": "Foundations",
+      "summary": "How frontier labs hire, the fundamentals every round assumes, the progressive coding screen, reading the labs, and the values round.",
+      "audience": "everyone, before any track.",
+      "headline": "Learn the loop.\nThen pass it.",
+      "modules": [
+        "c1-how-labs-hire",
+        "c2-llm-fundamentals",
+        "c3-progressive-coding",
+        "c4-reading-the-labs",
+        "c5-values-and-behavioral"
+      ]
+    },
+    {
+      "slug": "engineer",
+      "title": "Applied AI Engineer Playbook",
+      "short": "Applied AI Engineer",
+      "summary": "Build production LLM systems: prompting, agents, retrieval, evals, latency and cost, then the system design round.",
+      "audience": "backend and ML engineers.",
+      "headline": "Build it for production.\nDefend it in the loop.",
+      "modules": [
+        "e1-production-prompting",
+        "e2-tools-and-agents",
+        "e3-retrieval-at-scale",
+        "e4-evals-engineering",
+        "e5-production-concerns",
+        "e6-llm-system-design",
+        "e7-engineer-mock-loop"
+      ]
+    },
+    {
+      "slug": "architect",
+      "title": "Applied AI Architect Playbook",
+      "short": "Applied AI Architect",
+      "summary": "Design the customer's solution, run the proof of concept, and defend tradeoffs to executives.",
+      "audience": "senior engineers and solutions architects.",
+      "headline": "Design the solution.\nWin the room.",
+      "modules": [
+        "a1-architects-job",
+        "a2-enterprise-deployment",
+        "a3-choosing-the-approach",
+        "a4-poc-that-closes",
+        "a5-executive-communication",
+        "a6-reference-architectures",
+        "a7-architect-mock-loop"
+      ]
+    },
+    {
+      "slug": "fde",
+      "title": "Forward Deployed Engineer Playbook",
+      "short": "Forward Deployed Engineer",
+      "summary": "Ship working AI inside a customer's messy systems, across ten engagements.",
+      "audience": "engineers who like customers.",
+      "modules": [
+        "01-fde-role-and-mindset",
+        "02-customer-discovery",
+        "03-python-data-wrangling",
+        "04-apis-and-integrations",
+        "05-sql-and-data-modeling",
+        "06-building-with-claude",
+        "07-tool-use-rag-agents",
+        "08-evals-and-reliability",
+        "09-shipping-to-production",
+        "10-capstone",
+        "11-fde-mock-loop"
+      ]
+    }
+  ],
   "modules": [
     {
       "slug": "01-fde-role-and-mindset",
@@ -51,7 +122,7 @@
         "company": "Lumen Insurance",
         "sector": "Insurance",
         "contact": "Marisol Grant",
-        "role": "VP Claims",
+        "role": "Head of Claims Operations",
         "replies": [
           "You understood our claims process better than our last two vendors.",
           "Perfect. I'm forwarding this to the CFO as is.",
@@ -327,6 +398,486 @@
           "This is exactly what I'll show our CEO. Thank you.",
           "My coordinators can finally focus on the hard cases.",
           "Halvorsen noticed the difference already. Great work."
+        ]
+      }
+    },
+    {
+      "slug": "c1-how-labs-hire",
+      "code": "C1",
+      "title": "How Frontier Labs Hire",
+      "summary": "The loop at Anthropic, OpenAI and Perplexity, round by round: what each round tests, what the AI-use rules are, and why the written application is your first interview.",
+      "outcomes": [
+        "Map each round of a frontier-lab loop to what it tests",
+        "Tell official process facts from reported ones",
+        "Write a specific, first-draft \"Why this lab?\" answer"
+      ],
+      "plannedMinutes": 90,
+      "plannedLessons": [],
+      "customer": {
+        "company": "The hiring loop",
+        "sector": "Shared core",
+        "contact": "Nadia Okafor",
+        "role": "Interview coach",
+        "replies": [
+          "That's the kind of answer that gets you to the next round.",
+          "Good. Specific beats impressive every time.",
+          "Better than most candidates I've seen. Keep that standard."
+        ]
+      }
+    },
+    {
+      "slug": "c2-llm-fundamentals",
+      "code": "C2",
+      "title": "LLM Fundamentals Interviewers Probe",
+      "summary": "Tokens, context windows, sampling, tool use, caching, structured outputs, model choice and cost math: the fundamentals every applied round assumes.",
+      "outcomes": [
+        "Explain tokens, context and caching precisely",
+        "Estimate cost and latency for a workload",
+        "Pick a model and justify it"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Fundamentals",
+        "sector": "Shared core",
+        "contact": "Nadia Okafor",
+        "role": "Interview coach",
+        "replies": [
+          "That's the kind of answer that gets you to the next round.",
+          "Good. Specific beats impressive every time.",
+          "Better than most candidates I've seen. Keep that standard."
+        ]
+      }
+    },
+    {
+      "slug": "c3-progressive-coding",
+      "code": "C3",
+      "title": "Progressive Coding Drills",
+      "summary": "The multi-level coding screen: design the data model first, extend without rewriting, and stay calm against the clock.",
+      "outcomes": [
+        "Recognise the progressive-screen format",
+        "Design data models that survive new requirements",
+        "Clear four levels inside the time limit"
+      ],
+      "plannedMinutes": 180,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Coding screen",
+        "sector": "Shared core",
+        "contact": "Nadia Okafor",
+        "role": "Interview coach",
+        "replies": [
+          "That's the kind of answer that gets you to the next round.",
+          "Good. Specific beats impressive every time.",
+          "Better than most candidates I've seen. Keep that standard."
+        ]
+      }
+    },
+    {
+      "slug": "c4-reading-the-labs",
+      "code": "C4",
+      "title": "Reading the Labs",
+      "summary": "How to read and critique what lab leaders publish: steelman, assumptions, strongest counterargument, and what would change your mind.",
+      "outcomes": [
+        "Summarise a lab essay in your own words",
+        "Write a fair, specific critique",
+        "Turn your reading into a sharper \"why this lab\""
+      ],
+      "plannedMinutes": 120,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Reading the labs",
+        "sector": "Shared core",
+        "contact": "Nadia Okafor",
+        "role": "Interview coach",
+        "replies": [
+          "That's the kind of answer that gets you to the next round.",
+          "Good. Specific beats impressive every time.",
+          "Better than most candidates I've seen. Keep that standard."
+        ]
+      }
+    },
+    {
+      "slug": "c5-values-and-behavioral",
+      "code": "C5",
+      "title": "Values & Behavioral",
+      "summary": "The round that reportedly fails the most candidates: mission versus money, disagreement, failure and safety tradeoffs, practised live.",
+      "outcomes": [
+        "Tell true, specific stories in STAR shape",
+        "Handle mission and values questions honestly",
+        "Stay composed under follow-up questions"
+      ],
+      "plannedMinutes": 120,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Values round",
+        "sector": "Shared core",
+        "contact": "Nadia Okafor",
+        "role": "Interview coach",
+        "replies": [
+          "That's the kind of answer that gets you to the next round.",
+          "Good. Specific beats impressive every time.",
+          "Better than most candidates I've seen. Keep that standard."
+        ]
+      }
+    },
+    {
+      "slug": "e1-production-prompting",
+      "code": "E1",
+      "title": "Production Prompting & Structured Outputs",
+      "summary": "System prompts, JSON schemas, extraction reliability and prompt regression tests.",
+      "outcomes": [
+        "Write prompts that survive real inputs",
+        "Get schema-valid output every time",
+        "Catch prompt regressions before users do"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Prompting",
+        "sector": "Applied AI Engineer",
+        "contact": "Leo Martins",
+        "role": "Staff engineer",
+        "replies": [
+          "Ship it. That's production-grade thinking.",
+          "Clean. I'd approve that PR.",
+          "That's the bar we hold in the loop."
+        ]
+      }
+    },
+    {
+      "slug": "e2-tools-and-agents",
+      "code": "E2",
+      "title": "Tool Use & Agents",
+      "summary": "Tool loops, MCP servers, sub-agents, failure handling and traces.",
+      "outcomes": [
+        "Build a tool loop that fails safely",
+        "Design tools a model uses well",
+        "Debug an agent from its trace"
+      ],
+      "plannedMinutes": 180,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Agents",
+        "sector": "Applied AI Engineer",
+        "contact": "Leo Martins",
+        "role": "Staff engineer",
+        "replies": [
+          "Ship it. That's production-grade thinking.",
+          "Clean. I'd approve that PR.",
+          "That's the bar we hold in the loop."
+        ]
+      }
+    },
+    {
+      "slug": "e3-retrieval-at-scale",
+      "code": "E3",
+      "title": "Retrieval at Scale",
+      "summary": "Chunking, hybrid search, reranking, retrieval evals and citations.",
+      "outcomes": [
+        "Choose a chunking and search strategy",
+        "Measure retrieval quality",
+        "Ground answers with citations"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Retrieval",
+        "sector": "Applied AI Engineer",
+        "contact": "Leo Martins",
+        "role": "Staff engineer",
+        "replies": [
+          "Ship it. That's production-grade thinking.",
+          "Clean. I'd approve that PR.",
+          "That's the bar we hold in the loop."
+        ]
+      }
+    },
+    {
+      "slug": "e4-evals-engineering",
+      "code": "E4",
+      "title": "Evals as Engineering",
+      "summary": "Golden sets, LLM-as-judge calibration and regression gates in CI.",
+      "outcomes": [
+        "Build a golden set from real traffic",
+        "Calibrate an LLM judge against humans",
+        "Gate releases on eval results"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Evals",
+        "sector": "Applied AI Engineer",
+        "contact": "Leo Martins",
+        "role": "Staff engineer",
+        "replies": [
+          "Ship it. That's production-grade thinking.",
+          "Clean. I'd approve that PR.",
+          "That's the bar we hold in the loop."
+        ]
+      }
+    },
+    {
+      "slug": "e5-production-concerns",
+      "code": "E5",
+      "title": "Production Concerns",
+      "summary": "Streaming, latency budgets, prompt caching, rate limits, fallbacks, observability and cost.",
+      "outcomes": [
+        "Hit a latency budget",
+        "Cut cost with caching and model choice",
+        "Degrade gracefully under rate limits"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Production",
+        "sector": "Applied AI Engineer",
+        "contact": "Leo Martins",
+        "role": "Staff engineer",
+        "replies": [
+          "Ship it. That's production-grade thinking.",
+          "Clean. I'd approve that PR.",
+          "That's the bar we hold in the loop."
+        ]
+      }
+    },
+    {
+      "slug": "e6-llm-system-design",
+      "code": "E6",
+      "title": "LLM System Design Interview",
+      "summary": "Design rounds for LLM systems: requirements, architecture, evals, failure modes and cost, graded against an interviewer's rubric.",
+      "outcomes": [
+        "Scope a design question in five minutes",
+        "Present an architecture with explicit tradeoffs",
+        "Name failure modes and how you'd detect them"
+      ],
+      "plannedMinutes": 180,
+      "plannedLessons": [],
+      "customer": {
+        "company": "System design",
+        "sector": "Applied AI Engineer",
+        "contact": "Leo Martins",
+        "role": "Staff engineer",
+        "replies": [
+          "Ship it. That's production-grade thinking.",
+          "Clean. I'd approve that PR.",
+          "That's the bar we hold in the loop."
+        ]
+      }
+    },
+    {
+      "slug": "e7-engineer-mock-loop",
+      "code": "E7",
+      "title": "Mock Interview Loop",
+      "summary": "A full practice loop: timed progressive coding, system design, project deep dive and values.",
+      "outcomes": [
+        "Run a full loop end to end",
+        "Find your weakest round",
+        "Fix it before the real thing"
+      ],
+      "plannedMinutes": 240,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Mock loop",
+        "sector": "Applied AI Engineer",
+        "contact": "Leo Martins",
+        "role": "Staff engineer",
+        "replies": [
+          "Ship it. That's production-grade thinking.",
+          "Clean. I'd approve that PR.",
+          "That's the bar we hold in the loop."
+        ]
+      }
+    },
+    {
+      "slug": "a1-architects-job",
+      "code": "A1",
+      "title": "The Architect's Job",
+      "summary": "Pre-sales to deployment, solution design docs, and working with Sales and Product.",
+      "outcomes": [
+        "Explain the applied architect role",
+        "Run technical discovery",
+        "Write a solution design doc"
+      ],
+      "plannedMinutes": 120,
+      "plannedLessons": [],
+      "customer": {
+        "company": "The role",
+        "sector": "Applied AI Architect",
+        "contact": "Grace Liu",
+        "role": "Principal architect",
+        "replies": [
+          "The CTO will sign off on that.",
+          "Clear tradeoffs, honest numbers. That's an architect.",
+          "That's the conversation the customer needed."
+        ]
+      }
+    },
+    {
+      "slug": "a2-enterprise-deployment",
+      "code": "A2",
+      "title": "Enterprise Deployment of Claude",
+      "summary": "Direct API versus cloud platforms, data handling, security reviews and compliance questions.",
+      "outcomes": [
+        "Compare deployment options for an enterprise",
+        "Answer a security questionnaire",
+        "Plan for data residency"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Enterprise",
+        "sector": "Applied AI Architect",
+        "contact": "Grace Liu",
+        "role": "Principal architect",
+        "replies": [
+          "The CTO will sign off on that.",
+          "Clear tradeoffs, honest numbers. That's an architect.",
+          "That's the conversation the customer needed."
+        ]
+      }
+    },
+    {
+      "slug": "a3-choosing-the-approach",
+      "code": "A3",
+      "title": "Choosing the Approach",
+      "summary": "Prompting versus RAG versus agents versus fine-tuning; build versus buy; cost models at scale.",
+      "outcomes": [
+        "Choose an approach and defend it",
+        "Model total cost at scale",
+        "Know when not to use an LLM"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Approach",
+        "sector": "Applied AI Architect",
+        "contact": "Grace Liu",
+        "role": "Principal architect",
+        "replies": [
+          "The CTO will sign off on that.",
+          "Clear tradeoffs, honest numbers. That's an architect.",
+          "That's the conversation the customer needed."
+        ]
+      }
+    },
+    {
+      "slug": "a4-poc-that-closes",
+      "code": "A4",
+      "title": "Proofs of Concept That Close",
+      "summary": "Success criteria, bake-offs, eval-driven proofs of concept and honest readouts.",
+      "outcomes": [
+        "Define success criteria up front",
+        "Run a fair bake-off",
+        "Present results honestly"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Proof of concept",
+        "sector": "Applied AI Architect",
+        "contact": "Grace Liu",
+        "role": "Principal architect",
+        "replies": [
+          "The CTO will sign off on that.",
+          "Clear tradeoffs, honest numbers. That's an architect.",
+          "That's the conversation the customer needed."
+        ]
+      }
+    },
+    {
+      "slug": "a5-executive-communication",
+      "code": "A5",
+      "title": "Executive Communication",
+      "summary": "Architecture one-pagers, objection handling, and role-play with a skeptical CTO and a cautious CISO.",
+      "outcomes": [
+        "Write a one-page architecture brief",
+        "Handle executive objections",
+        "Say no without losing the deal"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Executives",
+        "sector": "Applied AI Architect",
+        "contact": "Grace Liu",
+        "role": "Principal architect",
+        "replies": [
+          "The CTO will sign off on that.",
+          "Clear tradeoffs, honest numbers. That's an architect.",
+          "That's the conversation the customer needed."
+        ]
+      }
+    },
+    {
+      "slug": "a6-reference-architectures",
+      "code": "A6",
+      "title": "Reference Architectures",
+      "summary": "Support automation, document processing, knowledge assistants and coding assistants, each with tradeoffs.",
+      "outcomes": [
+        "Reuse proven patterns",
+        "Adapt a pattern to a customer",
+        "Spot when a pattern doesn't fit"
+      ],
+      "plannedMinutes": 150,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Patterns",
+        "sector": "Applied AI Architect",
+        "contact": "Grace Liu",
+        "role": "Principal architect",
+        "replies": [
+          "The CTO will sign off on that.",
+          "Clear tradeoffs, honest numbers. That's an architect.",
+          "That's the conversation the customer needed."
+        ]
+      }
+    },
+    {
+      "slug": "a7-architect-mock-loop",
+      "code": "A7",
+      "title": "Mock Interview Loop",
+      "summary": "A full practice loop: case presentation, architecture design, customer role-play and values.",
+      "outcomes": [
+        "Run a full architect loop",
+        "Present under pressure",
+        "Fix your weakest round"
+      ],
+      "plannedMinutes": 240,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Mock loop",
+        "sector": "Applied AI Architect",
+        "contact": "Grace Liu",
+        "role": "Principal architect",
+        "replies": [
+          "The CTO will sign off on that.",
+          "Clear tradeoffs, honest numbers. That's an architect.",
+          "That's the conversation the customer needed."
+        ]
+      }
+    },
+    {
+      "slug": "11-fde-mock-loop",
+      "title": "FDE Mock Interview Loop",
+      "summary": "A full practice loop for forward deployed engineering roles: a take-home customer case, a timed coding drill, a live customer call, and a deep dive on what you built, scored like the real thing.",
+      "outcomes": [
+        "Run a full FDE interview loop end to end",
+        "Handle a messy customer case under time pressure",
+        "Defend your own project in a deep dive",
+        "Find and fix your weakest round"
+      ],
+      "plannedMinutes": 240,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Mock loop",
+        "sector": "FDE interview practice",
+        "contact": "Theo Brandt",
+        "role": "FDE hiring manager (practice)",
+        "replies": [
+          "That's the round that gets offers.",
+          "You scoped it like someone who's done this before.",
+          "Clear, honest, and you owned the outcome. Strong signal."
         ]
       }
     }

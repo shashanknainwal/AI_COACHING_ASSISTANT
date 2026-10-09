@@ -1,9 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { getViewer } from "@/lib/access";
+import { takeAiCall } from "@/lib/ai-usage";
 
 // With accounts switched on, only signed-in learners can use the tutor (it costs API
-// credits). TODO: add a per-user daily limit before launch traffic.
+// credits), and each answer counts against their daily AI limit (lib/ai-usage.ts).
 
 const SYSTEM = `You are the AI tutor inside an online course on Forward Deployed Engineering.
 Learners write Python in a browser editor. Their code is graded by hidden tests.
@@ -51,6 +52,9 @@ export async function POST(req: Request) {
     `<latest_output>\n${clip(body.output, 6000) || "(not run yet)"}\n</latest_output>`,
     body.question ? `<learner_question>\n${clip(body.question, 2000)}\n</learner_question>` : "The learner didn't type a question. Give the most useful next hint.",
   ].join("\n\n");
+
+  const limited = await takeAiCall(viewer);
+  if (limited) return NextResponse.json({ answer: limited }, { status: 429 });
 
   const client = new Anthropic();
   try {

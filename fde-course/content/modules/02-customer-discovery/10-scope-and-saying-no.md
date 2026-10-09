@@ -1,30 +1,19 @@
 ---
 title: Scope, Change Requests, and the Art of Saying No
 type: reading
-minutes: 15
+minutes: 6
 ---
 
 > **By the end of this lesson you will be able to:**
 > - Write a scope that names what's out as clearly as what's in
-> - Run a lightweight change-request process that keeps the sponsor in charge of trade-offs
-> - Say no (or "not now") in a way that strengthens the relationship
+> - Run a change-request process that keeps the sponsor in charge of trade-offs
+> - Say "not now" in a way that strengthens the relationship
 
-## Scope creep is the default
+Lumen's claims pilot is working, and now everyone wants more: commercial claims, fraud scoring, a dashboard for the CFO. Each one is asked for as if it's small. This is how a six-week pilot becomes a five-month slog.
 
-Every successful engagement attracts requests. Once users see something working, they imagine ten more things it could do. That's a good sign! It's also how a six-week pilot becomes a five-month slog that never quite launches.
+Scope creep arrives as many reasonable requests ("while you're in there…", "it's basically the same") plus your own *gold-plating*. Requests are valuable signals. You need a process that turns each one into an explicit decision.
 
-Scope creep rarely arrives as one big request. It arrives as many small, reasonable-sounding ones:
-
-- "While you're in there, could it also…"
-- "Can we add one more document type? It's basically the same."
-- "The CFO saw the demo and wants a dashboard."
-- An FDE's own perfectionism: polishing features nobody asked for, which is called *gold-plating*.
-
-You can't stop requests, and you shouldn't want to; they're valuable signals. What you need is a **process** that turns each request into an explicit decision.
-
-## Writing a scope that holds
-
-Your engagement brief (Module 1) contains a scope. Make it sturdy:
+## A scope that holds
 
 ```
 SCOPE — Lumen Insurance claims intake, phase 1 (Mar 10 – Apr 18)
@@ -47,58 +36,37 @@ Assumptions
 Capacity: 25 engineering days
 ```
 
-Three things make this work:
-
-1. **An explicit "out of scope" list.** It's much easier to point at something already written down than to argue about it later.
-2. **Assumptions.** If an assumption breaks (no API by March 17), you have a legitimate reason to revisit the plan.
-3. **Capacity in days.** Requests can then be discussed in a common unit: time.
+The **out-of-scope list** is easier to point at than to argue about. **Assumptions** give a legitimate reason to revisit the plan when one breaks. **Capacity in days** gives every request a common unit.
 
 ## The iron triangle
 
-Scope, time, and resources are linked. If one grows, at least one of the others must give:
+Scope, time and people are linked. In most engagements time and people are fixed, so the honest answer to "can we add X?" is: **"Yes, if we remove Y or move the date."** Make the trade-off visible and let the sponsor choose.
 
-```
-           SCOPE
-           /   \
-          /     \
-       TIME ─── PEOPLE
-```
+## Change requests in five steps
 
-For most FDE engagements, **time is fixed** (a pilot ends on a date, or a renewal is coming) and **people are fixed** (you and maybe one more engineer). So the honest answer to "can we add X?" is almost always: **"Yes, if we remove Y or move the date."** Your job is to make that trade-off visible, and let the sponsor choose.
+1. **Log it:** what, who asked, why.
+2. **Understand the problem:** "What would this let you do?" It may already be met by something in scope.
+3. **Estimate** in days.
+4. **Lay out options:** accept (if it fits), swap (drop lower-priority work), slip (move the date) or defer (phase 2).
+5. **Sponsor decides; record it** the same day.
 
-## A lightweight change-request process
+A new *must-have* can justify dropping *could-haves*. A new *could-have* displaces nothing; it waits unless there's spare capacity.
 
-You don't need forms and committees. You need five steps, and you need to do them every time:
-
-1. **Log it.** Write down the request, who asked, and why. Use a shared doc or tracker.
-2. **Understand the problem behind it.** "What would this let you do?" Sometimes the real need is met by something already in scope.
-3. **Estimate it** in days, roughly.
-4. **Lay out the options.** Accept (if it fits), swap (drop lower-priority work), slip (move the date), or defer (phase 2).
-5. **Let the sponsor decide, then record the decision** in a short email.
-
-Priority matters in step 4. A new *must-have* can justify dropping *could-haves*. A new *could-have* shouldn't displace anything; it waits for phase 2 unless there's spare capacity.
-
-## How to say no without saying "no"
-
-Saying a flat "no" damages relationships. Saying "yes" to everything destroys engagements. Here are the scripts experienced FDEs use.
+## Saying no without "no"
 
 **"Yes, and here's the trade-off."**
-> "We can absolutely add commercial claims. It's about 6 days of work. To keep the April 18 date, we'd defer the weekly metrics report. Or we keep everything and finish around April 28. Which would you prefer?"
+> "We can add commercial claims. It's about 6 days. To keep April 18 we'd defer the weekly metrics report, or keep everything and finish around April 28. Which do you prefer?"
 
 **"Not now, but it's on the list."**
-> "That's a great idea for phase 2. I've added it to the phase 2 list with your name on it, so it won't get lost. For now, let's get intake live."
+> "Great phase 2 idea. It's on the list with your name on it."
 
 **"Help me understand the problem."**
-> "Before we scope a dashboard, what decision would the CFO make with it?" *(Often a weekly email with three numbers solves it.)*
+> "Before we scope a dashboard, what decision would the CFO make with it?" *(Often a weekly email with three numbers.)*
 
 **"Let's ask the sponsor."**
 > "This changes our plan, so I'd like Joan to make the call. I'll send her the options today."
 
-Notice that none of these say no. They make the cost visible and route the decision to the right person. This keeps you on the customer's side of the table.
-
-## Writing the decision down
-
-Every scope decision deserves a two-line email, sent the same day:
+None say no. They make the cost visible and route the decision to the right person.
 
 ```
 Subject: Decision — commercial claims (CR-3)
@@ -107,24 +75,11 @@ Hi Joan, confirming today's decision: we're adding commercial claims to phase 1
 and deferring the weekly metrics report to phase 2. The April 18 date is unchanged.
 ```
 
-Six weeks later, when someone asks "why isn't the report done?", you'll be glad you sent it.
+**Your own scope:** before building anything unplanned, ask whether it moves the agreed metric, whether the customer asked for it, and what you're not doing instead.
 
-## Protecting the team from yourself
-
-The hardest scope to control is your own. FDEs are builders, and building is fun. Before starting anything not in the plan, ask:
-
-- Does this move the agreed metric?
-- Did the customer ask for it, or did I decide they need it?
-- What am I *not* doing while I do this?
-
-If you can't answer those well, write it on the phase 2 list and move on.
-
-## Turning it into a tool
-
-Evaluating a change request is mostly arithmetic: current load, capacity, the request's size and priority, and which lower-priority items could make room. In the next exercise you'll build a calculator that does this and drafts the message to the sponsor, so every request gets the same fair, fast treatment.
+The next exercise builds a calculator that evaluates a request and drafts the sponsor message.
 
 > **Key takeaways**
-> - Write an explicit out-of-scope list, assumptions, and capacity in days.
-> - Time and people are usually fixed, so added scope means removing scope or moving the date.
-> - Run every request through: log → understand → estimate → options → sponsor decides → record.
-> - Don't say "no": make the trade-off visible and let the sponsor choose.
+> - Write an out-of-scope list, assumptions and capacity in days.
+> - Added scope means removing scope or moving the date.
+> - Log → understand → estimate → options → sponsor decides → record.

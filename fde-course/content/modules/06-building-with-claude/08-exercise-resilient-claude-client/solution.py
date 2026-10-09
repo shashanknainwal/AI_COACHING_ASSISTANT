@@ -5,7 +5,7 @@ MODEL = "claude-opus-5-5"
 # Dollars per million tokens. Keep prices in one place: they change over time.
 PRICES = {
     "claude-opus-5-5": {"input": 4.00, "cache_write": 5.00, "cache_read": 0.20, "output": 20.00},
-    "claude-sonnet-5-5": {"input": 2.00, "cache_write": 2.50, "cache_read": 0.20, "output": 10.00},
+    "claude-sonnet-5-5": {"input": 2.00, "cache_write": 2.50, "cache_read": 0.10, "output": 10.00},
 }
 
 POLICY_MANUAL = "Harbor Bank support policy. " + " ".join(

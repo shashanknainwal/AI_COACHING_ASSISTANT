@@ -178,6 +178,23 @@ body {
   font-size: 1.15rem;
   color: #a7f3d0;
 }
+.playbook-prose blockquote.callout-loop {
+  font-family: var(--font-sans);
+  font-style: normal;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--color-rule);
+  border-left: 4px solid var(--color-vermilion);
+  border-radius: 14px;
+  padding: 1.1em 1.3em;
+  box-shadow: 0 18px 40px -30px rgba(29, 27, 22, 0.5);
+}
+.playbook-prose blockquote.callout-loop p:first-child strong {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-vermilion);
+}
 .playbook-prose blockquote.callout-takeaways li::marker {
   color: #6ee7b7;
 }

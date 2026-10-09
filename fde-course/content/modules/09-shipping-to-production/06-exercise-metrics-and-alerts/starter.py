@@ -19,7 +19,7 @@ def make_records():
         latency = int(500 + rand() * 900 + (rand() * 6000 if degraded and rand() < 0.3 else 0))
         hit = rand() < (0.95 if not degraded else 0.9)
         records.append({"ts": ts, "event": "llm_call", "latency_ms": latency, "cache_read_tokens": 3000 if hit else 0,
-                        "cost_usd": 0.0026 if hit else 0.0094})
+                        "cost_usd": 0.0019 if hit else 0.0091})
     return records
 
 

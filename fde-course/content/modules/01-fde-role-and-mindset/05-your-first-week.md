@@ -1,48 +1,33 @@
 ---
 title: Your First Week on an Engagement
 type: reading
-minutes: 12
+minutes: 5
 ---
 
-The first week of an engagement sets the tone for everything that follows. Customers decide quickly whether you're a vendor to be managed or a partner to be trusted. Here is a playbook that works.
+> **By the end of this lesson** you will be able to run a kickoff, find the four key people, and write a one-page engagement brief.
 
-## Before day one
+Monday is your Brightline kickoff with Dana Ruiz. By Friday she'll have decided whether you're a vendor to manage or a partner to trust.
 
-Read everything your company already knows about the customer: the sales notes, the contract or order form, any proof-of-concept results, and support tickets. Then write down three things:
+## Before and during the kickoff
 
-1. **What was promised.** Sales may have committed to outcomes, timelines, or features. You need to know before the customer reminds you.
-2. **Your hypotheses.** "I think the highest-value use case is X because of Y." You'll test these in discovery.
-3. **Your questions.** Especially about data access, security review, and who decides.
-
-## The kickoff meeting
-
-The kickoff is usually a 60-minute call or meeting with the customer's key people. Your goals:
-
-- Confirm the **business problem** and how success will be measured.
-- Identify the **people** and their roles (more on this below).
-- Surface **risks** early: data access, security reviews, competing projects, holidays, budget cycles.
-- Leave with **action items** that have an owner and a date.
-
-Take structured notes during the meeting. You'll parse a set of real-looking kickoff notes in the next exercise, and the format there is a good template.
+Beforehand, read the sales notes and contract and write down **what was promised** and **your questions**. Leave the kickoff with the **problem and success metric**, the **people**, early **risks** (data access, security, competing projects, budget cycles), and **actions with an owner and a date**.
 
 ## The four people you must find
 
-Every engagement has these roles, even if nobody has the title. Find them in week one.
-
-| Role | Who they are | What they need from you |
+| Role | Who | What they need from you |
 |---|---|---|
-| **Executive sponsor** | Owns the budget and the business outcome | Brief, regular proof that the investment is working |
-| **Champion** | Day-to-day advocate who wants this to succeed, often a team lead | Quick wins they can show their boss, and responsiveness |
-| **Users** | The people whose workflow changes | A tool that saves them time, and to be listened to |
-| **Gatekeepers / blockers** | IT, security, legal, data owners who can say no | Clear documentation, respect for their process, early involvement |
+| **Executive sponsor** | Owns budget and business outcome | Brief, regular proof the investment works |
+| **Champion** | Day-to-day advocate, often a team lead | Quick wins to show their boss |
+| **Users** | People whose workflow changes | Time saved, and being listened to |
+| **Gatekeepers** | IT, security, legal, data owners | Clear documentation, early involvement |
 
-> **The most common way engagements die:** there's a champion but no sponsor. The champion loves the pilot, but nobody with budget authority cares, so it never expands. If you can't name the sponsor by the end of week one, make it your top priority.
+> **The most common way engagements die:** a champion but no sponsor. The pilot is loved but never expands. No named sponsor by Friday? Make it your top priority.
 
-Blockers aren't villains. A security team that blocks you usually has a legitimate concern you haven't addressed yet. Meet them early, bring a clear data-flow diagram, and ask what they need to approve.
+Meet gatekeepers early with a data-flow diagram and ask what they need to approve.
 
 ## The engagement brief
 
-By the end of week one, write a one-page **engagement brief** and share it with the sponsor and champion. It should fit on one page:
+By the end of week one, send the sponsor and champion one page:
 
 ```
 ENGAGEMENT BRIEF — Brightline Health — v1 (March 6)
@@ -61,22 +46,17 @@ Next 2 wks: Profile 1 month of faxes; extraction prototype on 50 samples.
 Asks:       Sandbox credentials (Sam, Mar 8). 2 hrs/wk of Priya's time.
 ```
 
-Why this matters:
-
-- It forces **clarity**. If you can't fill a line, you've found a gap in discovery.
-- It creates **agreement**. Ask the sponsor to reply "looks right" or correct it. Now you have a written scope.
-- It's a **baseline for change**. When someone asks for something new in week 5, you can point to the brief and have a calm conversation about trade-offs.
+A line you can't fill is a discovery gap. Once the sponsor replies "looks right", it's your written scope for week-5 change requests.
 
 ## Week-one checklist
 
-- [ ] Kickoff held; notes shared within 24 hours
-- [ ] Sponsor, champion, users, and gatekeepers identified by name
-- [ ] Success metric agreed, with a baseline (or a plan to measure one)
+- [ ] Notes shared within 24 hours; the four roles named
+- [ ] Metric agreed with a baseline (or a plan for one)
 - [ ] Data access requested; security review started
-- [ ] First look at real data (even a small sample)
-- [ ] Engagement brief v1 sent and acknowledged
-- [ ] Weekly update cadence agreed (day, time, format)
+- [ ] Brief v1 acknowledged; weekly update agreed
 
-## A note on communication cadence
+**Cadence:** a short written update, same day every week: **Shipped**, **Metric**, **Next**, **Need from you**.
 
-Pick one day of the week and send a short written update, every week, without fail. A good format is four headings: **Shipped**, **Metric**, **Next**, **Need from you**. Consistency matters more than length. Sponsors who receive a crisp update every Friday rarely need status meetings.
+> **Key takeaways**
+> - Leave the kickoff with a metric, named people, risks and owned actions.
+> - No sponsor by end of week one is your top risk.

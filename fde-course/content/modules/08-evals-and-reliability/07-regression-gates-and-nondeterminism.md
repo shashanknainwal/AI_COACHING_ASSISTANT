@@ -1,28 +1,19 @@
 ---
 title: "Release Gates, Noise and Nondeterminism"
 type: reading
-minutes: 17
+minutes: 5
 ---
 
 > **By the end of this lesson you will be able to:**
-> - Tell a real improvement from noise using confidence intervals
-> - Design a release gate that blocks regressions a higher average would hide
-> - Measure consistency across repeated runs with pass@k and pass^k
-> - Connect offline evals to monitoring in production
+> - Tell a real improvement from noise with confidence intervals
+> - Design a release gate that blocks regressions an average would hide
+> - Measure consistency with pass@k and pass^k
 
-## "The new prompt scores higher, ship it"
+A teammate tells Jordan the new prompt scores 15/20 against the current 14/20, so it should ship. Three problems: with 20 cases one case is 5 points (**noise**); it fixed three tickets and broke two, one a damaged-item report Jordan cares about (**hidden regression**); and re-running changes some outputs (**nondeterminism**). A **release gate** answers "can this ship?" with rules agreed in advance.
 
-A teammate's new prompt scores 15/20; the current one scores 14/20. Is it better? Three problems:
+## Confidence intervals
 
-1. **Noise.** With 20 cases, one case is 5 points. The difference could easily come from chance.
-2. **Hidden regressions.** The new prompt fixed three tickets and broke two. One it broke is a damaged-item report, a slice the customer cares about most.
-3. **Nondeterminism.** Run the same eval twice and some outputs change. One run is one sample.
-
-A **release gate** is code that answers "can this ship?" with rules everyone agreed on in advance, on every change. It replaces arguments with criteria.
-
-## Confidence intervals: is it real?
-
-A pass rate from n cases is an estimate. A **confidence interval** gives the range the true rate plausibly lies in. For pass rates, use the **Wilson score interval**. It behaves well for small samples and for rates near 0% or 100%, where the simple textbook formula breaks.
+Use the **Wilson score interval** for pass rates. It behaves well for small samples and rates near 0% or 100%.
 
 ```
 p      = passes / n,   z = 1.96 (95%)
@@ -32,54 +23,38 @@ half   = z × √(p(1−p)/n + z²/(4n²)) / denom
 interval = (center − half, center + half)
 ```
 
-For 14/20 that's about 48%-86%; for 15/20, about 53%-89%. The intervals overlap almost completely, so **20 cases can't tell these two prompts apart.** The same rates on 1,000 cases would give intervals about 6 points wide.
-
-Practical rules:
-
-- **Size the set for the decisions you need.** To detect a 5-point change, you need hundreds of cases, not dozens.
-- **Compare on the same cases.** Paired comparisons (case by case: regressions vs fixes) are more sensitive than comparing two averages.
-- **Read the changed cases.** Two regressions you understand are more informative than a 1-point change in the average.
+14/20 gives about 48%-86%; 15/20 about 53%-89%. The intervals overlap almost completely: **20 cases can't tell these prompts apart.** On 1,000 cases the intervals would be about 6 points wide. To detect a 5-point change you need hundreds of cases. Compare **case by case** (regressions vs fixes), which is more sensitive than two averages, and read the changed cases.
 
 ## Designing the gate
 
-Average scores hide what matters. Good gates combine several rules:
-
 | Rule | Why |
 |---|---|
-| **Must-pass cases** | Some cases are non-negotiable: a safety complaint, a fraud report, a known past incident. One failure blocks. |
-| **No drop beyond a tolerance** | Allows noise-sized wiggles (say 2 points) but blocks real declines. |
-| **No regressions in critical slices** | A better average can hide a worse fraud slice. |
-| **Hard limits** | Zero policy violations (credit above limits, invented citations), latency and cost budgets. |
+| **Must-pass cases** | Safety complaints, fraud reports, past incidents: one failure blocks |
+| **No drop beyond a tolerance** | Allows noise (say 2 points), blocks real declines |
+| **No regressions in critical slices** | A better average can hide a worse fraud slice |
+| **Hard limits** | Zero policy violations; latency and cost budgets |
 
-Agree on the rules with the customer **before** the results are in. Rules written after seeing the numbers tend to say whatever lets the favored change ship.
+Agree the rules with the customer **before** results are in. Run the gate in CI on every change to prompts, models, tools or retrieval, model upgrades included.
 
-Run the gate in CI on every pull request that touches prompts, models, tools or retrieval, and post the report (headline, intervals, regressions and fixes) on the pull request. A model upgrade is a change too: run the gate before switching.
+## pass@k and pass^k
 
-## Nondeterminism: pass@k and pass^k
+Outputs vary between runs, and agents vary more. Run important cases k times:
 
-Even with the same input, model outputs vary between runs, and agents vary more because small differences compound over steps. So run important cases several times (k trials) and measure:
+- **pass@k:** share of cases that passed **at least once**. Fits best-of-k or retry setups.
+- **pass^k:** share that passed **every** time. This matters for automation: an agent right 4 times in 5 fails one customer in five.
 
-- **pass@k:** the share of cases that passed **at least once** in k trials. Useful when a person picks the best of several attempts, or when you retry.
-- **pass^k** (pass all k): the share that passed **every** time. This is what matters for customer-facing automation: a support agent that handles a request correctly 4 times out of 5 fails one customer in five.
+A big gap means **flakiness**. Flaky cases sit on a decision boundary, usually an ambiguous instruction or missing rule. Reduce variance with clearer instructions and examples, structured outputs, simpler steps, decisions moved into code, and tighter tools.
 
-A big gap between the two means the system is **flaky**. Flaky cases are often the most valuable to read: they sit on a decision boundary, which usually points to an ambiguous instruction or a missing rule.
+## From offline evals to production
 
-Ways to reduce variance: clearer instructions and examples, structured outputs, splitting a step into simpler steps, moving decisions from the model into code, and (for agents) tighter tools.
-
-## Offline evals and production monitoring
-
-Offline evals run before release on a fixed set. Production brings inputs your set doesn't have. Close the loop:
-
-- **Shadow mode:** run the new version on live traffic without showing its output, and compare with the current version.
-- **Canary release:** send a small share of traffic (say 5%) to the new version and watch metrics before rolling out.
-- **Online signals:** escalation rate, customer thumbs-down, agent overrides, refusals, errors, latency and cost per request.
-- **Sample and grade:** have a judge (or a person) grade a daily sample of production outputs.
-- **Feed failures back:** every production failure becomes an eval case, so it can never silently come back.
-
-Module 9 covers the logging and observability that make this possible.
+- **Shadow mode:** run the new version on live traffic without showing its output.
+- **Canary:** send a small share (say 5%) to the new version first.
+- **Online signals:** escalations, thumbs-down, agent overrides, refusals, errors, latency, cost.
+- **Sample and grade** a daily slice of production outputs.
+- **Feed failures back** as eval cases. Module 9 covers the logging behind this.
 
 > **Key takeaways**
-> - Small eval sets can't distinguish close scores; use Wilson intervals and paired, case-by-case comparisons.
-> - A release gate combines must-pass cases, a tolerance on the overall rate, no critical-slice regressions and hard limits, agreed in advance.
-> - Measure consistency with repeated trials: pass@k for best-of-k use, pass^k for automation; read flaky cases.
-> - Close the loop with shadow and canary releases, online signals, sampled grading and new eval cases from failures.
+> - Small sets can't separate close scores; use Wilson intervals and case-by-case comparison.
+> - Gates combine must-pass cases, a tolerance, critical-slice rules and hard limits, agreed in advance.
+> - pass@k for best-of-k, pass^k for automation; read flaky cases.
+> - Shadow, canary, online signals and sampled grading close the loop.

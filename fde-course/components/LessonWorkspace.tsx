@@ -12,6 +12,7 @@ import TutorPanel from "./TutorPanel";
 import { Avatar, Mark } from "./Playbook";
 import TraceView from "./TraceView";
 import { Diagram, DIAGRAM_PATTERN } from "./Diagrams";
+import { AnswerSheet, RoleplayChat, RubricCard, type PracticePersona, type PracticeSection } from "./AiPractice";
 
 const CodeEditor = dynamic(() => import("./CodeEditor"), { ssr: false });
 
@@ -19,7 +20,7 @@ export interface WorkspaceLesson {
   moduleSlug: string;
   slug: string;
   title: string;
-  type: "reading" | "exercise" | "quiz";
+  type: "reading" | "exercise" | "quiz" | "drill" | "written" | "roleplay";
   minutes: number;
   briefHtml: string;
   html: string;
@@ -28,6 +29,14 @@ export interface WorkspaceLesson {
   starter: string;
   setup: string;
   tests: string;
+  levels: { title: string; html: string }[];
+  timeLimit: number;
+  sections: PracticeSection[];
+  rubric: { name: string; points: number; lookFor: string }[];
+  passScore: number;
+  persona: PracticePersona | null;
+  opening: string;
+  maxTurns: number;
 }
 
 export interface WorkspaceCustomer {
@@ -55,12 +64,57 @@ const SCRATCH = `# Scratchpad: try anything from the lesson here.
 print("Hello, forward deployed engineer!")
 `;
 
-const TYPE_LABEL = { reading: "Field reading", exercise: "Engagement task", quiz: "Checkpoint" } as const;
+const TYPE_LABEL = {
+  reading: "Field reading",
+  exercise: "Engagement task",
+  quiz: "Checkpoint",
+  drill: "Timed drill",
+  written: "Written answer",
+  roleplay: "Live practice",
+} as const;
+
+/** Drill tests are named test_l<level>_..., so checks can be grouped and gated by level. */
+const testLevel = (id: string | undefined) => Number(/^test_l(\d+)_/.exec(id ?? "")?.[1] ?? 0);
+
+const drillKey = (id: string) => `fde-drill-v1:${id}`;
+
+interface DrillState {
+  startedAt: number | null;
+  cleared: number;
+  finishedAt: number | null;
+}
+
+function loadDrill(id: string): DrillState {
+  try {
+    const raw = window.localStorage.getItem(drillKey(id));
+    if (raw) return { startedAt: null, cleared: 0, finishedAt: null, ...JSON.parse(raw) };
+  } catch {
+    // Storage blocked: the drill still works for this visit.
+  }
+  return { startedAt: null, cleared: 0, finishedAt: null };
+}
+
+function saveDrill(id: string, d: DrillState) {
+  try {
+    window.localStorage.setItem(drillKey(id), JSON.stringify(d));
+  } catch {
+    // Storage blocked.
+  }
+}
+
+const clock = (ms: number) => {
+  const t = Math.max(0, Math.round(ms / 1000));
+  const h = Math.floor(t / 3600);
+  const m = Math.floor((t % 3600) / 60);
+  const sec = String(t % 60).padStart(2, "0");
+  return h ? `${h}:${String(m).padStart(2, "0")}:${sec}` : `${m}:${sec}`;
+};
 
 export default function LessonWorkspace({
   lesson,
+  track,
   moduleTitle,
-  moduleNumber,
+  moduleLabel,
   customer,
   siblings,
   position,
@@ -70,8 +124,9 @@ export default function LessonWorkspace({
 }: {
   viewer: ClientViewer;
   lesson: WorkspaceLesson;
+  track: string;
   moduleTitle: string;
-  moduleNumber: number;
+  moduleLabel: string;
   customer: WorkspaceCustomer;
   siblings: Sibling[];
   position: { index: number; total: number };
@@ -79,11 +134,14 @@ export default function LessonWorkspace({
   next: NavLink | null;
 }) {
   const id = lessonId(lesson.moduleSlug, lesson.slug);
-  const isExercise = lesson.type === "exercise";
+  const isDrill = lesson.type === "drill";
+  // Exercises and drills are both graded by hidden Python tests.
+  const isExercise = lesson.type === "exercise" || isDrill;
   const isQuiz = lesson.type === "quiz";
+  const isAi = lesson.type === "written" || lesson.type === "roleplay";
   // Reading lessons without example code open full-width; the scratchpad is one click away.
-  const [showEditor, setShowEditor] = useState(!isQuiz && (lesson.type !== "reading" || Boolean(lesson.starter)));
-  const fullWidth = isQuiz || !showEditor;
+  const [showEditor, setShowEditor] = useState(!isQuiz && !isAi && (lesson.type !== "reading" || Boolean(lesson.starter)));
+  const fullWidth = isQuiz || (!isAi && !showEditor);
   const initial = lesson.starter || SCRATCH;
   const progress = useProgress();
   const done = Boolean(progress.completed[id]);
@@ -100,6 +158,34 @@ export default function LessonWorkspace({
   const [split, setSplit] = useState(48);
   const dragging = useRef(false);
   const edited = useRef(false);
+
+  // Drill state: when the clock started, how many levels are cleared, when the last one was.
+  const [drill, setDrill] = useState<DrillState>({ startedAt: null, cleared: 0, finishedAt: null });
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (isDrill) setDrill(loadDrill(id));
+  }, [id, isDrill]);
+  const drillRunning = isDrill && drill.startedAt !== null && drill.finishedAt === null;
+  useEffect(() => {
+    if (!drillRunning) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [drillRunning]);
+  const levelCount = lesson.levels.length;
+  const unlocked = Math.min(levelCount, drill.cleared + 1);
+  const limitMs = lesson.timeLimit * 60_000;
+  const elapsed = drill.startedAt ? Math.max(0, (drill.finishedAt ?? now) - drill.startedAt) : 0;
+  const timeUp = isDrill && limitMs > 0 && drill.startedAt !== null && elapsed >= limitMs;
+  // The tutor and hints stay off while the clock runs, like the real assessments.
+  const assistOff = isDrill && drill.finishedAt === null && !timeUp;
+
+  const updateDrill = useCallback(
+    (next: DrillState) => {
+      setDrill(next);
+      saveDrill(id, next);
+    },
+    [id],
+  );
 
   // Restore saved code for this lesson.
   useEffect(() => {
@@ -145,9 +231,27 @@ export default function LessonWorkspace({
       if (mode === "submit") setTab("checks");
       try {
         const r = await runPython({ code, setup: lesson.setup, tests: mode === "submit" ? lesson.tests : "", mode });
+        if (isDrill && mode === "submit") {
+          // Count cleared levels in order, then only show checks for levels the learner can see.
+          let cleared = 0;
+          for (let lvl = 1; lvl <= levelCount; lvl++) {
+            const mine = r.tests.filter((t) => testLevel(t.id) === lvl);
+            if (r.ok && mine.length && mine.every((t) => t.passed)) cleared = lvl;
+            else break;
+          }
+          const best = Math.max(cleared, drill.cleared);
+          // Checks for every level open before this submit, plus any it just cleared.
+          const visible = Math.max(Math.min(levelCount, drill.cleared + 1), best);
+          const shown = r.tests.filter((t) => testLevel(t.id) <= visible);
+          r.tests = shown;
+          r.passed = shown.length > 0 && shown.every((t) => t.passed);
+          if (best !== drill.cleared) {
+            updateDrill({ ...drill, startedAt: drill.startedAt ?? Date.now(), cleared: best, finishedAt: best === levelCount ? Date.now() : drill.finishedAt });
+          }
+          if (best === levelCount) markComplete(id);
+        } else if (mode === "submit" && r.passed) markComplete(id);
         setResult(r);
         setRunId((n) => n + 1);
-        if (mode === "submit" && r.passed) markComplete(id);
         if (mode === "run") setTab("output");
       } catch (e) {
         setResult({ ok: false, stdout: "", error: String(e), tests: [], passed: null });
@@ -156,7 +260,7 @@ export default function LessonWorkspace({
         setBusy(null);
       }
     },
-    [code, lesson.setup, lesson.tests, id],
+    [code, lesson.setup, lesson.tests, id, isDrill, levelCount, drill, updateDrill],
   );
 
   const resetCode = () => {
@@ -190,14 +294,14 @@ export default function LessonWorkspace({
     <div className="flex h-screen flex-col bg-paper text-graphite">
       {/* Top bar */}
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-rule bg-paper-2/80 px-4 text-sm backdrop-blur">
-        <Link href="/learn" className="flex items-center gap-2 font-serif text-base font-semibold text-graphite" title="Your engagement map">
+        <Link href={`/learn?track=${track}`} className="flex items-center gap-2 font-serif text-base font-semibold text-graphite" title="Your map">
           <Mark />
           <span className="hidden sm:inline">FDE Playbook</span>
         </Link>
         <span className="hidden h-5 w-px bg-rule sm:block" />
         <div className="hidden min-w-0 md:block">
           <div className="truncate text-[11px] font-medium uppercase tracking-[0.14em] text-graphite-3">
-            Module {moduleNumber} · {customer.company}
+            {moduleLabel} · {customer.company}
           </div>
           <div className="truncate text-[13px] text-graphite-2">{moduleTitle}</div>
         </div>
@@ -225,7 +329,7 @@ export default function LessonWorkspace({
           <span className="hidden text-xs tabular-nums text-graphite-3 xl:inline">
             {position.index} / {position.total}
           </span>
-          {!isQuiz && (
+          {!isQuiz && !isAi && (
             <button
               onClick={() => setShowEditor((v) => !v)}
               className="hidden rounded-lg border border-rule px-2.5 py-1 text-graphite-2 hover:bg-paper-3 lg:inline"
@@ -268,7 +372,7 @@ export default function LessonWorkspace({
               <span className="text-graphite-3">{lesson.minutes} min</span>
               {done && (
                 <span className="ml-auto rotate-[-3deg] rounded border-2 border-forest px-2 py-0.5 text-forest">
-                  {isExercise ? "Resolved" : "Done"}
+                  {lesson.type === "exercise" ? "Resolved" : isDrill ? "Cleared" : isAi ? "Passed" : "Done"}
                 </span>
               )}
             </div>
@@ -280,9 +384,26 @@ export default function LessonWorkspace({
 
             <LessonBody html={lesson.html} />
 
+            {isDrill && (
+              <DrillLevels
+                levels={lesson.levels}
+                timeLimit={lesson.timeLimit}
+                state={drill}
+                unlocked={unlocked}
+                timeUp={timeUp}
+                onStart={() => {
+                  const t = Date.now();
+                  setNow(t);
+                  updateDrill({ startedAt: t, cleared: 0, finishedAt: null });
+                }}
+              />
+            )}
+
+            {isAi && lesson.rubric.length > 0 && <RubricCard rubric={lesson.rubric} passScore={lesson.passScore} />}
+
             {isQuiz && <Quiz questions={lesson.questions} onPass={() => markComplete(id)} />}
 
-            {isExercise && lesson.hints.length > 0 && (
+            {isExercise && !assistOff && lesson.hints.length > 0 && (
               <div className="mt-10 rounded-2xl border border-rule bg-white/60 p-5">
                 <div className="flex items-center justify-between gap-4">
                   <h3 className="font-serif text-lg font-semibold">Field notes</h3>
@@ -306,7 +427,7 @@ export default function LessonWorkspace({
               </div>
             )}
 
-            {isExercise && <TutorPanel lessonTitle={lesson.title} instructionsHtml={lesson.briefHtml + lesson.html} code={code} result={result} />}
+            {isExercise && !assistOff && <TutorPanel lessonTitle={lesson.title} instructionsHtml={lesson.briefHtml + lesson.html} code={code} result={result} />}
 
             {next && done && (
               <Link
@@ -323,7 +444,34 @@ export default function LessonWorkspace({
           </div>
         </section>
 
-        {!fullWidth && (
+        {isAi && (
+          <>
+            <div
+              className="group hidden w-2 cursor-col-resize items-center justify-center bg-paper-3 lg:flex"
+              onPointerDown={() => (dragging.current = true)}
+              title="Drag to resize"
+            >
+              <span className="h-10 w-0.5 rounded bg-graphite-3/40 group-hover:bg-forest" />
+            </div>
+            <section className="flex h-[88vh] shrink-0 flex-col bg-console text-gray-200 lg:h-auto lg:min-h-0 lg:flex-1 lg:shrink">
+              {lesson.type === "written" ? (
+                <AnswerSheet id={id} moduleSlug={lesson.moduleSlug} lessonSlug={lesson.slug} sections={lesson.sections} onPass={() => markComplete(id)} />
+              ) : lesson.persona ? (
+                <RoleplayChat
+                  id={id}
+                  moduleSlug={lesson.moduleSlug}
+                  lessonSlug={lesson.slug}
+                  persona={lesson.persona}
+                  opening={lesson.opening}
+                  maxTurns={lesson.maxTurns}
+                  onPass={() => markComplete(id)}
+                />
+              ) : null}
+            </section>
+          </>
+        )}
+
+        {!fullWidth && !isAi && (
           <>
             <div
               className="group hidden w-2 cursor-col-resize items-center justify-center bg-paper-3 lg:flex"
@@ -342,6 +490,16 @@ export default function LessonWorkspace({
                   <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
                 </div>
                 <span className="rounded-md bg-console-2 px-2.5 py-1 font-mono text-xs text-gray-300">main.py</span>
+                {isDrill && drill.startedAt !== null && (
+                  <span
+                    className={`rounded-md px-2 py-1 font-mono text-xs tabular-nums ${
+                      drill.finishedAt ? "bg-emerald-400/15 text-emerald-300" : timeUp ? "bg-red-400/15 text-red-300" : "bg-amber-400/10 text-amber-200"
+                    }`}
+                    title={drill.finishedAt ? "Your finishing time" : "Time left"}
+                  >
+                    {drill.finishedAt ? `✓ ${clock(elapsed)}` : timeUp ? "Time's up" : clock(limitMs - elapsed)}
+                  </span>
+                )}
                 <span className="hidden items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-gray-500 sm:flex">
                   <span className={`h-1.5 w-1.5 rounded-full ${ready ? "bg-emerald-400" : "animate-pulse bg-amber-400"}`} />
                   {ready ? "Runtime ready" : pyStatus === "loading" ? "Booting Python" : pyStatus}
@@ -399,7 +557,15 @@ export default function LessonWorkspace({
                   ) : tab === "output" || (tab === "trace" && !trace.length) ? (
                     <Output result={result} busy={busy} />
                   ) : (
-                    <ChecksPanel key={runId} result={result} busy={busy === "submit"} customer={customer} reply={reply} next={next} />
+                    <ChecksPanel
+                      key={runId}
+                      result={result}
+                      busy={busy === "submit"}
+                      customer={customer}
+                      reply={reply}
+                      next={next}
+                      drill={isDrill ? { cleared: drill.cleared, total: levelCount, time: drill.finishedAt ? clock(elapsed) : null } : undefined}
+                    />
                   )}
                 </div>
               </div>
@@ -471,12 +637,14 @@ function ChecksPanel({
   customer,
   reply,
   next,
+  drill,
 }: {
   result: RunResult | null;
   busy: boolean;
   customer: WorkspaceCustomer;
   reply: string;
   next: NavLink | null;
+  drill?: { cleared: number; total: number; time: string | null };
 }) {
   if (busy) {
     return (
@@ -498,7 +666,19 @@ function ChecksPanel({
 
   return (
     <div>
-      {result.passed && (
+      {result.passed && drill && (
+        <div className="check-in mb-5 rounded-xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/10 to-transparent p-4" style={delay(tests.length)}>
+          <div className="font-mono text-[11px] uppercase tracking-wider text-emerald-300">
+            Level {drill.cleared} of {drill.total} cleared
+          </div>
+          <p className="mt-1.5 font-serif text-[15px] leading-relaxed text-gray-100">
+            {drill.cleared === drill.total
+              ? `Drill complete${drill.time ? ` in ${drill.time}` : ""}. Now reread your code as an interviewer would: is the data model one you could extend again?`
+              : `Level ${drill.cleared + 1} is open on the left. Read it before you touch the code: the change it asks for is the point.`}
+          </p>
+        </div>
+      )}
+      {result.passed && !drill && (
         <div className="check-in mb-5 overflow-hidden rounded-xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/10 to-transparent" style={delay(tests.length)}>
           <div className="flex items-center gap-2 border-b border-emerald-400/15 px-4 py-2 font-mono text-[11px] uppercase tracking-wider text-emerald-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Case resolved · new message
@@ -543,7 +723,10 @@ function ChecksPanel({
                 {t.passed ? "✓" : "✗"}
               </span>
               <div className="min-w-0 flex-1">
-                <div className={`text-sm ${t.passed ? "text-gray-400" : "text-gray-100"}`}>{t.name}</div>
+                <div className={`text-sm ${t.passed ? "text-gray-400" : "text-gray-100"}`}>
+                  {drill && testLevel(t.id) > 0 && <span className="mr-2 rounded bg-console-2 px-1.5 py-0.5 font-mono text-[10px] text-gray-400">L{testLevel(t.id)}</span>}
+                  {t.name}
+                </div>
                 {!t.passed && t.message && (
                   <pre className="mt-1.5 whitespace-pre-wrap rounded-md border border-red-400/20 bg-red-400/5 px-3 py-2 font-mono text-xs leading-relaxed text-red-200">
                     {t.message}
@@ -560,6 +743,73 @@ function ChecksPanel({
           {tests.length - passedCount} check{tests.length - passedCount === 1 ? "" : "s"} still failing. Fix the first red one, then submit again.
         </p>
       )}
+    </div>
+  );
+}
+
+function DrillLevels({
+  levels,
+  timeLimit,
+  state,
+  unlocked,
+  timeUp,
+  onStart,
+}: {
+  levels: { title: string; html: string }[];
+  timeLimit: number;
+  state: DrillState;
+  unlocked: number;
+  timeUp: boolean;
+  onStart: () => void;
+}) {
+  if (state.startedAt === null) {
+    return (
+      <div className="mt-10 rounded-2xl bg-graphite p-6 text-paper">
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-emerald-300">Ready when you are</p>
+        <p className="mt-2 font-serif text-xl leading-snug">
+          {levels.length} levels{timeLimit ? `, ${timeLimit} minutes` : ""}. Each level unlocks when every check on the previous one passes.
+        </p>
+        <p className="mt-2 text-sm text-paper-3">The hints and the AI tutor switch off until you finish or the clock runs out, the same as a real assessment.</p>
+        <button onClick={onStart} className="mt-5 rounded-full bg-emerald-400 px-5 py-2.5 text-sm font-semibold text-graphite hover:bg-emerald-300">
+          Start the clock →
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-10 space-y-6">
+      {timeUp && !state.finishedAt && (
+        <p className="rounded-xl border border-vermilion/30 bg-vermilion/5 p-3 text-sm text-graphite-2">
+          Time&apos;s up: you cleared {state.cleared} of {levels.length} levels in {timeLimit} minutes. Keep going to finish for practice; hints and the tutor are back on.
+        </p>
+      )}
+      {levels.map((lvl, i) => {
+        const n = i + 1;
+        const open = n <= unlocked;
+        const cleared = n <= state.cleared;
+        return (
+          <section key={n} className={`rounded-2xl border ${open ? "border-rule bg-white/60" : "border-dashed border-rule bg-paper-2/40"} p-5`}>
+            <div className="flex items-center gap-3">
+              <span
+                className={`flex h-7 w-7 items-center justify-center rounded-full font-mono text-xs font-semibold ${
+                  cleared ? "bg-forest text-white" : open ? "bg-vermilion text-white" : "bg-paper-3 text-graphite-3"
+                }`}
+              >
+                {cleared ? "✓" : open ? n : "🔒"}
+              </span>
+              <span className="font-serif text-lg font-semibold text-graphite">
+                Level {n}: {lvl.title}
+              </span>
+              {cleared && <span className="ml-auto text-xs font-medium text-forest">Cleared</span>}
+            </div>
+            {open ? (
+              <article className="playbook-prose mt-2 [&>h2:first-child]:hidden" dangerouslySetInnerHTML={{ __html: lvl.html }} />
+            ) : (
+              <p className="mt-2 text-sm text-graphite-3">Unlocks when Level {n - 1} passes.</p>
+            )}
+          </section>
+        );
+      })}
     </div>
   );
 }

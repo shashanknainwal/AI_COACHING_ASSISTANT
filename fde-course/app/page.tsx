@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { getViewer, toClientViewer } from "@/lib/access";
-import { getCourse } from "@/lib/content";
-import { SITE_NAME } from "@/lib/config";
+import { getCourse, FDE_TRACK } from "@/lib/content";
+import { SITE_NAME, tracksEnabled } from "@/lib/config";
 import AccountBadge from "@/components/AccountBadge";
 import BuyButton from "@/components/BuyButton";
+import TracksHome from "@/components/TracksHome";
 import { Avatar, Mark } from "@/components/Playbook";
 
 export const dynamic = "force-dynamic";
@@ -119,7 +120,14 @@ function HeroComposition() {
 }
 
 export default async function Home() {
-  const course = getCourse();
+  // The three-track home page once tracks are live; the original FDE page until then.
+  if (tracksEnabled()) return <TracksHome course={getCourse()} viewer={toClientViewer(await getViewer())} />;
+  return <FdeHome />;
+}
+
+async function FdeHome() {
+  const full = getCourse();
+  const course = { ...full, modules: full.modules.filter((m) => m.track === FDE_TRACK) };
   const viewer = toClientViewer(await getViewer());
   const totalMinutes = course.modules.reduce((s, m) => s + m.minutes, 0);
   const hours = Math.floor(totalMinutes / 60);
@@ -333,7 +341,7 @@ export default async function Home() {
                     {m.lessons.map((l) => (
                       <li key={l.slug} className="flex items-center gap-3 text-graphite-2">
                         <span className={`w-10 shrink-0 font-mono text-[10px] uppercase tracking-wider ${l.type === "exercise" ? "text-vermilion" : "text-graphite-3"}`}>
-                          {{ reading: "Read", exercise: "Task", quiz: "Quiz" }[l.type]}
+                          {{ reading: "Read", exercise: "Task", quiz: "Quiz", drill: "Drill", written: "Write", roleplay: "Talk" }[l.type]}
                         </span>
                         <span className="flex-1">{l.title.replace(/^Exercise:\s*/, "")}</span>
                         <span className="text-xs text-graphite-3">{l.minutes}m</span>

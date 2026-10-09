@@ -9,6 +9,8 @@ import { Avatar, Ring } from "./Playbook";
 interface MapModule {
   slug: string;
   number: number;
+  code: string;
+  label: string;
   title: string;
   summary: string;
   status: "live" | "coming-soon";
@@ -23,7 +25,11 @@ const customerWord = (n: number) => NUMBER_WORDS[n] ?? String(n);
 
 const shortTitle = (t: string) => t.replace(/^Exercise:\s*/, "");
 
-const TYPE_MARK: Record<string, string> = { reading: "Read", exercise: "Task", quiz: "Quiz" };
+const TYPE_MARK: Record<string, string> = { reading: "Read", exercise: "Task", quiz: "Quiz", drill: "Drill", written: "Write", roleplay: "Talk" };
+const HOT_TYPES = new Set(["exercise", "drill", "written", "roleplay"]);
+
+/** "3" -> "03"; codes like "C1" stay as they are. */
+const badge = (code: string) => (/^\d+$/.test(code) ? code.padStart(2, "0") : code);
 
 // Station positions on the route (viewBox 1000 x 230).
 function stationPoints(n: number) {
@@ -42,7 +48,23 @@ function routePath(pts: { x: number; y: number }[]) {
   }, "");
 }
 
-export default function CourseMap({ modules, viewer }: { modules: MapModule[]; viewer: ClientViewer }) {
+export default function CourseMap({
+  modules,
+  viewer,
+  eyebrow = "Your engagement map",
+  headline,
+  sectionTitle = "Engagements",
+  taskLabel = "cases resolved",
+}: {
+  modules: MapModule[];
+  viewer: ClientViewer;
+  eyebrow?: string;
+  /** Two lines separated by "\n". Defaults to "N customers. / One playbook." */
+  headline?: string;
+  sectionTitle?: string;
+  /** Caption for the count of graded tasks (exercises, drills, written and live practice). */
+  taskLabel?: string;
+}) {
   const progress = useProgress();
   useEffect(() => {
     if (viewer.signedIn) void enableServerSync();
@@ -51,7 +73,7 @@ export default function CourseMap({ modules, viewer }: { modules: MapModule[]; v
   const isDone = (m: MapModule, slug: string) => Boolean(progress.completed[lessonId(m.slug, slug)]);
   const all = modules.flatMap((m) => m.lessons.map((l) => ({ m, l })));
   const doneCount = all.filter(({ m, l }) => isDone(m, l.slug)).length;
-  const exercises = all.filter(({ l }) => l.type === "exercise");
+  const exercises = all.filter(({ l }) => HOT_TYPES.has(l.type));
   const resolved = exercises.filter(({ m, l }) => isDone(m, l.slug)).length;
   const minutesLeft = all.filter(({ m, l }) => !isDone(m, l.slug)).reduce((s, { l }) => s + l.minutes, 0);
   const pct = all.length ? doneCount / all.length : 0;
@@ -70,16 +92,26 @@ export default function CourseMap({ modules, viewer }: { modules: MapModule[]; v
       {/* Hero */}
       <section className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-vermilion">Your engagement map</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-vermilion">{eyebrow}</p>
           <h1 className="mt-3 font-serif text-4xl font-semibold leading-[1.08] tracking-[-0.02em] text-graphite sm:text-5xl">
-            {customerWord(new Set(modules.map((m) => m.customer.company)).size)} customers.
-            <br />
-            One playbook.
+            {headline ? (
+              headline.split("\n").map((line, i) => (
+                <span key={i} className="block">
+                  {line}
+                </span>
+              ))
+            ) : (
+              <>
+                {customerWord(new Set(modules.map((m) => m.customer.company)).size)} customers.
+                <br />
+                One playbook.
+              </>
+            )}
           </h1>
           <dl className="mt-8 grid max-w-xl grid-cols-3 gap-3">
             {[
               [`${Math.round(pct * 100)}%`, "complete"],
-              [`${resolved}/${exercises.length}`, "cases resolved"],
+              [`${resolved}/${exercises.length}`, taskLabel],
               [`${Math.round(minutesLeft / 60)}h`, "to go"],
             ].map(([n, l]) => (
               <div key={l} className="rounded-2xl border border-rule bg-white/60 px-4 py-3">
@@ -99,7 +131,7 @@ export default function CourseMap({ modules, viewer }: { modules: MapModule[]; v
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-emerald-300">{doneCount === 0 ? "Start here" : "Pick up where you left off"}</p>
               <p className="mt-3 text-xs text-paper-3">
-                Module {nextUp.m.number} · {nextUp.m.customer.company}
+                {nextUp.m.label} · {nextUp.m.customer.company}
               </p>
               <p className="mt-1 font-serif text-2xl leading-snug">{shortTitle(nextUp.l.title)}</p>
             </div>
@@ -143,7 +175,7 @@ export default function CourseMap({ modules, viewer }: { modules: MapModule[]; v
             const labelY = p.y > 100 ? p.y + 42 : p.y - 34;
             return (
               <a key={m.slug} href={`#module-${m.number}`} className="group">
-                <title>{`Module ${m.number}: ${m.title} (${m.customer.company})`}</title>
+                <title>{`${m.label}: ${m.title} (${m.customer.company})`}</title>
                 {current && <circle cx={p.x} cy={p.y} r="22" fill="var(--color-forest)" opacity="0.12" />}
                 <circle
                   cx={p.x}
@@ -163,13 +195,13 @@ export default function CourseMap({ modules, viewer }: { modules: MapModule[]; v
                   fontWeight="600"
                   fill={complete || current ? "#fff" : "var(--color-graphite-2)"}
                 >
-                  {complete ? "✓" : m.locked ? "🔒" : m.number}
+                  {complete ? "✓" : m.locked ? "🔒" : m.code}
                 </text>
                 <text x={p.x} y={labelY} textAnchor="middle" fontSize="12.5" fontWeight="600" fill="var(--color-graphite)" className="font-sans">
                   {m.customer.company}
                 </text>
                 <text x={p.x} y={labelY + 15} textAnchor="middle" fontSize="10.5" fill="var(--color-graphite-3)" className="font-sans">
-                  Module {m.number}
+                  {m.label}
                 </text>
               </a>
             );
@@ -180,7 +212,7 @@ export default function CourseMap({ modules, viewer }: { modules: MapModule[]; v
       {/* Dossiers */}
       <section className="mt-12">
         <div className="flex items-end justify-between">
-          <h2 className="font-serif text-2xl font-semibold text-graphite">Engagements</h2>
+          <h2 className="font-serif text-2xl font-semibold text-graphite">{sectionTitle}</h2>
           <span className="text-sm text-graphite-3">
             {doneCount} of {all.length} lessons
           </span>
@@ -200,10 +232,13 @@ export default function CourseMap({ modules, viewer }: { modules: MapModule[]; v
                   <summary className="flex cursor-pointer list-none gap-4 p-5 sm:p-6">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-graphite-3">
-                        <span className="font-mono text-graphite">{String(m.number).padStart(2, "0")}</span>
+                        <span className="font-mono text-graphite">{badge(m.code)}</span>
                         <span>·</span>
                         <span className="truncate">{m.customer.company}</span>
-                        {m.locked && <span className="shrink-0 whitespace-nowrap rounded-full bg-graphite px-2 py-0.5 text-[10px] tracking-wider text-paper">Full course</span>}
+                        {m.status === "coming-soon" && (
+                          <span className="shrink-0 whitespace-nowrap rounded-full border border-rule px-2 py-0.5 text-[10px] tracking-wider text-graphite-3">Coming soon</span>
+                        )}
+                        {m.locked && m.status === "live" && <span className="shrink-0 whitespace-nowrap rounded-full bg-graphite px-2 py-0.5 text-[10px] tracking-wider text-paper">Full course</span>}
                         {current && !m.locked && <span className="shrink-0 whitespace-nowrap rounded-full bg-vermilion/10 px-2 py-0.5 text-[10px] text-vermilion">In progress</span>}
                       </div>
                       <h3 className="mt-2 font-serif text-xl font-semibold leading-snug text-graphite">{m.title}</h3>
@@ -214,7 +249,8 @@ export default function CourseMap({ modules, viewer }: { modules: MapModule[]; v
                           {m.customer.contact}, {m.customer.role}
                         </span>
                         <span className="ml-auto shrink-0 whitespace-nowrap">
-                          {m.lessons.length} lessons · {Math.round(m.minutes / 6) / 10}h
+                          {m.status === "live" ? `${m.lessons.length} lessons · ` : "about "}
+                          {Math.round(m.minutes / 6) / 10}h
                         </span>
                       </div>
                     </div>
@@ -231,7 +267,7 @@ export default function CourseMap({ modules, viewer }: { modules: MapModule[]; v
                         <li key={l.slug}>
                           <Link href={`/learn/${m.slug}/${l.slug}`} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm hover:bg-paper-2">
                             <span
-                              className={`w-10 shrink-0 font-mono text-[10px] uppercase tracking-wider ${l.type === "exercise" ? "text-vermilion" : "text-graphite-3"}`}
+                              className={`w-10 shrink-0 font-mono text-[10px] uppercase tracking-wider ${HOT_TYPES.has(l.type) ? "text-vermilion" : "text-graphite-3"}`}
                             >
                               {TYPE_MARK[l.type] ?? "·"}
                             </span>
