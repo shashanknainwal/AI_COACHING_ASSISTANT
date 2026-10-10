@@ -3,11 +3,11 @@ title: "Exercise: Pause for Approval, Resume Later"
 type: exercise
 minutes: 45
 hints:
-  - "`requires_approval`: `True` for `cancel_booking`; for `issue_refund`, `tool_input[\"amount\"] > AUTO_REFUND_LIMIT`; `False` otherwise."
-  - "In `run_agent`, check `state[\"iterations\"] >= MAX_ITERATIONS` before each call, then increment it after the call. Append `response.content` to `state[\"messages\"]`."
-  - "For a `tool_use` turn, walk the blocks in order: risky ones go into a `pending` list as `{\"id\", \"tool\", \"input\", \"summary\": describe(...)}`; safe ones run now with `execute(block)` and get an `\"auto\"` audit entry. Keep their results in a dict keyed by `block.id`."
-  - "If anything is pending, save the call order, the results so far and the pending list in `state`, and return without appending a user message. Otherwise append one user message with all results in call order and loop."
-  - "`resume`: raise `ValueError(\"no pending approvals\")` if nothing is pending, then clear `state[\"pending\"]` before running anything. Approve only when `decisions.get(id, {}).get(\"approved\") is True`; rebuild the block with `anthropic.ToolUseBlock(p[\"tool\"], p[\"input\"], id=p[\"id\"])` so `execute()` uses the original id as the idempotency key."
+  - "`requires_approval` is a pure policy function: the tool name decides it for cancellations, and the amount decides it for refunds."
+  - "Count API calls in `state`, not in a local variable, because a paused run is resumed in a later call. Check the cap before each request."
+  - "In a `tool_use` turn, sort each block into 'run now' or 'hold'. Run the safe ones immediately and keep their results so they can go back later in the same message as the held ones."
+  - "If anything is held, the turn can't be answered yet: persist what you need to rebuild that one user message later (the call order, the results so far, the held calls) and return without sending anything."
+  - "`resume`: make a second delivery of the same webhook harmless by changing state before you run anything. Treat anything other than an explicit `True` as a decline, and execute approved calls under their original `tool_use` id so the idempotency key still matches."
 ---
 
 Leo is back with the Fernway file. "Their finance team signed off on the agent with one condition: any refund over $200, and every cancellation, needs a supervisor. Supervisors answer in Slack, sometimes an hour later, so the agent can't block a thread waiting. It has to stop, save its state, and pick up when the decision lands. And their payments team has seen webhooks arrive twice, so a resumed run must never refund twice."
@@ -56,3 +56,7 @@ The API requires a `tool_result` for **every** `tool_use` in Claude's turn, all 
 ```
 
 Press **Run** to watch one pause and approval, check the **Trace** tab, then **Submit**.
+
+## Beyond one process
+
+Clearing `pending` before running anything stops a duplicate webhook only when both deliveries reach the same process. In production, two workers can load the same saved state at once. The distributed version of the same idea is a **compare-and-set on the persisted run state** (for example `UPDATE runs SET status='resuming' WHERE id=? AND status='awaiting_approval'`, and only the worker whose update changed a row proceeds) or a lock keyed on the run id. Keep the payments-side idempotency key as well: defence in depth.

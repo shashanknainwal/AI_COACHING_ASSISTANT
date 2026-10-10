@@ -89,14 +89,16 @@ Never paste `str(exc)` from an unexpected exception into the result. It's how in
 
 ## Bounding the loop
 
-Every iteration resends the whole history, so cost grows faster than linearly with steps. Rough numbers for one run on Claude Opus 5.5 ($4 input / $20 output per million tokens), with 3,000 tokens of system prompt and tools, each iteration adding about 800 tokens, and 300 output tokens per call:
+Every iteration resends the whole history, so cost grows faster than linearly with steps. Rough numbers for one run on Claude Opus 5.5 ($4 input / $20 output per million tokens) with `output_config={"effort": "low"}` set explicitly, 3,000 tokens of system prompt and tools, each iteration adding about 800 tokens, 300 visible output tokens per call, and an assumed 300 thinking tokens per call. Thinking is billed as output and counted in `usage.output_tokens`, so it belongs in the table:
 
-| Design | Calls | Input tokens | Output tokens | Cost per run |
+| Design | Calls | Input tokens | Output tokens (reply + thinking) | Cost per run |
 |---|---|---|---|---|
-| Workflow: code does the lookups, one Claude call writes the reply | 1 | ~4,500 | 300 | ~$0.024 |
-| Agent, 6 iterations | 6 | 3,000×6 + 800×(0+1+…+5) = 30,000 | 1,800 | ~$0.156 |
+| Workflow: code does the lookups, one Claude call writes the reply | 1 | ~4,500 | 300 + 300 = 600 | ~$0.030 |
+| Agent, 6 iterations | 6 | 3,000×6 + 800×(0+1+…+5) = 30,000 | 6 × 600 = 3,600 | ~$0.192 |
 
-That's about 6.5x, before retries. Prompt caching cuts the repeated prefix sharply, but the shape stays the same. So bound every loop:
+The 300 thinking tokens are an assumption, not a measured figure. At the default effort (`medium` on Opus 5.5) thinking is usually larger. As a sensitivity check, at 900 thinking tokens per call the agent run is 30,000 input plus 7,200 output, about $0.26. Measure `usage.output_tokens` on your own traffic before you quote a number.
+
+That's about 6.4x, before retries. Prompt caching cuts the repeated prefix sharply, but the shape stays the same. So bound every loop:
 
 - **Iteration cap.** 5 to 10 is typical for support tasks. At the cap, **stop without running the tools Claude just requested** (nobody will read their results, and they may have side effects) and hand off with a clear status like `"max_iterations"`.
 - **Token or dollar budget**, summed from `response.usage` on every call.

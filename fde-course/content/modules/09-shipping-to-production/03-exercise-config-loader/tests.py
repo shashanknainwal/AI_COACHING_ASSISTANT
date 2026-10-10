@@ -63,7 +63,7 @@ def test_load_config_reports_every_error():
     env = {"APP_ENV": "staging", "MAX_TOKENS": "lots", "ENABLE_AUTO_CREDIT": "maybe", "TRIAGE_MODEL": "claude-sonnet"}
     assert _errors(env) == [
         "ANTHROPIC_API_KEY is required",
-        "TRIAGE_MODEL must be one of claude-opus-5-5, claude-sonnet-5-5, claude-haiku-4-5, got 'claude-sonnet'",
+        "TRIAGE_MODEL must be one of claude-opus-5-5, claude-sonnet-5-5, claude-haiku-5-5, got 'claude-sonnet'",
         "MAX_TOKENS must be an integer, got 'lots'",
         "ENABLE_AUTO_CREDIT must be true or false, got 'maybe'",
         "DATABASE_URL is required",

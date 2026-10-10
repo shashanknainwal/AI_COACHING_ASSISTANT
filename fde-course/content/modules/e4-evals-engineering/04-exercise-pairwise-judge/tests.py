@@ -9,25 +9,25 @@ def _fresh():
 
 
 def _reply(winner):
-    return json.dumps({"reasoning": "scripted", "winner": winner})
+    return json.dumps({"winner": winner, "rationale": "scripted"})
 
 
 def test_schema():
-    """PAIRWISE_SCHEMA asks for reasoning first, then a winner from a closed set"""
+    """PAIRWISE_SCHEMA asks for a winner from a closed set plus a short rationale"""
     s = PAIRWISE_SCHEMA
     props = s.get("properties", {})
-    assert list(props) == ["reasoning", "winner"], f"reasoning must come before winner: {list(props)}"
-    assert props["reasoning"].get("type") == "string"
+    assert set(props) == {"winner", "rationale"}, f"properties should be winner and rationale: {list(props)}"
+    assert props["rationale"].get("type") == "string"
     assert props["winner"].get("type") == "string" and props["winner"].get("enum") == ["first", "second", "tie"], \
         f"winner must be an enum of first/second/tie: {props['winner']}"
-    assert s.get("type") == "object" and s.get("required") == ["reasoning", "winner"] and s.get("additionalProperties") is False
+    assert s.get("type") == "object" and set(s.get("required", [])) == {"winner", "rationale"} and s.get("additionalProperties") is False
 
 
 def test_build_prompt():
     """build_prompt() uses neutral position labels and no hint of which summary is new"""
     expected = (f"<rubric>\n{RUBRIC}\n</rubric>\n\n<clause>\nC.\n</clause>\n\n<response_1>\nX.\n</response_1>\n\n"
                 "<response_2>\nY.\n</response_2>\n\n"
-                'Compare the two summaries against the rubric. Explain your reasoning first, then answer "first", "second" or "tie".')
+                'Compare the two summaries against the rubric. Answer "first", "second" or "tie", with a one- or two-sentence rationale naming the deciding fact.')
     got = build_prompt("C.", "X.", "Y.")
     assert got == expected, f"got:\n{got}"
 
@@ -45,6 +45,8 @@ def test_ask_judge_request():
     assert p["messages"] == [{"role": "user", "content": build_prompt("C.", "X.", "Y.")}]
     assert (p.get("output_config") or {}).get("format") == {"type": "json_schema", "schema": PAIRWISE_SCHEMA}, \
         "pass PAIRWISE_SCHEMA through output_config.format"
+    assert (p.get("output_config") or {}).get("effort") in ("low", "medium", "high", "xhigh", "max"), \
+        "set effort explicitly: the judge thinks by default, and thinking is billed as output"
     assert "temperature" not in p, "sampling parameters are rejected on current models"
 
 
@@ -53,7 +55,7 @@ def test_ask_judge_errors():
     _fresh()
     _sim.queue(_sim.refusal())
     assert ask_judge(anthropic.Anthropic(), "C.", "X.", "Y.") == "error", "a refusal should return 'error'"
-    _sim.queue(_sim.message(_sim.text('{"reasoning": "cut o'), stop_reason="max_tokens"))
+    _sim.queue(_sim.message(_sim.text('{"winner": "fir'), stop_reason="max_tokens"))
     assert ask_judge(anthropic.Anthropic(), "C.", "X.", "Y.") == "error", "stop_reason max_tokens should return 'error'"
 
 

@@ -99,7 +99,7 @@ The document ends by listing tensions it hasn't resolved: asking Claude to put o
 
 ## Other labs
 
-If you're also interviewing at OpenAI, read its [Charter](https://openai.com/charter/) in full yourself and run it through the same six notes from lesson 1. Ask the same questions of it: who does it bind, what does it commit to, and how could an outsider check? Comparing documents is only useful if you've read each one; don't compare from summaries.
+If you're also interviewing at OpenAI, read its [Charter](https://openai.com/charter/) in full yourself and run it through the same six notes from lesson 1. Lesson 6 adds study guides for OpenAI's Model Spec and Preparedness Framework, and for the engineering posts that matter most in applied roles. Ask the same questions of it: who does it bind, what does it commit to, and how could an outsider check? Comparing documents is only useful if you've read each one; don't compare from summaries.
 
 ## Talking about policies in an interview
 

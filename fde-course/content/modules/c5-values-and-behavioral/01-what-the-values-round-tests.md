@@ -8,7 +8,7 @@ minutes: 15
 
 ## Why this round deserves real preparation
 
-Most engineers prepare for coding for weeks and for the values round for an evening. That's backwards at a mission-driven lab. Several interview guides single out the culture or values interview at Anthropic as the round that fails the most candidates (**Reported**: [Yale SOM career guide](https://cdo.som.yale.edu/blog/2026/05/18/get-a-job-at-anthropic-interview-process-and-top-questions/), plus other third-party guides). Strong technical candidates fail it because they treat it as small talk.
+Most engineers prepare for coding for weeks and for the values round for an evening. That's backwards at a mission-driven lab, where the culture interview sits in the same onsite loop as coding and system design and can end your process on its own. Strong technical candidates stumble in it because they treat it as small talk.
 
 The round isn't a test of whether you hold the "right" opinions. It's a test of whether your answers are specific, honest and consistent with how you've actually behaved.
 
@@ -19,12 +19,14 @@ What's been reported:
 | Claim | Label | Source |
 |---|---|---|
 | The culture interview is part of the first onsite loop, alongside coding and system design. | Reported | Third-party loop guides, e.g. [Yale SOM](https://cdo.som.yale.edu/blog/2026/05/18/get-a-job-at-anthropic-interview-process-and-top-questions/) |
-| It is run by an employee nominated for the role, not necessarily someone on your future team. | Reported | [Axios AI+ newsletter](https://www.axios.com/newsletters/axios-ai-plus-10f46cb9-9c35-4d55-b72c-498c853ea10b.html) |
-| Candidates have been asked whether they'd prioritize the mission over the company's future share price. | Reported | [Axios AI+](https://www.axios.com/newsletters/axios-ai-plus-10f46cb9-9c35-4d55-b72c-498c853ea10b.html), career guides |
-| Candidates have been asked to describe someone they respect but disagree with on values. | Reported | [Axios AI+](https://www.axios.com/newsletters/axios-ai-plus-10f46cb9-9c35-4d55-b72c-498c853ea10b.html), career guides |
-| It's the round that fails the most candidates. | Reported | Several career guides; Anthropic hasn't published pass rates |
+| It is run by an employee nominated for the role, not necessarily someone on your future team. | Anecdotal (one newsletter) | [Axios AI+ newsletter](https://www.axios.com/newsletters/axios-ai-plus-10f46cb9-9c35-4d55-b72c-498c853ea10b.html) |
+| Candidates have been asked whether they'd prioritize the mission over the company's future share price. | Reported (secondary sources) | [Axios AI+ newsletter](https://www.axios.com/newsletters/axios-ai-plus-10f46cb9-9c35-4d55-b72c-498c853ea10b.html); career guides that may be repeating it |
+| Candidates have been asked to describe someone they respect but disagree with on values. | Reported (secondary sources) | [Axios AI+ newsletter](https://www.axios.com/newsletters/axios-ai-plus-10f46cb9-9c35-4d55-b72c-498c853ea10b.html); career guides that may be repeating it |
+| It's the round that fails the most candidates. | Anecdotal | Several career guides. Guides aren't candidate reports, they may copy each other, and Anthropic publishes no pass rates. |
 
-Two things follow. First, a nominated interviewer is often someone who cares a lot about the culture, so polished corporate answers land badly. Second, both reported questions have no correct answer. The mission question checks whether you've thought about the tradeoff at all. The disagreement question checks whether you can describe a person you disagree with fairly, which is hard to fake.
+Notice the labels. Only the first row rests on several independent loop guides. The rest come from one newsletter or from guides that may trace back to it, which is exactly the trap module C1 warned about: ten copies of one account are still one account. Prepare for the round seriously, but don't build your plan on any single reported question.
+
+Two things follow even so. First, if the round is run by someone chosen for it, that person probably cares a lot about the culture, so polished corporate answers land badly. Second, both questions said to come up have no correct answer. The mission question checks whether you've thought about the tradeoff at all. The disagreement question checks whether you can describe a person you disagree with fairly, which is hard to fake.
 
 Anthropic doesn't publish its values rubric. Anything more specific you read online about "what they score" is a guess.
 
@@ -84,7 +86,8 @@ Values questions are usually tradeoff questions in disguise: speed versus safety
 
 > **Key takeaways**
 >
-> - At Anthropic, the culture round is reported to fail more candidates than any other. Prepare it like a technical round.
-> - Reported questions (mission versus share price, someone you respect but disagree with) have no right answer. They test honesty and depth of thought.
+> - The culture interview sits in Anthropic's first onsite loop (reported) and can end your process. Prepare it like a technical round.
+> - Claims about who runs it, how many it fails and which questions come up rest on a newsletter and guides; treat them as anecdotal or secondary.
+> - Questions such as mission versus share price have no right answer. They test honesty and depth of thought.
 > - OpenAI and Perplexity mix behavioral questions into project deep dives and hiring-manager rounds.
 > - Interviewers listen for specificity, honesty, judgment under tradeoffs, and motivation beyond money and hype.

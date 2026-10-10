@@ -1,7 +1,7 @@
 ---
 title: Tool Use and Structured Outputs
 type: reading
-minutes: 22
+minutes: 28
 ---
 
 > **By the end of this lesson** you'll be able to walk through the tool-use loop step by step, design a tool schema an interviewer would accept, and explain when to use strict tools versus structured outputs.
@@ -46,6 +46,16 @@ while True:
             })
     messages.append({"role": "user", "content": results})
 ```
+
+### Never edit the history
+
+Notice that the loop appends `response.content` exactly as it came back, thinking blocks included, and never changes an earlier message. That's deliberate.
+
+- **Pass thinking blocks back unmodified.** On current models a response can start with one or more `thinking` blocks. Read content by block `type`, not by position, and send the blocks back exactly as received.
+- **Text between tool calls may arrive as thinking.** On Claude Opus 5.5, text the model writes between tool calls comes back inside `thinking` blocks rather than `text` blocks. If your UI showed that narration, look for it there.
+- **Preserved thinking.** On Opus 5.5, Sonnet 5.5, Haiku 5.5 and Fable 5.1, each thinking block's signature is bound to the system prompt, the tools and every earlier message. Edit or trim an earlier turn and the replayed block no longer matches. For accounts created on or after 2026-08-31, that request returns a **400** by default. Older accounts aren't enforced by default, but Anthropic's guidance is to build append-only regardless.
+
+So the rule is **append-only history**. When a conversation gets too long, use compaction (summarise and start a fresh context) or the API's server-side context editing, rather than snipping old turns yourself. Append-only is also what keeps the prompt cache hitting (Lesson 6), so one habit serves both.
 
 A production loop also handles the other stop reasons: `max_tokens` (the answer was cut off), `refusal` (the model declined; check `stop_details`) and `pause_turn` (a server-side tool paused a long turn and you re-send to continue). The SDK also has a beta **tool runner** that drives this loop for you; knowing the manual loop is what lets you explain it.
 
@@ -161,14 +171,51 @@ The Python SDK also has `client.messages.parse(...)`, which takes a Pydantic mod
 
 ## Practice (say it out loud)
 
-Original prompts in the style of a fundamentals round:
+Original prompts in the style of a fundamentals round. Answer out loud, then check.
 
-- "Walk me through, message by message, what goes over the wire when a user asks a support agent for a refund and the agent needs two tools."
-- "Your agent sometimes passes `order_id: 10293` instead of `"ORD-10293"`. What do you change?" (Hint: description with a format example, a pattern in the schema, strict mode, and validation in the tool.)
+**1.** "Walk me through, message by message, what goes over the wire when a user asks a support agent for a refund and the agent needs two tools."
+
+<details>
+<summary>Model answer and self-check</summary>
+
+"Say the tools are `lookup_order` and `issue_refund`.
+
+1. **Request 1:** my code sends the system prompt, both tool definitions, and the user message 'I want a refund for order ORD-10293.'
+2. **Response 1:** `stop_reason: "tool_use"`, possibly a thinking block, and a `tool_use` block for `lookup_order` with an `id` and `input: {order_id: "ORD-10293"}`. The model runs nothing.
+3. **My code** runs the lookup, checking the user is allowed to see that order.
+4. **Request 2:** the same system prompt and tools, the original user message, the assistant's response appended unchanged, then a user message with one `tool_result` whose `tool_use_id` matches.
+5. **Response 2:** the model asks for `issue_refund`. Because it moves money, my code checks policy and may require human approval before running it. If it fails, I return a `tool_result` with `is_error: true` and a clear message.
+6. **Request 3:** history plus that result. **Response 3:** `stop_reason: "end_turn"` and the text reply to the user.
+
+Every request resends the full history, so three round trips means the order data is billed as input twice. I'd keep tool outputs small and the prefix cached."
+
+Score yourself:
+- [ ] Said clearly that your code runs the tools, not the model.
+- [ ] Matched each `tool_result` to its `tool_use_id` and appended the assistant turn unchanged.
+- [ ] Put a permission or approval check on the risky tool.
+- [ ] Mentioned error handling (`is_error`) and that history is resent each time.
+
+</details>
+
+**2.** "Your agent sometimes passes `order_id: 10293` instead of `"ORD-10293"`. What do you change?"
+
+<details>
+<summary>Model answer and self-check</summary>
+
+"Layers, cheapest first. The property description gets a format example: 'Order ID including the ORD- prefix, for example ORD-10293.' The schema gets `type: string` and a `pattern` for the format, and the tool gets `strict: true` so the arguments always match the schema's types. Strict mode guarantees shape, not meaning, so the tool code still validates. If the ID is wrong, it returns `is_error: true` with an actionable message such as 'Order IDs look like ORD-10293', and the model can retry. Then I add the failing cases to the eval set so I can see the error rate drop and stay down."
+
+Score yourself:
+- [ ] Improved the description with a concrete format example.
+- [ ] Tightened the schema (string type, pattern) and used `strict: true`.
+- [ ] Kept validation in the tool and returned a helpful error.
+- [ ] Added the case to an eval.
+
+</details>
 
 > **Key takeaways**
 >
 > - The model never runs tools. It returns `stop_reason: "tool_use"`, your code runs the tool, and you send back a `tool_result` with the matching `tool_use_id`. Loop until `end_turn`.
 > - Return all parallel results in one message, and return errors with `is_error` instead of dropping them.
+> - Keep history append-only and pass thinking blocks back unmodified. On Opus 5.5 and the other current models, editing earlier turns invalidates thinking signatures (a 400 for newer accounts) and breaks the cache.
 > - Tool descriptions are prompts: say when to call the tool, describe every field, use enums.
 > - `strict: true` guarantees the argument shape; `output_config.format` guarantees a JSON answer. Neither guarantees the content is correct.

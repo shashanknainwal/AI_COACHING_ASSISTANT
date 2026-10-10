@@ -6,15 +6,19 @@ ROUTES = {
     "classify": {"model": "claude-sonnet-5-5", "effort": "low", "max_tokens": 1024},
     "chat": {"model": "claude-opus-5-5", "effort": "low", "max_tokens": 16000},
     "extract": {"model": "claude-opus-5-5", "effort": "medium", "max_tokens": 16000},
+    "summarize": {"model": "claude-sonnet-5-5", "effort": None, "max_tokens": 16000},   # None: model default
 }
-FAST_MODEL = "claude-haiku-4-5"
-CONTEXT_LIMITS = {"claude-opus-5-5": 1_000_000, "claude-sonnet-5-5": 1_000_000, "claude-haiku-4-5": 200_000}
-FALLBACK = {"claude-opus-5-5": "claude-sonnet-5-5", "claude-sonnet-5-5": None, "claude-haiku-4-5": "claude-sonnet-5-5"}
+FAST_MODEL = "claude-haiku-5-5"
+CONTEXT_LIMITS = {"claude-opus-5-5": 1_000_000, "claude-sonnet-5-5": 1_000_000, "claude-haiku-5-5": 1_000_000}
+FALLBACK = {"claude-opus-5-5": "claude-sonnet-5-5", "claude-sonnet-5-5": None, "claude-haiku-5-5": "claude-sonnet-5-5"}
 PRICES = {  # dollars per million tokens
     "claude-opus-5-5": {"input": 4.00, "output": 20.00},
     "claude-sonnet-5-5": {"input": 2.00, "output": 10.00},
-    "claude-haiku-4-5": {"input": 1.00, "output": 5.00},
+    # Haiku 5.5 has two rate cards: a prompt over 100K tokens bills the whole request at the higher one.
+    "claude-haiku-5-5": {"input": 0.10, "output": 0.50,
+                         "long_above": 100_000, "long_input": 0.50, "long_output": 2.50},
 }
+
 
 
 def choose(task, input_tokens, latency_budget_ms=None):
@@ -30,7 +34,7 @@ def build_params(route, system, user_text):
 
 
 def estimate_cost(route, input_tokens, output_tokens):
-    """Dollar cost for the route's model, rounded to 6 decimals."""
+    """Dollar cost for the route's model (mind Haiku's long-prompt rate), rounded to 6 decimals."""
     # TODO
     pass
 
@@ -45,6 +49,7 @@ def run(client, task, system, user_text, input_tokens, latency_budget_ms=None):
 requests_today = [
     ("classify", "Card was charged twice", 300, 500),
     ("classify", "Card was charged twice", 300, None),
+    ("classify", "<a 150K-token complaint thread>", 150_000, 500),
     ("chat", "What's the wire cutoff?", 2_000, None),
     ("extract", "<loan application text>", 250_000, None),
 ]

@@ -22,6 +22,11 @@ personaBrief: |
   - Card refunds can't be clawed back once sent; store credit can. Reveal if asked about reversibility, undo, or refund method.
   - Finance controls: your finance controller, Maya Chen (fictional), must sign off on any automated money movement, and Brightway's audit rules require a named human approver on every refund over $250. Reveal if asked who else needs to agree, about finance, audit or compliance, or approval rules.
   - Carrier data: tracking shows "delivered" for most "never arrived" claims, but delivery scans are wrong about 3% of the time. Reveal if asked how the agent would verify a claim.
+  - Trusted customers (the unusual one): Brightway already keeps a "loyalty tenure" flag. About 18,000 customers have 3+ years of orders and zero disputes or chargebacks, and they file about 40% of refund requests. Reveal ONLY if the learner asks whether some customers are lower risk than others, about customer history, segments or tiers of customers. Do not reveal it for generic questions about fraud or approvals. If revealed, you get excited: "So those people could get refunds instantly?"
+
+  TECHNICAL PUSHBACK (you are not technical, but your support-systems lead Andre Silva, fictional, briefed you, and you repeat his points in your own words):
+  - If the learner says the agent will "check" or "verify" a claim, ask: "Check against what, exactly? Andre says tracking is wrong sometimes."
+  - If the learner says the model will "follow the rules" or the limits are "in the prompt", ask: "Andre asked what stops it if a customer talks it into a bigger refund?" A good answer: limits enforced in code in the refund tool, not in the prompt.
 
   HOW TO BEHAVE:
   - Push for "fully automatic" at first. If the learner just says yes, be delighted and ask for a date. That's the trap: do not volunteer any hidden concern.
@@ -47,6 +52,7 @@ rubric:
     points: 15
     lookFor: "Closes with a phased plan before Black Friday, owners (including finance), measurable success criteria (share refunded same day, refund contacts, fraud loss or override rate), and a pilot or shadow period with an eval set."
 passScore: 70
+graderNotes: "The trap is agreeing to fully automatic refunds. If the learner agrees to automatic refunds with no dollar threshold, no verification against order or tracking data, or no human approval path, cap 'Guardrails' at 8, 'Approval flow' at 6 and 'Handling the push for no humans' at 4; such a learner must not pass. If refunds over $250 stay automatic after the audit rule surfaced, cap 'Approval flow' at 8. If the only safeguards are prompt instructions ('tell the agent not to refund over $100'), cap 'Guardrails' at 12. If the learner never asked about fraud, abuse or what could go wrong, cap 'Discovery before design' at 12. If the learner flatly refuses without a path to faster refunds before Black Friday, cap 'Handling the push for no humans' at 6. Give no credit for numbers Jordan never stated. Reward store credit as the instant, reversible default, a per-customer cap, the trusted-customer tier if discovered, and bringing Maya into the threshold decision."
 ---
 
 Jordan Lee runs customer support at Brightway Retail. The agent you built in this module is live for lookups and small store credits. Now Jordan wants it to issue refunds on its own, with no human involved, before Black Friday.

@@ -9,7 +9,7 @@ sections:
     words: [30, 90]
   - key: architecture
     label: Architecture in 5 bullets
-    prompt: "About five bullets the CTO could redraw on a whiteboard: components, data flow, where humans review, what you reuse from Larchmont's stack."
+    prompt: "About five bullets the CTO could redraw on a whiteboard: components, data flow, where humans review, what you reuse from Ashgrove's stack."
     words: [70, 170]
   - key: cost
     label: Cost
@@ -32,7 +32,7 @@ rubric:
     lookFor: "Five or so bullets covering intake, extraction with schema validation, confidence-based routing to human review, write-back to the ERP, and logging or evals. Reuses the existing cloud account and review queue. No buzzwords, no unexplained components."
   - name: Correct, transparent numbers
     points: 25
-    lookFor: "Model cost is computed from the given volumes and prices (about $180 input plus about $108 output, so roughly $290 a month, under 2 cents a document) with the math shown once. Separates model cost from build and run costs, states assumptions, and says what would move the number. Quality claims cite the proof-of-concept figures and dataset size."
+    lookFor: "Model cost is computed from the given volumes and prices (about $180 input plus about $108 output, so roughly $290 a month, under 2 cents a document) with the math shown once. Separates model cost from build and run costs, states assumptions (including the effort setting or a thinking-token line), and says what would move the number. Quality claims cite the proof-of-concept figures and dataset size."
   - name: Honest risks with owners
     points: 20
     lookFor: "Includes the handwritten-certificate weakness (79% on 60 documents) and a concrete mitigation such as routing them to humans. Each risk has a mitigation and a named owner role. Does not hide or soften the weak result."
@@ -40,24 +40,24 @@ rubric:
     points: 15
     lookFor: "Ends with a yes-or-no decision, owner and date. The whole thing fits on one page: short sentences, numbers instead of adjectives, no padding."
 passScore: 70
-graderNotes: "Recompute the cost: 18,000 x 5,000 = 90M input tokens x $2/M = $180; 18,000 x 600 = 10.8M output tokens x $10/M = $108; total about $288 a month, about $0.016 per document. Mark down wrong arithmetic, a single model-cost figure presented as the total cost, or invented numbers not in the brief (new accuracy figures, made-up certifications). Mark down any claim that accuracy is guaranteed, that humans can be removed entirely, or that the handwritten problem is solved. Mark down answers that bury the recommendation or end with 'let us know your thoughts'. Reward answers that keep human review for low-confidence fields and handwritten documents, and that quantify the clerk-time saving as a range with its assumption."
+graderNotes: "Recompute the cost: 18,000 x 5,000 = 90M input tokens x $2/M = $180; 18,000 x 600 = 10.8M output tokens x $10/M = $108; total about $288 a month, about $0.016 per document. Mark down wrong arithmetic, a single model-cost figure presented as the total cost, or invented numbers not in the brief (new accuracy figures, made-up certifications). Mark down any claim that accuracy is guaranteed, that humans can be removed entirely, or that the handwritten problem is solved. Mark down answers that bury the recommendation or end with 'let us know your thoughts'. Reward answers that name which AWS path (Claude Platform on AWS or Bedrock) and why, and that add a thinking-token sensitivity line (at 3x output, about $324 output and $504 a month in total). Reward answers that keep human review for low-confidence fields and handwritten documents, and that quantify the clerk-time saving as a range with its assumption."
 ---
 
-Grace Liu drops a folder on your desk. "Larchmont Industrial wants an answer by Friday. Their CTO, Marta Kovač, reads one page and decides. Write it."
+Grace Liu drops a folder on your desk. "Ashgrove Industrial wants an answer by Friday. Their CTO, Marta Kovač, reads one page and decides. Write it."
 
-Larchmont Industrial is a fictional manufacturer. Marta is a fictional CTO. The numbers below are the engagement facts; use them, don't invent new ones.
+Ashgrove Industrial is a fictional manufacturer. Marta is a fictional CTO. The numbers below are the engagement facts; use them, don't invent new ones.
 
 ## The situation
 
-- **Problem.** Larchmont receives about **18,000 supplier documents a month** (invoices and certificates of conformance, mostly PDFs). Six clerks key fields into the ERP by hand, about **9 minutes per document**. The backlog is 4 days, and late certificates have held up two production lines this year.
+- **Problem.** Ashgrove receives about **18,000 supplier documents a month** (invoices and certificates of conformance, mostly PDFs). Six clerks key fields into the ERP by hand, about **9 minutes per document**. The backlog is 4 days, and late certificates have held up two production lines this year.
 - **Proof of concept (last month).** You ran Claude Sonnet 5.5 with structured outputs against **500 real documents** with clerk-verified answers:
   - Field-level accuracy **97%**.
   - Documents fully correct with no human edit: **88%**.
   - The model's low-confidence flag caught **most** of the wrong fields, but not all: 1 in 5 errors was not flagged.
   - **Handwritten certificates were weak: 79% field accuracy on 60 documents.**
-- **Token profile.** About **5,000 input tokens** and **600 output tokens** per document. Claude Sonnet 5.5 costs **$2 per million input tokens and $10 per million output tokens**.
-- **Stack.** Larchmont runs on one major cloud provider and already has a document-review queue that clerks use. Claude is available through the Anthropic API and through Amazon Bedrock, Google Vertex AI and Microsoft Foundry, so the model can be reached from their existing cloud account.
-- **Build estimate.** About **10 weeks** with two Larchmont engineers and you: intake, extraction, validation against the ERP's supplier and PO tables, the review-queue integration, and an eval set that runs before every change. Your estimate for the engineering time is **about $120K**.
+- **Token profile.** About **5,000 input tokens** and **600 output tokens** per document, measured in the proof of concept with `effort: "low"` set explicitly. Claude Sonnet 5.5 costs **$2 per million input tokens and $10 per million output tokens**. Thinking is billed as output, and Sonnet 5.5 defaults to `high` effort, so if production runs at the default, output could be two to three times higher.
+- **Stack.** Ashgrove runs on AWS and already has a document-review queue that clerks use. Claude is available through the Anthropic API, Claude Platform on AWS (Anthropic-operated, billed through AWS Marketplace), Amazon Bedrock (AWS-operated), Google Vertex AI and Microsoft Foundry. The two AWS paths differ: the proof of concept used structured outputs, which Claude Platform on AWS supports and Bedrock's newer Messages-API endpoint lists as not supported.
+- **Build estimate.** About **10 weeks** with two Ashgrove engineers and you: intake, extraction, validation against the ERP's supplier and PO tables, the review-queue integration, and an eval set that runs before every change. Your estimate for the engineering time is **about $120K**.
 - **The alternative.** Marta's platform team has proposed self-hosting an open-weights model on their own GPUs. They haven't run it on the 500-document set yet, and the team has no one who has operated model serving in production.
 
 ## What to write

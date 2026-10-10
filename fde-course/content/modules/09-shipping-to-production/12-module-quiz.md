@@ -18,7 +18,7 @@ questions:
       - Whether you can bypass their proxy
       - That the bank switches to the Claude API instead
     answer: 1
-    explain: 'Claude is available on the Claude API, Amazon Bedrock, Google Cloud Vertex AI and Microsoft Foundry, but feature availability and client setup differ.'
+    explain: 'Claude is available on the Claude API, Claude Platform on AWS, Amazon Bedrock, Google Cloud Vertex AI and Microsoft Foundry, but feature availability and client setup differ. Message Batches, for example, is missing on Bedrock, Vertex and Foundry.'
   - q: Where should ANTHROPIC_API_KEY live for the production service?
     options:
       - 'In the customer''s secrets manager, injected at runtime, scoped to production and rotated'

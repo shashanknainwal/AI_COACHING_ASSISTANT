@@ -6,7 +6,7 @@ client = anthropic.Anthropic()
 PRICES = {  # dollars per million tokens
     "claude-opus-5-5": {"input": 4.00, "output": 20.00, "cache_write": 5.00, "cache_read": 0.20},
     "claude-sonnet-5-5": {"input": 2.00, "output": 10.00, "cache_write": 2.50, "cache_read": 0.10},
-    "claude-haiku-4-5": {"input": 1.00, "output": 5.00, "cache_write": 1.25, "cache_read": 0.10},
+    "claude-haiku-5-5": {"input": 0.10, "output": 0.50, "cache_write": 0.125, "cache_read": 0.01},  # prompts up to 100K tokens
 }
 BATCH_DISCOUNT = 0.5   # Message Batches: half price on every token type
 
@@ -120,7 +120,7 @@ OPTIONS = [  # pass rates come from the eval suite; output tokens include thinki
     {"name": "opus, medium effort", "pass_rate": 0.95, "params": dict(TRAFFIC, model="claude-opus-5-5", output_tokens=400)},
     {"name": "opus, low effort", "pass_rate": 0.94, "params": dict(TRAFFIC, model="claude-opus-5-5", output_tokens=150)},
     {"name": "sonnet, low effort", "pass_rate": 0.93, "params": dict(TRAFFIC, model="claude-sonnet-5-5", output_tokens=120)},
-    {"name": "haiku", "pass_rate": 0.86, "params": dict(TRAFFIC, model="claude-haiku-4-5", output_tokens=80)},
+    {"name": "haiku 5.5, low effort", "pass_rate": 0.89, "params": dict(TRAFFIC, model="claude-haiku-5-5", output_tokens=100)},
 ]
 for option in OPTIONS:
     cost = monthly_cost(**option["params"])

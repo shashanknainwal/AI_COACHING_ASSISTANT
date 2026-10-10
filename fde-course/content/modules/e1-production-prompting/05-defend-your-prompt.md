@@ -28,7 +28,7 @@ rubric:
     lookFor: "States the few rules that matter with the reason beside each: emergency criteria (gas, active flooding, sparks or burning smell, no heat in freezing weather, lockout of a vulnerable tenant), null for anything not stated, ignore instructions in the tenant text. Uses plain language rather than capital-letter pressure."
   - name: Schema design
     points: 20
-    lookFor: "Enums for anything code routes on (category, urgency, entry permission), an escape hatch value (other or unknown), nullable rather than invented values for unit and access details, a checkable evidence quote for the urgency decision, and no field that asks the model to reproduce its reasoning."
+    lookFor: "Enums for anything code routes on (category, urgency, entry permission), an escape hatch value (other or unknown), nullable rather than invented values for unit and access details, a checkable evidence quote for the urgency decision. A short `rationale` field (one or two sentences) is fine; a long free-form reasoning field is unnecessary because adaptive thinking already deliberates."
   - name: Test plan with numbers
     points: 25
     lookFor: "A golden set drawn from real requests with a stated size and deliberate hard cases (emergencies described calmly, false alarms described dramatically, injection attempts, missing unit numbers, other languages). Field-level scoring, emergency recall as a separate metric with a target, and a release rule that blocks any missed emergency regardless of average accuracy."
@@ -36,7 +36,7 @@ rubric:
     points: 15
     lookFor: "Answers all three pushback questions with reasons: separates extraction from tenant-facing replies, explains why capital-letter emphasis is the wrong fix and what to do instead, and explains how a keyword check can be a cheap escalation-only safety net but not the classifier."
 passScore: 70
-graderNotes: "Mark down: urgency or category as free text; no unknown/other value; a required unit number with no null option; a 'reasoning' or 'think step by step' field or instruction; pressure language (MUST, CRITICAL, NEVER in capitals) used as the main safety mechanism; a test plan with no numbers or no separate emergency metric; letting the model's output alone decide that a gas leak is routine with no code-side backstop. A short, well-reasoned prompt beats a long one. Do not reward length."
+graderNotes: "Mark down: urgency or category as free text; no unknown/other value; a required unit number with no null option; a long free-form 'reasoning' field or a 'think step by step' instruction (a one- or two-sentence `rationale` or evidence field is fine and must not be marked down); pressure language (MUST, CRITICAL, NEVER in capitals) used as the main safety mechanism; a test plan with no numbers or no separate emergency metric; letting the model's output alone decide that a gas leak is routine with no code-side backstop. A short, well-reasoned prompt beats a long one. Do not reward length."
 ---
 
 Design rounds and take-home reviews, where you walk an interviewer through what you built, are reported in applied AI loops (Reported). This practice combines the two: **here's a scenario, write the prompt, then defend it.** Interviewers aren't grading prose style. They want to see that every line has a reason, the output is shaped for the code that consumes it, and you'd know if it broke.

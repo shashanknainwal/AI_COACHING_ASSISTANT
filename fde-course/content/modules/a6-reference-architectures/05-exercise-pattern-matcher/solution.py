@@ -29,6 +29,10 @@ DEFAULT_REVIEW_RATE = 0.15
 # Message Batches is listed for the Claude API and Claude Platform on AWS only
 # (Anthropic's platform availability table, checked 2026-10-08).
 NO_BATCH_PLATFORMS = {"bedrock", "vertex", "foundry"}
+# Structured outputs on Bedrock split by integration (checked 2026-10-10): the newer
+# Messages-API endpoint lists them as not supported; the legacy InvokeModel
+# integration supports them for some models. Flag it so someone confirms which.
+STRUCTURED_OUTPUT_CHECK_PLATFORMS = {"bedrock"}
 SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
 
 
@@ -100,6 +104,10 @@ def flags_for(brief, pattern):
     if brief.get("latency") == "overnight" and brief.get("platform") in NO_BATCH_PLATFORMS:
         flags.append(_flag("batch_unavailable", "medium",
                            f"Message Batches isn't available on {brief.get('platform')}: budget at standard prices or check the cloud's own batch option"))
+    if brief.get("needs_structured_output") and brief.get("platform") in STRUCTURED_OUTPUT_CHECK_PLATFORMS:
+        flags.append(_flag("structured_outputs_platform", "medium",
+                           f"structured outputs on {brief.get('platform')}: the Messages-API endpoint lists them as unsupported "
+                           "and the legacy InvokeModel path supports some models; confirm which, or validate JSON in code"))
     if brief.get("needs_citations") and brief.get("needs_structured_output"):
         flags.append(_flag("citations_with_schema", "low",
                            "citations and structured outputs can't be combined in one request"))

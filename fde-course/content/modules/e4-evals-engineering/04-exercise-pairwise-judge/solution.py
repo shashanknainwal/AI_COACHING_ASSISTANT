@@ -49,10 +49,10 @@ PAIRS = [
 PAIRWISE_SCHEMA = {
     "type": "object",
     "properties": {
-        "reasoning": {"type": "string"},
         "winner": {"type": "string", "enum": ["first", "second", "tie"]},
+        "rationale": {"type": "string"},
     },
-    "required": ["reasoning", "winner"],
+    "required": ["winner", "rationale"],
     "additionalProperties": False,
 }
 
@@ -63,7 +63,7 @@ def build_prompt(clause, first, second):
         "<clause>", clause, "</clause>", "",
         "<response_1>", first, "</response_1>", "",
         "<response_2>", second, "</response_2>", "",
-        'Compare the two summaries against the rubric. Explain your reasoning first, then answer "first", "second" or "tie".',
+        'Compare the two summaries against the rubric. Answer "first", "second" or "tie", with a one- or two-sentence rationale naming the deciding fact.',
     ])
 
 
@@ -71,10 +71,10 @@ def ask_judge(client, clause, first, second):
     """One judge call. Returns "first", "second", "tie", or "error" on a refusal or truncation."""
     response = client.messages.create(
         model=JUDGE_MODEL,
-        max_tokens=2048,
+        max_tokens=4096,
         system=JUDGE_SYSTEM,
         messages=[{"role": "user", "content": build_prompt(clause, first, second)}],
-        output_config={"format": {"type": "json_schema", "schema": PAIRWISE_SCHEMA}},
+        output_config={"effort": "low", "format": {"type": "json_schema", "schema": PAIRWISE_SCHEMA}},
     )
     if response.stop_reason in ("refusal", "max_tokens"):
         return "error"

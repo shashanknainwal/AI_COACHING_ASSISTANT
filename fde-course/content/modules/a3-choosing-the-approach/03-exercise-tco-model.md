@@ -67,6 +67,8 @@ Once it passes, look at what the numbers say. They are the point of the exercise
 
 - **Model spend is under $500 a month.** Human review is $16,800 and fixed costs are $18,000. On most document workflows the API bill is the smallest line. The decision turns on review rate and time to value, not token prices.
 - **The horizon flips the answer.** Over 12 months the build is cheapest. Over 6 months, buying wins because it goes live in month 2. State the horizon in the first line of your recommendation.
+- **Check the thinking tokens.** The 800 output tokens assume `effort` is set explicitly and measured. Sonnet 5.5 defaults to `high` effort and thinks by default, and thinking is billed as output. Run the workload at 2,400 output tokens (3x) and the API line rises from about $485 to about $933 a month. It's still under 3% of the build option's run cost, so the ranking holds, but say it out loud.
+- **The cache hit rate on batched traffic is optimistic.** The model applies the same 95% hit rate to the 60% of traffic sent through the Batch API. Anthropic's cost guidance notes that cache hits inside a concurrent batch are best-effort, so treat 95% as a ceiling for that share. Here a lower hit rate moves the bill by tens of dollars; on a prefix-heavy workload it can matter more.
 - **Every input is an assumption.** The 15% review rate is a guess until a proof of concept measures it. Run the model at 25% and see how the ranking moves. That is your sensitivity analysis, and the subject of lesson 4.
 
 ## Defend it

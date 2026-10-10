@@ -36,11 +36,11 @@ def _responder(params):
     s1 = sum(f.lower() in first.lower() for f in facts)
     s2 = sum(f.lower() in second.lower() for f in facts)
     if s1 > s2:
-        out = {"reasoning": f"The first summary keeps {s1} of {len(facts)} key terms; the second keeps {s2}.", "winner": "first"}
+        out = {"winner": "first", "rationale": f"The first summary keeps {s1} of {len(facts)} key terms; the second keeps {s2}."}
     elif s2 > s1:
-        out = {"reasoning": f"The second summary keeps {s2} of {len(facts)} key terms; the first keeps {s1}.", "winner": "second"}
+        out = {"winner": "second", "rationale": f"The second summary keeps {s2} of {len(facts)} key terms; the first keeps {s1}."}
     else:
-        out = {"reasoning": "Both summaries cover the key terms. The first is clear and well organised.", "winner": "first"}
+        out = {"winner": "first", "rationale": "Both summaries cover the key terms. The first is clear and well organised."}
     return json.dumps(out)
 
 

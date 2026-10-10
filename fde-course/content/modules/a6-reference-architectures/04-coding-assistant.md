@@ -36,7 +36,7 @@ Build custom when the customer needs something a tool doesn't do: a PR reviewer 
 
 ## Components and data flow
 
-Fictional customer: **Larkfield Bank**, 1,500 engineers, 600 merged PRs a day, a strict change-management policy.
+Fictional customer: **Rookwood Bank**, 1,500 engineers, 600 merged PRs a day, a strict change-management policy.
 
 ### PR review bot
 
@@ -113,7 +113,7 @@ Remember that output tokens include the model's thinking on current models, so e
 
 Prices from Anthropic's [pricing page](https://platform.claude.com/docs/en/about-claude/pricing) (checked 2026-10-08), per million tokens: Sonnet 5.5 $2 input, $10 output; Opus 5.5 $4 input, $20 output, $0.20 cache read, $5 for a 5-minute cache write.
 
-### PR review at Larkfield
+### PR review at Rookwood
 
 Assumptions: 600 PRs a day, 3 reviews per PR (open plus two pushes), 30,000 input tokens and 2,000 output tokens per review, mostly fresh (each diff is new).
 
@@ -122,7 +122,7 @@ Assumptions: 600 PRs a day, 3 reviews per PR (open plus two pushes), 30,000 inpu
 | Sonnet 5.5 | 30,000 x $2/M + 2,000 x $10/M = $0.08 | $144 | about $3,200 |
 | Opus 5.5 | 30,000 x $4/M + 2,000 x $20/M = $0.16 | $288 | about $6,300 |
 
-On Opus 5.5 that's about $4.20 per engineer per month. Reviewing only new commits on later pushes could cut input on those reviews by more than half.
+The 2,000 output tokens include thinking at an explicitly set effort. Sonnet 5.5 defaults to `high` and Opus 5.5 to `medium`; if review output runs to 6,000 tokens (3x), Sonnet 5.5 costs $0.12 a review, about $4,750 a month. On Opus 5.5 the base estimate is about $4.20 per engineer per month. Reviewing only new commits on later pushes could cut input on those reviews by more than half.
 
 ### One agentic coding task
 
@@ -162,5 +162,5 @@ Original practice prompts:
 > - Split developer productivity into PR review, code Q&A and agentic coding. They carry different risks and should be reviewed separately.
 > - Governance is architecture: secret scanning before prompts, sandboxes without production credentials, command allowlists, branch protection, and a run log per PR.
 > - Prefer an existing tool for agentic coding; build where custom policy or integration is the point.
-> - PR review on Opus 5.5 costs about $0.16 a review at Larkfield's sizes; agent tasks cost about $1.78 with caching and about $10.80 without.
+> - PR review on Opus 5.5 costs about $0.16 a review at Rookwood's sizes; agent tasks cost about $1.78 with caching and about $10.80 without.
 > - Without tests, review capacity or an approved data path, agentic coding is the wrong first step.

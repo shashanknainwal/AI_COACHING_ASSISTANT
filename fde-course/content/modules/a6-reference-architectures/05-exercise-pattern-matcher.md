@@ -7,7 +7,7 @@ hints:
   - "`recommend`: rank with `sorted(PATTERNS, key=lambda p: (-scores[p], PATTERNS.index(p)))`. Below `MIN_FIT` means `pattern=None`, `runner_up=None`, `confidence=\"no_fit\"`. Otherwise the runner-up is the second pattern if its score is above 0."
   - "`flags_for`: build a list of `{\"code\", \"severity\", \"reason\"}` dicts in any order, then `flags.sort(key=lambda f: (SEVERITY_ORDER[f[\"severity\"]], f[\"code\"]))`. Python's sort is stable, so two `irreversible_action` flags stay in brief order."
   - "Skip an action entirely when `action.get(\"human_approval\")` is true. Otherwise flag `irreversible_action` when `reversible` is False and `approval_limit` when `max_usd > AUTO_APPROVE_LIMIT_USD` (missing `max_usd` counts as 0)."
-  - "The three mismatch flags and the three pattern-specific risks only apply when `pattern` is not None (and, for the specific risks, only for their own pattern). `no_golden_set`, `batch_unavailable` and `citations_with_schema` apply to every brief, even with no pattern."
+  - "The three mismatch flags and the three pattern-specific risks only apply when `pattern` is not None (and, for the specific risks, only for their own pattern). `no_golden_set`, `batch_unavailable`, `structured_outputs_platform` and `citations_with_schema` apply to every brief, even with no pattern."
 ---
 
 Grace here. Sales hands me five or six new customer briefs a week, and the first thing I do with each is the same: which reference architecture is this, how sure am I, and what in the brief will hurt us if nobody says it out loud in the first call? I'd like a tool that does that first pass consistently, so the account team arrives at discovery with the right questions.
@@ -71,9 +71,10 @@ General risks, for every brief:
 |---|---|---|---|
 | `no_golden_set` | medium | `labelled_examples` below `MIN_GOLDEN_SET` (100) | the count |
 | `batch_unavailable` | medium | latency is `"overnight"` and the platform is in `NO_BATCH_PLATFORMS` | |
+| `structured_outputs_platform` | medium | `needs_structured_output` and the platform is in `STRUCTURED_OUTPUT_CHECK_PLATFORMS` | the platform |
 | `citations_with_schema` | low | `needs_citations` and `needs_structured_output` | |
 
-The last two encode real API facts from this module: the Message Batches API is listed for the Claude API and Claude Platform on AWS but not for Bedrock, Vertex AI or Foundry, and citations can't be combined with structured outputs in one request.
+The last three encode real API facts from this module. The Message Batches API is listed for the Claude API and Claude Platform on AWS but not for Bedrock, Vertex AI or Foundry. On Bedrock, structured outputs split by integration: the newer Messages-API endpoint lists them as not supported, while the legacy `InvokeModel` integration supports them for some models, so a Bedrock brief that needs schema-constrained JSON needs someone to confirm which path and model (or plan to validate JSON in code). And citations can't be combined with structured outputs in one request.
 
 **3. `recommend(brief)`** returns:
 
@@ -96,5 +97,6 @@ Original practice questions in the style of an architect case round:
 
 - "Your matcher says 'close' between knowledge assistant and document processing. What do you ask the customer to break the tie?" Ask what happens to the answer: does a person read it, or does a system ingest it?
 - "Why does an irreversible action block `go` while a missing golden set doesn't?" A missing golden set delays launch; an unguarded irreversible action causes harm after launch. Both need fixing, at different times.
+- "Ostrava Re is on Bedrock and needs structured output. Is that a blocker?" Not by itself. Ask which Bedrock integration and model they'd use, check the current structured-outputs compatibility note, and if the endpoint doesn't support it, validate against the schema in code and retry. Or compare Claude Platform on AWS, which supports it.
 - "A salesperson wants to delete the `batch_unavailable` flag because it 'scares the customer'. What do you say?" It can double the model bill. Better to raise it in week one than in the first invoice.
 - "What can't a rule-based matcher see?" Politics, data quality, who owns the budget, whether the process should exist at all. That's what discovery is for.

@@ -3,11 +3,11 @@ title: "Exercise: Grounded Answers With Verified Citations"
 type: exercise
 minutes: 40
 hints:
-  - "`format_documents`: build a list of lines. For each doc, `enumerate(docs, 1)` and add `<document index=\"{i}\">`, `<source>{id}</source>`, `<document_content>`, the text, `</document_content>`, `</document>`. Join with `\"\\n\"`."
-  - "`parse_citations`: split with `re.split(r\"(?<=[.!?])\\s+\", text.strip())`. For each piece, first peel off any citations at the very start (`re.match(r\"(\\s*\\[[A-Z]+-\\d+\\])+\", piece)`) and add them to the previous claim. Then `CITATION.findall(piece)` gives the ids and `re.sub(r\"\\s*\\[[A-Z]+-\\d+\\]\", \"\", piece).strip()` gives the sentence."
-  - "`validate`: `uncited` is every sentence whose `ids` is empty. For `unknown_ids`, walk the claims in order and append each id that isn't in `retrieved_ids` and isn't already in the list."
-  - "`answer_question`: return the insufficient dict with `attempts: 0` before calling Claude when `search` returns nothing. Then loop `for attempt in range(1, MAX_ATTEMPTS + 1)`, joining the text blocks of each response."
-  - "On a failed check before the last attempt, extend the conversation: `messages + [{\"role\": \"assistant\", \"content\": text}, {\"role\": \"user\", \"content\": feedback_message(report)}]`. After the loop, return `flagged` with the last text, its cited ids and the last report's `uncited` and `unknown_ids`."
+  - "`format_documents`: the spec shows the exact tag structure. Number documents from 1, and keep the source id inside its own tag so the model can cite it."
+  - "`parse_citations`: split into sentences first. Models sometimes put a citation at the start of the next sentence instead of the end of the one it supports; decide which claim such a leading citation belongs to before you strip the brackets."
+  - "`validate` reports two different problems: sentences with no citation at all, and citations that point at documents you never retrieved. Keep the unknown ids in first-seen order without duplicates."
+  - "`answer_question`: there's one case where you shouldn't call Claude at all. After that it's a bounded retry loop; read the text by block type, not by position."
+  - "When a check fails and you have attempts left, extend the conversation with what Claude said and what was wrong with it, rather than starting over. After the last attempt, return what you have, flagged."
 ---
 
 **Kestrel Benefits** (fictional) runs benefits for mid-sized employers. Their employee assistant answers questions like "How long is paid parental leave?" from plan documents. Their legal team has one non-negotiable rule: **every sentence the assistant shows must point to the plan document that supports it.** Last month the pilot told an employee they could "split the leave into two blocks" and cited a document that was never retrieved. Nobody noticed until HR did.
@@ -53,7 +53,7 @@ Rewrite the answer using only the documents above. End every sentence with the i
 **6. `answer_question(client, question, k=3)`**:
 
 1. `docs = search(question, k)`. If it's empty, return `insufficient` with `attempts: 0` **without calling Claude**.
-2. Call `client.messages.create` with `model=MODEL`, `max_tokens` ≥ 1024, `system=SYSTEM_PROMPT` and one user message, `build_user_message(question, docs)`.
+2. Call `client.messages.create` with `model=MODEL`, `max_tokens` ≥ 1024 (it covers thinking too, and Sonnet 5.5 thinks at effort `high` by default, so leave room: 4096 is a sensible value), `system=SYSTEM_PROMPT` and one user message, `build_user_message(question, docs)`.
 3. Join the text blocks. If the text is exactly `INSUFFICIENT_CONTEXT`, return `insufficient`.
 4. Parse and validate against the retrieved ids. If it passes, return `answered`.
 5. If it fails and you have attempts left, append the answer as an `assistant` turn and `feedback_message(report)` as a `user` turn, and call again. After `MAX_ATTEMPTS` failures, return `flagged`.

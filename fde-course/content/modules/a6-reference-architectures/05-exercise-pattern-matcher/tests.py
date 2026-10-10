@@ -111,7 +111,7 @@ def test_pattern_specific_risks():
 
 
 def test_general_risks():
-    """Golden set, batch availability and citations-with-schema apply whatever the pattern"""
+    """Golden set, batch, structured-output platform and citations-with-schema apply whatever the pattern"""
     f = flags_for(_brief(labelled_examples=40), "support_automation")
     assert _codes(f) == ["no_golden_set"] and "40" in f[0]["reason"], f"got {f}"
     assert flags_for(_brief(labelled_examples=100), "support_automation") == [], "exactly 100 is enough"
@@ -125,6 +125,16 @@ def test_general_risks():
         assert "batch_unavailable" not in _codes(f), f"Message Batches works on {platform}"
     f = flags_for(_brief(latency="minutes", platform="bedrock"), "document_processing")
     assert "batch_unavailable" not in _codes(f), "only overnight work needs batch"
+
+    f = flags_for(_brief(needs_structured_output=True, platform="bedrock"), "document_processing")
+    so = [x for x in f if x["code"] == "structured_outputs_platform"]
+    assert so and so[0]["severity"] == "medium", f"structured outputs on Bedrock need confirming; got {_codes(f)}"
+    assert "bedrock" in so[0]["reason"], f"name the platform in the reason; got {so[0]['reason']!r}"
+    for platform in ("anthropic_api", "claude_platform_aws", "vertex", "foundry"):
+        f = flags_for(_brief(needs_structured_output=True, platform=platform), "document_processing")
+        assert "structured_outputs_platform" not in _codes(f), f"structured outputs are listed as supported on {platform}"
+    assert "structured_outputs_platform" not in _codes(flags_for(_brief(platform="bedrock"), "document_processing")), \
+        "only flag it when the brief needs structured output"
 
     f = flags_for(_brief(needs_citations=True, needs_structured_output=True), "support_automation")
     assert f and f[0]["code"] == "citations_with_schema" and f[0]["severity"] == "low", f"got {f}"
@@ -148,7 +158,7 @@ def test_grace_briefs():
     assert _codes(fen["flags"]) == ["approval_limit", "irreversible_action"], _codes(fen["flags"])
     ost = got["Ostrava Re"]
     assert ost["pattern"] == "document_processing"
-    assert _codes(ost["flags"]) == ["review_queue_overflow", "batch_unavailable"], _codes(ost["flags"])
+    assert _codes(ost["flags"]) == ["review_queue_overflow", "batch_unavailable", "structured_outputs_platform"], _codes(ost["flags"])
     hal = got["Halden Pharma"]
     assert _codes(hal["flags"]) == ["permissions_sync", "read_only_pattern", "citations_with_schema"], _codes(hal["flags"])
     qua = got["Quayside Bank"]

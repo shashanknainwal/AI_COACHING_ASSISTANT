@@ -46,7 +46,7 @@ PAIRS = [
      "b": "Supplier needs the customer's prior written consent to subcontract and remains responsible for its subcontractors.", "human": "B"},
 ]
 
-PAIRWISE_SCHEMA = {}  # TODO: reasoning (string) first, then winner (enum first/second/tie)
+PAIRWISE_SCHEMA = {}  # TODO: winner (enum first/second/tie) and a short rationale (string)
 
 
 def build_prompt(clause, first, second):

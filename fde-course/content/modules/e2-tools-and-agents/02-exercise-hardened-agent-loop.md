@@ -3,11 +3,11 @@ title: "Exercise: Harden a Trip-Support Agent Loop"
 type: exercise
 minutes: 40
 hints:
-  - "`execute_tool`: start from `{\"type\": \"tool_result\", \"tool_use_id\": block.id}`. Look the function up with `TOOL_FUNCTIONS.get(block.name)` and return the unknown-tool error if it's `None`."
-  - "Catch `ToolError` first and use `str(exc)` as the content. Then catch `Exception` and use the generic message with `type(exc).__name__` only, never `str(exc)`."
-  - "`run_agent`: loop `for iteration in range(1, max_iterations + 1)`. After each call, add `response.usage.input_tokens` / `output_tokens` to your totals and append `{\"role\": \"assistant\", \"content\": response.content}`."
-  - "Check stop reasons in this order: `refusal`, `max_tokens`, anything other than `tool_use` (completed), then `iteration == max_iterations` (hand off before running tools)."
-  - "Collect every `tool_use` block's result into one list and append `{\"role\": \"user\", \"content\": results}` once per turn. Record `{\"name\", \"input\", \"is_error\"}` for each call as you go."
+  - "`execute_tool`: there are four outcomes in the table. Start from the fields every result shares, and handle the unknown-tool case before you try to call anything."
+  - "Order your `except` clauses from most specific to least. Ask of each failure: is this message safe and useful for the model to read? A `ToolError` was written for the model; an arbitrary exception was not."
+  - "`run_agent`: one loop over API calls. Each pass records usage, appends the assistant turn unchanged, then decides what to do from `stop_reason`."
+  - "The order of your stop-reason checks matters. Which turns must never have their tools run? And on the last allowed call, what should happen before any tool runs?"
+  - "A `tool_use` turn produces exactly one user message, however many tools were called. Build the results first, append once."
 ---
 
 Leo Martins drops a file into your shared folder. "Treat this like a take-home. Fernway Travel, a fictional corporate travel agency, has a trip-support agent that a contractor wrote. It works in the demo. In production it crashed when the flight-ops database timed out, looped 40 times on one ticket, and once leaked an internal database hostname into a reply. Make the loop production-safe. I'll review it like a PR."

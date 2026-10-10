@@ -1,7 +1,7 @@
 ---
 title: "Live Practice: Saying No Without Losing the Deal"
 type: roleplay
-minutes: 25
+minutes: 20
 persona:
   name: Joanna Mercer
   role: SVP Claims, business sponsor (fictional)

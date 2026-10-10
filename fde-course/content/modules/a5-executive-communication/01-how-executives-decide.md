@@ -59,7 +59,7 @@ Adjectives ask the reader to trust you. Numbers let them check you.
 | "Highly accurate" | "Correct routing on 91% of 400 held-out claims; the current manual process scores 87% on the same set" |
 | "Cost-effective" | "About $0.02 per claim in model cost; about $800 a month at 40,000 claims" |
 | "Fast" | "p95 latency 6 seconds per claim; claims are processed in a queue, so nobody waits on it" |
-| "Secure" | "Claim text goes to the model through our existing cloud account; under the commercial terms the provider may not train on it" |
+| "Secure" | "Claim text goes to Claude on Amazon Bedrock inside our existing AWS account, where AWS is the data processor, so AWS's data-protection terms apply (page attached); our own prompt logs are kept 30 days, then deleted" |
 | "Scalable" | "Tested at 3x current peak volume in the pilot environment" |
 
 Show your working once, briefly, so the reader can redo it. For the claims example on Claude Sonnet 5.5 ($2 per million input tokens, $10 per million output tokens):
@@ -68,9 +68,11 @@ Show your working once, briefly, so the reader can redo it. For the claims examp
 40,000 claims/month x 6,000 input tokens  = 240M input tokens  x $2/M  = $480
 40,000 claims/month x   800 output tokens =  32M output tokens x $10/M = $320
 Model cost                                                             ≈ $800/month (≈ $0.02/claim)
+Assumes effort set explicitly ("low"). Thinking line: at Sonnet 5.5's default
+"high" effort, if output triples to 2,400 tokens: 96M x $10/M = $960 output ≈ $1,440/month
 ```
 
-Then say what moves it: prompt caching on a shared system prompt lowers the input side; the Batch API is 50% off for work nobody is waiting on; a doubling of claim length roughly doubles input cost. A CFO trusts a number more when you tell them what would make it wrong.
+Then say what moves it: prompt caching on a shared system prompt lowers the input side; the Batch API is 50% off for work nobody is waiting on (on the Claude API and Claude Platform on AWS, not on Bedrock); thinking is billed as output, so the effort setting moves the output line; a doubling of claim length roughly doubles input cost. A CFO trusts a number more when you tell them what would make it wrong.
 
 Two cautions:
 

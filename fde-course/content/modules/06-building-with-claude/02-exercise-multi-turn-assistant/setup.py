@@ -7,10 +7,23 @@ _REPLIES = {
     "password": "I can't help with getting into someone else's account.",
 }
 
+SIM_SUMMARY = ("The agent asked about wire fees: international wires are $35 to send and $15 to receive; "
+               "domestic wires are $25 to send and free to receive.")
+
+
+def _newest_text(params):
+    """Text of the newest block in the newest message (ignores an injected summary block)."""
+    content = params["messages"][-1]["content"]
+    if isinstance(content, list):
+        texts = [b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text"]
+        return texts[-1] if texts else ""
+    return content
+
 
 def _responder(params):
-    last = params["messages"][-1]["content"]
-    text = (last if isinstance(last, str) else str(last)).lower()
+    text = _newest_text(params).lower()
+    if "summarize" in text:
+        return _sim.message(_sim.thinking(""), _sim.text(SIM_SUMMARY))
     if "neighbor" in text:
         return _sim.refusal(category=None)
     for cue, reply in _REPLIES.items():

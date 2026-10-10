@@ -33,7 +33,11 @@ Four details in that table matter more than they look.
 
 **2. Who processes the data decides whose paperwork applies.** Anthropic's data retention page says that on Bedrock and Google Cloud the cloud provider is the data processor, and points you to their retention and compliance docs. On the Claude API, Claude Platform on AWS and Foundry, Anthropic is the processor. That one fact routes half of the security review (lesson 02).
 
-**3. Foundry has two hosting options.** In Foundry you pick "Hosted on Azure" (an Anthropic-operated service running on Azure infrastructure) or "Hosted on Anthropic" (Anthropic infrastructure). For Hosted on Azure, Anthropic's docs say prompts and completions stay within Azure, and only usage metadata and content flagged by Anthropic's safety systems leave Azure for Anthropic. Hosted on Anthropic gets more features and more models. The choice is per deployment.
+**3. Foundry has two hosting options, and they aren't interchangeable.** In Foundry you pick "Hosted on Azure" (an Anthropic-operated service running on Azure infrastructure) or "Hosted on Anthropic" (Anthropic infrastructure). For Hosted on Azure, Anthropic's docs say prompts and completions stay within Azure, and only usage metadata and content flagged by Anthropic's safety systems leave Azure for Anthropic. The choice is per deployment. Three details from the Foundry page change what you tell a CISO:
+
+- **Anthropic acts as an "independent processor for Microsoft"**, and Foundry customers are subject to Anthropic's data use terms. Don't describe Anthropic as Microsoft's subprocessor or say "Microsoft's terms only."
+- **Model availability depends on the hosting option.** Claude Fable 5.1 is offered only Hosted on Anthropic, so a "prompts stay in Azure" requirement rules it out. Opus 5.5, Sonnet 5.5 and Haiku 5.5 are offered in both.
+- **Claude Sonnet 5.5 supports only Global Standard deployments.** The US Data Zone option isn't available for it.
 
 **4. Google's product name moved.** Anthropic's docs now call it "Google Cloud's Agent Platform" (the URL still says vertex-ai). Customers will say Vertex. Use their word, and know both.
 
@@ -44,6 +48,7 @@ This is where architectures break. Anthropic's skill reference and platform page
 | Feature | Claude API | Platform on AWS | Bedrock | Vertex AI | Foundry |
 |---|---|---|---|---|---|
 | Messages, streaming, tool use, PDF input | Yes | Yes | Yes | Yes | Yes |
+| Structured outputs (`output_config.format`) | Yes | Yes | Not on the Messages-API endpoint; legacy `InvokeModel` for some models (see below) | Yes | Yes |
 | Prompt caching (5 min and 1 h) | Yes | Yes | Yes | Yes | Yes |
 | 1M-token context (current models) | Yes | Yes | Yes | Yes | Yes |
 | `inference_geo` data-residency parameter | Yes | Yes | No (region set by endpoint) | No (region set by endpoint) | No (deployment type instead) |
@@ -61,7 +66,7 @@ Three things to say out loud when you show a table like this:
 
 - **Batches is a cost lever.** Anthropic's batch pricing is half the standard rate. A customer with a large overnight document backlog who picks Bedrock, Vertex or Foundry gives that up and must find another way to cut cost.
 - **Server-side tools change who runs what.** Without code execution or web fetch on the platform, the customer builds and hosts those tools themselves. That's more engineering, but some security teams prefer it.
-- **Sources can disagree.** Anthropic's skill reference lists structured outputs as available on Bedrock, while the "Claude in Amazon Bedrock" page (Opus 4.7 and later) lists structured outputs under "not supported." When two official sources disagree, you don't pick one. You test it in the customer's account and confirm with the provider before it goes in a design.
+- **Bedrock has two integrations, and structured outputs splits along them.** The newer "Claude in Amazon Bedrock" page (the Messages API at `/anthropic/v1/messages`, Opus 4.7 and later) lists structured outputs under "Features not supported." The legacy page (`InvokeModel` and `Converse`) lists structured outputs as supported for the models named in the Bedrock note of the structured-outputs compatibility section. So this isn't a contradiction; it's a version split. If a Bedrock design depends on schema-constrained JSON, say which integration and which model, check the current compatibility note, and plan for validate-and-retry in code if the endpoint you use doesn't support it.
 
 ## Where inference runs
 
@@ -71,13 +76,15 @@ Data residency questions come in every enterprise deal. The answer differs by pl
 |---|---|---|
 | Claude API | `inference_geo` per request: `"global"` (default) or `"us"`. Workspaces can set `default_inference_geo` and `allowed_inference_geos`. Workspace geo (where data is stored at rest) is currently `"us"` only. | US-only inference is 1.1x on Claude 4.6 and later models |
 | Claude Platform on AWS | Same `inference_geo` controls. Workspaces are bound to one AWS region. | 1.1x for US-only |
-| Amazon Bedrock | Global endpoint, or regional endpoints and inference profiles (US, EU, JP, AU) | Regional endpoints carry a 10% premium over global |
-| Vertex AI | Global, multi-region (`us`, `eu`) or regional endpoints | Regional and multi-region carry a 10% premium |
-| Foundry | Global Standard, or US Data Zone Standard (Hosted on Azure only), which Anthropic's docs describe as equivalent to `inference_geo: "us"` | 1.1x for US Data Zone |
+| Amazon Bedrock | Global endpoint; geographic inference profiles (US, EU, JP, AU); and "In-region only" single-region routing in a few listed regions (in the EU: `eu-north-1` Stockholm and `eu-west-1` Ireland). Frankfurt (`eu-central-1`) is listed as "Global, EU", not in-region. | Regional endpoints carry a 10% premium over global |
+| Vertex AI | Global, multi-region (`us`, `eu`) or regional endpoints. Single-region endpoints serve **Claude Sonnet 4.6 and earlier only**; newer models use the global or multi-region endpoints. | Regional and multi-region carry a 10% premium |
+| Foundry | Global Standard, or US Data Zone Standard (Hosted on Azure only), which Anthropic's docs describe as equivalent to `inference_geo: "us"`. No EU data zone. Sonnet 5.5 is Global Standard only. | 1.1x for US Data Zone |
 
 Source: [Data residency](https://platform.claude.com/docs/en/manage-claude/data-residency) and the platform pages above.
 
-Read that table for the question a European bank will ask: "Can inference stay in the EU?" On the Claude API today, `inference_geo` offers only `"us"` and `"global"`. Bedrock (EU inference profiles) and Vertex AI (the `eu` multi-region) offer EU options. So an EU-only inference requirement can push the platform choice by itself. Before you promise it, confirm that the exact model they need is offered in that geography; model availability varies by region on both clouds.
+Read that table for the question a European bank will ask: "Can inference stay in the EU?" On the Claude API today, `inference_geo` offers only `"us"` and `"global"`. Foundry offers Global or US only. Bedrock (the EU inference profile, or in-region routing in Stockholm or Ireland) and Vertex AI (the `eu` multi-region) offer EU options. So an EU-only inference requirement can push the platform choice by itself. Before you promise it, confirm that the exact model they need is offered in that geography; model availability varies by region on both clouds.
+
+Now the sharper question: **"Can inference stay in Germany?"** For current models, no documented option pins inference to Germany alone. Vertex AI's `eu` multi-region routes across EU regions, and its single-region endpoints (such as a German region) serve only Sonnet 4.6 and earlier. Bedrock's Frankfurt region is listed as "Global, EU", so it routes through the EU profile, not Frankfurt only. The honest answer is: "EU-only inference, yes, on Bedrock or Vertex AI. Germany-only for current models, not as a documented option today. Is the requirement really Germany, or the EU? I'll check the current docs and the cloud provider's region list before anything goes in writing."
 
 Also know the limits of the claim. "Inference in the EU" is not the same as "no data ever leaves the EU." Logging, abuse monitoring and support processes have their own rules. Lesson 02 covers how to answer that without overclaiming.
 
@@ -138,6 +145,6 @@ Then write the answer as a recommendation with reasons and open items, for examp
 > - There are five options. Anthropic operates the Claude API, Claude Platform on AWS and Foundry; AWS operates Bedrock and Google Cloud operates Vertex AI. That decides who the data processor is.
 > - Claude Platform on AWS and Amazon Bedrock are different products. Always ask which one.
 > - Feature gaps (Batches, code execution, Skills, Files API, server-side web tools, Managed Agents) are the main reason a platform choice breaks an architecture.
-> - Residency controls differ: `inference_geo` us/global on Anthropic-operated platforms, endpoints and inference profiles on Bedrock and Vertex AI, deployment types on Foundry. Regional options cost about 10% more.
+> - Residency controls differ: `inference_geo` us/global on Anthropic-operated platforms, endpoints and inference profiles on Bedrock and Vertex AI, deployment types on Foundry (Global or US only, no EU zone). Regional options cost about 10% more. No documented option pins current models to a single country such as Germany.
 > - Model IDs differ: bare on the Claude API, Platform on AWS and Vertex AI, `anthropic.`-prefixed on Bedrock, deployment names on Foundry.
 > - Choose in order: procurement, processor, residency, features, data-handling arrangement. Write the result as a recommendation with reasons, rejections and open items.

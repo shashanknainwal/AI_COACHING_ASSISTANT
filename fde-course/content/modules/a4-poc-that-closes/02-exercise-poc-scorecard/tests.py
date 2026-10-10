@@ -5,9 +5,9 @@ def _crit(metric, threshold, direction="higher", must_have=True, baseline=0, **e
 
 
 def test_validate_good_criteria():
-    """validate_criteria() returns an empty list for the agreed Halvorsen criteria"""
+    """validate_criteria() returns an empty list for the agreed Thornbury criteria"""
     got = validate_criteria(CRITERIA)
-    assert got == [], f"Halvorsen's criteria are complete, so expect [], got {got!r}"
+    assert got == [], f"Thornbury's criteria are complete, so expect [], got {got!r}"
 
 
 def test_validate_finds_problems():
@@ -90,8 +90,8 @@ def test_readout_decisions():
         f"a missed must-have is a no-go even if another is unmeasured; both block. Got {nogo}"
 
 
-def test_halvorsen_readout():
-    """Halvorsen week 6: conditional, three items to watch, the demo score left unscored"""
+def test_thornbury_readout():
+    """Thornbury week 6: conditional, three items to watch, the demo score left unscored"""
     r = poc_readout(CRITERIA, RESULTS)
     assert r, "poc_readout returned nothing"
     statuses = [row["status"] for row in r["rows"]]

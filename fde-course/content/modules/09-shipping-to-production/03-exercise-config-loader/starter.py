@@ -11,7 +11,7 @@ SETTINGS = {
     "ANTHROPIC_API_KEY": {"type": "str", "required": True, "secret": True},
     "APP_ENV": {"type": "str", "required": True, "choices": ["dev", "staging", "prod"]},
     "TRIAGE_MODEL": {"type": "str", "default": "claude-sonnet-5-5",
-                     "choices": ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-4-5"]},
+                     "choices": ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"]},
     "MAX_TOKENS": {"type": "int", "default": 1024, "min": 1, "max": 64000},
     "REQUEST_TIMEOUT_S": {"type": "float", "default": 30.0, "min": 1, "max": 600},
     "ENABLE_AUTO_CREDIT": {"type": "bool", "default": False},

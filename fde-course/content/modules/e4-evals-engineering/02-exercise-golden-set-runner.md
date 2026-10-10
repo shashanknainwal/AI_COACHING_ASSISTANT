@@ -3,11 +3,11 @@ title: "Exercise: A Golden-Set Runner That Tells the Truth"
 type: exercise
 minutes: 40
 hints:
-  - "Wilson: `p = passes / n`, `denom = 1 + z*z/n`, `center = (p + z*z/(2*n)) / denom`, `half = z * math.sqrt(p*(1-p)/n + z*z/(4*n*n)) / denom`. Round `center - half` and `center + half` to 3 decimals."
-  - "`cases_needed` is one line: `math.ceil(z * z * p * (1 - p) / (margin * margin))`."
-  - "In `run_golden_set`, start each row as an error (`actual: None`, `status: \"error\"`), then use `try / except Exception as e / else`. Only grade in the `else` branch. A pass needs `isinstance(actual, str)` and `actual.strip().lower() == case[\"expected\"]`."
-  - "In `summarize`, build `scored = [r for r in rows if r[\"status\"] != \"error\"]` once. Categories come from every row (`sorted({r[\"expected\"] for r in rows})`), but each category's n counts only its scored rows."
-  - "In `traffic_report`, a category is tested when its scored n is above 0. Divide the weighted sum by the total traffic share of the tested categories. Sort gaps with `key=lambda c: (-traffic_mix[c], c)`."
+  - "`wilson_interval`: the formula is in the spec; translate it line by line. Handle `n == 0` before you divide by anything."
+  - "`cases_needed`: you're solving the margin formula for n. 'Smallest whole n' tells you which way to round."
+  - "`run_golden_set`: the system under test can raise, and an exception is not a wrong answer. Grade only when the call returned, and remember the output might not even be a string."
+  - "`summarize`: decide once which rows are scored and which are errors, then reuse that split for the totals and for every category. A category whose rows all errored still appears, with `n` 0."
+  - "`traffic_report`: weight each tested category's pass rate by its traffic share, then renormalize by the share you actually tested, so untested traffic isn't silently counted as passing or failing. Gaps are about traffic at risk, so order them by share."
 ---
 
 Leo Martins, a Staff engineer on the applied team (a fictional coach for this track), drops a take-home on your desk. It's in the style of applied AI interviews: small, practical, and judged on whether your numbers can be trusted.

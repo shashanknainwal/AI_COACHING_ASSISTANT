@@ -3,11 +3,11 @@ title: "Exercise: Hybrid Retrieval With Rank Fusion and Filters"
 type: exercise
 minutes: 35
 hints:
-  - "`rrf`: default `weights` to `[1.0] * len(rankings)`. Loop `for ranking, weight in zip(rankings, weights)` and `for rank, doc_id in enumerate(ranking, 1)`; add `weight / (k + rank)` to a `scores` dict and keep `best[doc_id] = min(...)`."
-  - "Round each score to 6 places **before** sorting, then sort with `key=lambda item: (-item[1], best[item[0]], item[0])`."
-  - "`matches`: loop over `(filters or {}).items()`. Return False if the key is missing from `meta`; use `meta[key] in wanted` when `wanted` is a list and `==` otherwise. Return True at the end."
-  - "`apply_filter` is one list comprehension: keep `doc_id` when `doc_id in docs and matches(docs[doc_id], filters)`."
-  - "`hybrid_search`: filter `keyword_search(query)` and `vector_search(query)` separately with `DOCS`, pass both lists to `rrf(..., weights=weights)`, and return the first `k` ids."
+  - "`rrf`: each ranking contributes `weight / (k + rank)` per document, with ranks starting at 1. You'll also need each document's best rank across lists for the tie-break."
+  - "Floating-point sums can differ in the last digit depending on order, so round before you sort. The sort key has three parts, in the order the spec lists them."
+  - "`matches`: a filter value can be a single value or a list of allowed values. A document missing the key fails the filter; it doesn't pass by default."
+  - "`apply_filter`: keep only ids that exist in `docs` and match. Filtering happens before fusion, never after."
+  - "`hybrid_search`: filter each retriever's list separately, fuse them, then cut to `k`. Ask yourself why fusing first and filtering after could return fewer than `k` results."
 ---
 
 Ridgeline Software's help center now has two retrievers. BM25 nails exact strings like `E4012` but misses paraphrases. The embedding retriever understands "undo a bad deploy" but ranks the exact error-code article fourth. Leo wants one ranked list from both, and a fix for a bug a customer found: a cloud customer on version 5 saw an **internal** article about self-hosted clock skew.

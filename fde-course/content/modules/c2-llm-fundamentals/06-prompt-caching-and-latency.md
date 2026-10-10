@@ -1,7 +1,7 @@
 ---
 title: Prompt Caching and Latency
 type: reading
-minutes: 20
+minutes: 26
 ---
 
 > **By the end of this lesson** you'll be able to explain how prompt caching works, design a prompt so it caches, prove a cache is hitting, do the break-even math, and talk through latency and rate limits in a design round.
@@ -32,7 +32,7 @@ response = client.messages.create(
 )
 ```
 
-There's also a simpler top-level `cache_control` on the request that places the breakpoint automatically on the last cacheable block. You can have at most 4 breakpoints per request, and prompts below a model-specific minimum length silently don't cache.
+Caching is **opt-in**: nothing caches unless you add a marker. There's also a simpler top-level `cache_control` on the request (automatic caching) that places the breakpoint on the last cacheable block. You can have at most 4 breakpoints per request, and prompts below a minimum length silently don't cache: 512 tokens on current models, but 4,096 on the older Haiku 4.5.
 
 ## Designing for cache hits
 
@@ -51,7 +51,8 @@ The silent invalidators to name:
 - `json.dumps()` without `sort_keys=True`, or iterating a set, so bytes differ between requests.
 - A tool list that varies per user or per mode. Tools render first, so nothing after them caches.
 - Switching models mid-conversation. Caches are per model.
-- Editing earlier turns instead of appending. Append-only history keeps the prefix stable.
+- Editing earlier turns instead of appending. Append-only history keeps the prefix stable, and on Opus 5.5 and the other current models it also keeps thinking signatures valid (Lesson 4).
+- Changing `effort` or the thinking setting from request to request. Pin them per route.
 
 Caches are also isolated per workspace on the Claude API, so the same prompt sent from two workspaces writes two separate entries.
 
@@ -88,7 +89,7 @@ Reads are even cheaper on some models. On Claude Opus 5.5 and Sonnet 5.5, a cach
 
 ### Worked example
 
-A support assistant on Sonnet 5.5 ($2 input, $10 output, $0.10 cache read, $2.50 cache write, per million tokens). Each request has a 20,000-token stable prefix, a 1,000-token question and a 400-token answer.
+A support assistant on Sonnet 5.5 ($2 input, $10 output, $0.10 cache read, $2.50 cache write, per million tokens). Each request has a 20,000-token stable prefix, a 1,000-token question and a 400-token answer. The route sets `output_config.effort` to `"low"`, and the 400 output tokens include its short thinking. (Leave Sonnet 5.5 at its default, `high`, and the output line can double or triple.)
 
 | Request | Prefix | Question | Output | Total |
 |---|---:|---:|---:|---:|
@@ -121,8 +122,55 @@ And for debugging any of this, log the `request-id` header that every API respon
 
 ## Practice (say it out loud)
 
-- "Your agent's cache hit rate dropped to zero after Tuesday's deploy. Nothing errored. Walk me through how you find the cause."
-- "You run 5,000 document-QA requests a day over the same 150K-token manual, spread evenly over business hours. 5-minute or 1-hour TTL? What's the daily cost difference with and without caching on Sonnet 5.5?"
+Answer out loud first, then open the model answer.
+
+**1.** "Your agent's cache hit rate dropped to zero after Tuesday's deploy. Nothing errored. Walk me through how you find the cause."
+
+<details>
+<summary>Model answer and self-check</summary>
+
+"First I'd confirm the symptom from `usage`, not from latency. Two patterns mean different things. If `cache_creation_input_tokens` is large on every request, the prefix is being rewritten each time. If both cache fields are zero, the marker is gone, or the prefix fell under the minimum length.
+
+Then I'd capture two consecutive request bodies for the same conversation and diff them in render order: tools, then system, then messages. The first differing byte is the cause. The usual suspects from a deploy are a timestamp, user name or request ID added to the system prompt; tool definitions built per request, or in a different order; `json.dumps` without `sort_keys`; a route that now switches models or changes effort per request; and code that edits or trims earlier turns.
+
+After the fix I'd add a standing check: a test that sends the same request twice and asserts `cache_read_input_tokens > 0`, and a dashboard alert on cache-read share, so the next regression shows up the same day."
+
+Score yourself:
+- [ ] Used the usage fields to tell 'rewritten every time' from 'not cached at all'.
+- [ ] Diffed two real request bodies in tools, system, messages order.
+- [ ] Named at least three concrete invalidators.
+- [ ] Ended with a test or monitor.
+
+</details>
+
+**2.** "You run 5,000 document-QA requests a day over the same 150K-token manual, spread evenly over business hours. 5-minute or 1-hour TTL? What's the daily cost difference with and without caching on Sonnet 5.5?"
+
+<details>
+<summary>Model answer and self-check</summary>
+
+"Assume an 8-hour business day. 5,000 requests over 480 minutes is about 10 a minute, so a request arrives every six seconds or so. Each read refreshes the 5-minute timer, so the default TTL stays warm all day. The 1-hour TTL costs more per write and buys nothing here. I'd pick 5 minutes, and only revisit if there are long gaps, say overnight or at lunch.
+
+Prefix cost per day on Sonnet 5.5 ($2 input, $2.50 5-minute write, $0.10 read, per million):
+
+| | Arithmetic | Per day |
+|---|---|---:|
+| No caching | 5,000 × 150K = 750M tokens × $2/M | **$1,500** |
+| Caching, reads | about 750M tokens × $0.10/M | $75 |
+| Caching, writes | one 150K write each morning: 150K × $2.50/M | about $0.38 |
+| Caching, total | | **about $75** |
+
+So caching saves about $1,425 a day on the prefix, roughly $30,000 a month over 21 working days. A few extra writes after any gap don't move that. The question tokens and the answers cost the same either way, so I'd state them separately, with effort set explicitly because thinking is output.
+
+Two more things I'd say. On Sonnet 5.5 a cache read is 0.05x input; on a model at 0.1x the read line doubles to about $150, which is still a 90% saving. And cache reads don't count toward input-token rate limits on most models, so a 750M-token-a-day workload becomes much easier to fit under the limits."
+
+Score yourself:
+- [ ] Worked out the request rate and used it to pick the TTL.
+- [ ] Got the uncached prefix cost ($1,500 a day) and the cached cost (about $75).
+- [ ] Named the model when quoting the read price.
+- [ ] Kept the question and output costs out of the comparison, or treated them separately.
+- [ ] Mentioned rate limits or time to first token as a second benefit.
+
+</details>
 
 > **Key takeaways**
 >

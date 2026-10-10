@@ -15,7 +15,7 @@ So why spend two hours on this module? Two rounds reward it.
 | Where it helps | What happens there | Label |
 |---|---|---|
 | The written application | A "Why Anthropic?"-style answer, reported as 200–400 words. Generic answers are easy to spot. | Reported |
-| The values / culture round | Several guides call it the round that fails the most candidates. Reported prompts include mission versus share price, and a time you disagreed with someone you respect. | Reported |
+| The values / culture round | A culture interview in the first onsite loop (Reported). Prompts said to come up include mission versus share price, and someone you respect but disagree with on values; those come from a newsletter and guides that may share one origin. | Reported (secondary sources) |
 
 In both rounds, the weak answer is praise ("I love your mission") and the strong answer is engagement ("Here's the part of your argument I find convincing, here's where I'm unsure, and here's how that shapes the work I want to do"). Reading the labs' own writing carefully is the cheapest way to have something specific to say.
 
@@ -96,7 +96,7 @@ Notice what the example doesn't do. It doesn't call the policy "inspiring" or "a
 - **Forgetting the job.** If you can't connect your reading to the role, it won't help you in the loop.
 
 > **Key takeaways**
-> - No public source says interviewers quiz candidates on essays. Read them to sharpen "why this lab" and to hold your own in the values round.
+> - Read lab writing to sharpen "why this lab" and to hold your own in the values round, not to pass a quiz.
 > - Six notes: claim in two sentences, steelman, load-bearing assumptions, strongest counterargument, what would change your mind, what it means for the job.
 > - Attack the assumption that carries the most weight, with evidence or a mechanism.
 > - "What would change my mind" is the note that shows intellectual honesty.

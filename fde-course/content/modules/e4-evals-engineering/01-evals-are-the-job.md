@@ -116,7 +116,9 @@ Two refinements you should be able to name:
 - **Use the Wilson interval for reporting.** The normal approximation misbehaves near 0% and 100% and on small n. It can even give an upper bound above 100%. The Wilson score interval stays inside [0, 1] and is the usual choice. You'll implement it in the next exercise.
 - **Compare versions case by case.** Two versions run on the same cases are a **paired** comparison. Counting the cases that flipped (pass to fail, fail to pass) is far more sensitive than comparing two independent rates. Lesson 5 builds a gate on that idea.
 
-Model outputs also vary between runs. For borderline cases, run several repetitions. Cases and repetitions are two knobs on the same dial: 50 cases × 2 runs and 100 cases × 1 run give similar resolution on a pass rate.
+Model outputs also vary between runs, so it's tempting to treat repetitions as extra cases. They aren't. **Cases and repetitions answer different questions.** More cases narrow the interval on the pass rate you care about: how the system does on the population of real inputs. Repetitions measure per-case flakiness: does this input pass every time, or only sometimes? Runs of the same case are strongly correlated, and the variation between cases usually dwarfs the variation within one, so 50 cases × 2 runs behaves much closer to n = 50 than to n = 100 when you estimate the population rate.
+
+Use repetitions for what they're good at: finding flaky cases (rerun borderline ones three to five times) and separating a real regression from noise before you block a release. When you do average several runs per case, compute the interval over cases, not over runs: average each case's runs first, or use a clustered standard error with the case as the cluster. Treating 2 × 50 runs as 100 independent samples makes the interval look about 30% narrower than it is.
 
 ## Harness hygiene
 

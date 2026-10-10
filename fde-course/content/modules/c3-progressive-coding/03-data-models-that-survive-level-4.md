@@ -41,11 +41,13 @@ def value_at(self, rid, field, at):
     result = None
     for t, r, f, v in self.log:
         if t > at:
-            break           # the log is in time order because timestamps only increase
+            break           # safe only if the log is in time order (see below)
         if r == rid and f == field:
             result = v
     return result
 ```
+
+That `break` assumes the log is sorted by time. "Timestamps only increase" doesn't guarantee it on its own, because scheduled changes are logged at their scheduled time, which is earlier than the call that applies them. The log stays sorted only if `_advance` (Pattern 2) runs at the **top of every public method**, including read-only ones, so every due change is logged before anything at the current timestamp. Skip it in one method and a later call can append an entry dated 10 after one dated 50; `value_at` then stops early and returns a silently wrong answer. The same problem appears if the spec allows scheduling at a time already in the past. If you're unsure, drop the `break` and scan the whole list, or sort before scanning: at screen sizes it costs nothing.
 
 ## Pattern 2: one helper that brings state up to date
 

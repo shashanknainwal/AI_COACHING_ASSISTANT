@@ -46,6 +46,8 @@ Fictional customer: **Ardent Mutual**, a property insurer receiving 12,000 claim
 
 One API detail that shapes step 4: Claude's citations feature and structured outputs cannot be combined in the same request (the API returns a 400). That's why this design asks for `source_page` and `source_text` as schema fields and verifies them in code, rather than relying on citations.
 
+A second detail, if the customer is on Amazon Bedrock: structured outputs split by integration there. The newer "Claude in Amazon Bedrock" page (the Messages API endpoint) lists structured outputs as not supported; the legacy `InvokeModel` integration supports them for the models named in the structured-outputs compatibility note. So on Bedrock, confirm which integration and model the design uses. If the endpoint doesn't support it, ask for JSON in the prompt, validate it against the schema in code, and retry on failure. Claude Platform on AWS supports structured outputs, so an AWS customer who wants them has that option too.
+
 ## Confidence thresholds: the core tradeoff
 
 Every threshold is a dial between **straight-through rate** (share of documents that skip people) and **error rate in what skips people**. Here is the kind of table you build from a labelled golden set. The numbers are illustrative; yours come from the customer's documents.
@@ -111,8 +113,8 @@ Ardent Mutual assumptions (all to be measured in the pilot):
 |---|---|
 | Packets per day | 12,000 |
 | Extraction input per packet | 13,000 tokens (6 pages at an assumed 2,000 tokens each, plus 1,000 of instructions and schema) |
-| Extraction output per packet | 800 tokens |
-| Classification per packet | 2,500 input, 30 output tokens |
+| Extraction output per packet | 800 tokens, with `effort` set explicitly (thinking is billed as output) |
+| Classification per packet | 2,500 input, 30 output tokens on Haiku 5.5 at `effort: "low"` |
 | Review rate | 15% of packets, 3 minutes each |
 | Reviewer cost | $40 an hour loaded (Ardent's figure) |
 
@@ -125,7 +127,7 @@ Model cost per packet on the Batch API:
 | Classify (Haiku 5.5 batch) | 2,500 x $0.05/M + 30 x $0.25/M | $0.0001 |
 | **Per packet** | | **about $0.0171** |
 
-12,000 packets a day is about **$206 a day** in model spend. At standard prices it would be about double, roughly $410.
+12,000 packets a day is about **$206 a day** in model spend. At standard prices it would be about double, roughly $410. **Thinking sensitivity:** if extraction runs at Sonnet 5.5's default `high` effort and output triples to 2,400 tokens, extract output becomes $0.012 a packet and the total about $0.025, roughly $300 a day on batch. Still small next to the queue below.
 
 Now the review queue: 15% of 12,000 is 1,800 packets, at 3 minutes each that's 90 reviewer-hours a day, about **$3,600 a day**. The people cost is more than 17 times the model cost.
 

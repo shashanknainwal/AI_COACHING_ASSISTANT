@@ -1,15 +1,15 @@
 ---
 title: "Live Practice: The Cautious CISO"
 type: roleplay
-minutes: 25
+minutes: 20
 persona:
   name: Ruth Calloway
   role: Chief Information Security Officer (fictional)
-  company: Larchmont Savings Bank (fictional)
+  company: Pellham Savings Bank (fictional)
 opening: "I've got thirty minutes and a long list. Let's start with the basics. When a branch employee types a question into this assistant, where does that text go, who can see it, and how long does it live there?"
 maxTurns: 10
 personaBrief: |
-  You are Ruth Calloway, CISO of Larchmont Savings Bank, a fictional regional bank. You are calm, precise and hard to impress. You are not against AI; you are against surprises. You write down every claim a vendor makes and check it later.
+  You are Ruth Calloway, CISO of Pellham Savings Bank, a fictional regional bank. You are calm, precise and hard to impress. You are not against AI; you are against surprises. You write down every claim a vendor makes and check it later.
   The proposal (the learner knows it): an internal assistant for about 1,200 branch staff that answers questions about bank policies and procedures, using retrieval over the bank's internal policy library. Claude would be reached through the bank's existing cloud account (the bank already uses one of the major cloud providers that offer Claude). No customer account data is in scope for phase one.
   Work through these areas one at a time, adapting to the answers:
   1. Data flow: what is sent to the model, what is stored where (prompts, retrieved passages, logs), and for how long.
@@ -42,16 +42,16 @@ graderNotes: "The main failure is overclaiming. Any made-up certification list, 
 
 Grace Liu's advice: "A CISO writes down everything you say. Say less, say it precisely, and never say something you'd have to take back. 'I'll get you the current document by Thursday' is a complete answer."
 
-**Ruth Calloway** and **Larchmont Savings Bank** are fictional. Ruth is played by Claude.
+**Ruth Calloway** and **Pellham Savings Bank** are fictional. Ruth is played by Claude.
 
 ## What you know going in
 
 | Fact | Value |
 |---|---|
 | Proposal | An internal assistant for about 1,200 branch staff, answering questions about bank policies and procedures using retrieval over the internal policy library |
-| Access path | Through the bank's existing cloud account. Claude is available through the Anthropic API and through Amazon Bedrock, Google Vertex AI and Microsoft Foundry |
+| Access path | Through the bank's existing AWS account. On AWS there are two paths: Claude Platform on AWS (Anthropic-operated, Anthropic is the processor, billed through AWS Marketplace) and Amazon Bedrock (AWS-operated, AWS is the processor). Claude is also available through the Anthropic API, Google Vertex AI and Microsoft Foundry |
 | Phase one scope | Policy documents only. No customer account data |
-| Training on customer data | Anthropic's [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) state that Anthropic may not train models on customer content from its services. When the model is reached through a cloud provider, the bank's agreement with that provider also applies |
+| Training on customer data | Anthropic's [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) state that Anthropic may not train models on customer content from its services. On Bedrock or Vertex AI the cloud provider is the data processor, so the bank's agreement with that provider governs data handling; on Claude Platform on AWS, Anthropic's terms apply |
 | Not in your notes | Certification lists, retention periods, data-location commitments. These change; they live in the provider's current trust and legal documents and the cloud provider's documentation |
 
 Module A2 covers enterprise deployment and security reviews in depth. This lesson is about how you speak to the person who signs off on risk.

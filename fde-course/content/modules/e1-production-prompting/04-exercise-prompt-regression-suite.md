@@ -3,11 +3,11 @@ title: "Exercise: A Field-Level Prompt Regression Suite"
 type: exercise
 minutes: 35
 hints:
-  - "`normalize`: return None first. For `total`, `round(float(str(value).replace(\",\", \"\")), 2)`. For `currency`, `str(value).strip().upper()`. Everything else: `\" \".join(str(value).split()).casefold()`."
-  - "`run_suite`: wrap the call in `try/except anthropic.APIError as e` and store `type(e).__name__`. Check `stop_reason` for `\"refusal\"` and `\"max_tokens\"` before parsing; the JSON is in the text block, not `content[0]`."
-  - "`field_accuracy`: `True` counts as 1, so `sum(r[\"scores\"][f] for r in rows) / len(rows)` is a rate. A row counts toward `all_fields` when `all(r[\"scores\"].values())`."
-  - "`compare`: build `before = {r[\"id\"]: r[\"scores\"] for r in old_rows}`, then walk `new_rows` (skip IDs not in `before`) and `FIELDS` in order, adding `f\"{id}:{field}\"` to regressions (True to False) or fixes (False to True)."
-  - "`compare` reasons: first one line per field in `FIELDS` whose delta is below `-tolerance` (`f\"{field} accuracy dropped from {old:.3f} to {new:.3f}\"`), then one line per regression whose field is in `critical`."
+  - "`normalize`: handle None before anything else, then one rule per field type. For the money field, think about what a human-typed amount can contain that `float()` rejects."
+  - "`run_suite`: every failure path (an API exception, a refusal, a truncation) produces the same all-wrong row shape, so write that row once. Catch the SDK's base error class, not every exception, and look at `stop_reason` before parsing."
+  - "`field_accuracy`: booleans add up like 0 and 1, which turns a count into a rate. Remember the empty-list case before you divide."
+  - "`compare`: index the old run by case ID first; then the case-level diff is a nested walk over the new rows and the field list, in the order the spec gives."
+  - "The verdict is derived, not decided: collect every reason (field drops beyond tolerance first, then critical-field regressions), and ship only when the list is empty."
 ---
 
 Leo forwards you a pull request from a teammate on a fictional engagement with Tallis Freight, whose accounts-payable team uses Claude to extract fields from supplier invoices. The PR rewrites the extraction prompt (`PROMPT_V1` to `PROMPT_V2`). The description says: "Accuracy up from 50% to 70% on the golden set. Ship it?"
@@ -63,5 +63,7 @@ Press **Run** to compare the two prompts, then **Submit**.
 - The headline went up 20 points, and the PR still shouldn't ship. The new rule "If no currency code is printed, use USD" turned `€` and `£` invoices into dollars.
 - `due_date` accuracy didn't move (0.9 to 0.9), yet one case broke: a fix and a regression cancelled out. Only the case-level diff shows it, and the broken case is a made-up due date, which is exactly the kind of value the prompt said never to invent.
 - The fix isn't to throw away v2. Keep the vendor rules, drop the two "helpful" defaults, and run the suite again. One change at a time.
+
+A zero-tolerance gate on critical fields only works if the regression is real. On a real model, outputs vary run to run, so one flipped case can be noise. Before you block on a single critical regression in production, rerun that case a few times (say five) and block only if it fails consistently; log the flaky ones as their own finding. The simulator here is deterministic, so the exercise skips that step.
 
 In a debrief, be ready for: "Ten invoices is tiny. How big should the golden set be, and where would you get it?" A good answer draws from real traffic, oversamples the hard cases (symbols instead of codes, missing fields, foreign number formats), and grows the set with every production bug.

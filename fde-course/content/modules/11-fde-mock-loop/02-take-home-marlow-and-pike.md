@@ -97,7 +97,7 @@ Marlow & Pike Distribution sells electrical, plumbing and HVAC parts to trade co
 
 - Claude Opus 5.5 costs $4 per million input tokens and $20 per million output tokens. Claude Sonnet 5.5 costs $2 and $10. Claude Haiku 5.5 costs $0.10 and $0.50 for prompts up to 100K tokens. Prices from Anthropic's [pricing page](https://platform.claude.com/docs/en/about-claude/pricing), checked 2026-10-08.
 - These models accept images and PDFs as input, and structured outputs can constrain a reply to a JSON schema.
-- Claude is available through the Anthropic API and on Amazon Bedrock, Google Vertex AI and Microsoft Foundry. If the customer's data rules point to one platform, saying you'd confirm the features you need on it is a good answer.
+- Claude is available through the Anthropic API, Claude Platform on AWS (operated by Anthropic, with AWS IAM and AWS Marketplace billing), Amazon Bedrock, Google Vertex AI and Microsoft Foundry. Features differ: for example, Message Batches is not on Bedrock, Vertex or Foundry, and the MCP connector and Agent Skills are not on Bedrock or Vertex. If the customer's data rules point to one platform, saying you'd confirm the features you need on it is a good answer.
 - A rough rule of thumb for this case: an order email with its attachment is about 3,000 input tokens, and an extracted order is about 500 output tokens.
 
 When you submit, Claude grades your answer against the rubric below. Write the score down, keep your answer open, and move on to Round 2.

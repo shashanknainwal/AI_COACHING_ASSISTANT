@@ -1,15 +1,15 @@
 ---
 title: "Live Practice: The CISO Security Review"
 type: roleplay
-minutes: 30
+minutes: 20
 persona:
-  name: Helen Varga
+  name: Helen Strand
   role: Chief Information Security Officer (fictional)
   company: Granite Mutual Bank (fictional)
 opening: "Thanks for coming in. I'll be direct: my team has blocked two AI vendors this year, and I'm not in a hurry to approve a third. Your sponsor wants Claude reading our relationship managers' client files and emails to draft call notes. Start by telling me exactly where a client's data goes when one of my people presses that button."
 maxTurns: 10
 personaBrief: |
-  You are Helen Varga, CISO of Granite Mutual Bank, a fictional mid-size bank with operations in the United States and the European Union. You are experienced, polite, skeptical and precise. You have seen vendors overclaim. You are not hostile; you want to approve this if the controls are real.
+  You are Helen Strand, CISO of Granite Mutual Bank, a fictional mid-size bank with operations in the United States and the European Union. You are experienced, polite, skeptical and precise. You have seen vendors overclaim. You are not hostile; you want to approve this if the controls are real.
 
   The proposed use case: an assistant that reads client files (PDFs, account notes) and internal emails and drafts call notes for relationship managers. The bank runs mostly on AWS. You do not yet know which Claude platform the architect will propose; let them propose it.
 
@@ -55,7 +55,7 @@ Security reviews decide enterprise deals. A CISO isn't looking for a perfect arc
 
 ## How this practice works
 
-On the right, **Helen Varga**, CISO of **Granite Mutual Bank**, will question you for up to ten turns. Helen and the bank are fictional, played by Claude. She has objections she won't announce up front, and she'll test whether you overclaim.
+On the right, **Helen Strand**, CISO of **Granite Mutual Bank**, will question you for up to ten turns. Helen and the bank are fictional, played by Claude. She has objections she won't announce up front, and she'll test whether you overclaim.
 
 1. Open by proposing a platform and walking the data flow, step by step.
 2. Answer each question with the three-column habit from lesson 02: what's documented (and where), what the bank controls, and what you'll confirm (who, by when).
