@@ -28,7 +28,22 @@ calls = []       # every request attempt: {"params": {...}, "attempt": n, "strea
 _queue = []
 _responder = None
 _cache = set()   # prompt-cache prefixes written so far
-CACHE_MIN_TOKENS = 1024  # simplified; real minimums vary by model
+CACHE_MIN_TOKENS = 512  # current models (Opus 5.5, Sonnet 5.5, Haiku 5.5, ...)
+# Older models with a higher minimum cacheable prefix (from the prompt-caching docs).
+CACHE_MIN_TOKENS_BY_MODEL = {
+    "claude-haiku-4-5": 4096,
+    "claude-opus-4-6": 4096,
+    "claude-opus-4-5": 4096,
+    "claude-opus-4-7": 2048,
+    "claude-opus-4-8": 1024,
+    "claude-sonnet-5": 1024,
+    "claude-sonnet-4-6": 1024,
+    "claude-sonnet-4-5": 1024,
+}
+
+
+def _cache_min_tokens(model):
+    return CACHE_MIN_TOKENS_BY_MODEL.get(str(model), CACHE_MIN_TOKENS)
 
 
 def reset():
@@ -238,7 +253,7 @@ def _cache_usage(params):
     if prefix is None:
         return 0, 0
     tokens = len(prefix) // 4
-    if tokens < CACHE_MIN_TOKENS:
+    if tokens < _cache_min_tokens(params.get("model")):
         return 0, 0          # too short to cache: silently not cached, like the real API
     key = (params["model"], prefix)
     if key in _cache:

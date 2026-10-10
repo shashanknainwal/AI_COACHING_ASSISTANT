@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { getViewer } from "@/lib/access";
+import { passingLessonIds } from "@/lib/attempts";
+import { getCourse } from "@/lib/content";
 import { createClient } from "@/lib/supabase/server";
+
+// Completion of a written or role-play lesson is accepted only when the server has recorded a
+// passing grade for it (grade_attempts, migration 0003). Until that table exists, completions
+// are accepted as before. Code lessons (exercises, drills) stay self-reported: their tests run
+// in the browser. lib/attempts.ts getVerifiedSummary() marks which completions are verified.
 
 const LESSON_ID = /^[a-z0-9-]{1,100}\/[a-z0-9-]{1,100}$/;
 const MAX_CODE = 100_000;
@@ -61,6 +68,23 @@ export async function POST(req: Request) {
     }
   }
 
+  // Drop written/role-play completions that have no passing grade on record.
+  const rejected: string[] = [];
+  if (completions.length) {
+    const types = new Map<string, string>(getCourse().modules.flatMap((m) => m.lessons.map((l) => [`${m.slug}/${l.slug}`, l.type] as const)));
+    const graded = completions.filter((c) => types.get(c.lesson_id) === "written" || types.get(c.lesson_id) === "roleplay").map((c) => c.lesson_id);
+    const passed = graded.length ? await passingLessonIds(userId, graded) : null;
+    if (passed) {
+      for (let i = completions.length - 1; i >= 0; i--) {
+        const id = completions[i].lesson_id;
+        if (graded.includes(id) && !passed.has(id)) {
+          rejected.push(id);
+          completions.splice(i, 1);
+        }
+      }
+    }
+  }
+
   // Two separate upserts so a code save never clears completed_at (and vice versa):
   // an upsert only overwrites the columns present in its payload.
   const supabase = await createClient();
@@ -73,5 +97,5 @@ export async function POST(req: Request) {
     console.error("progress upsert failed", failed.error.message);
     return NextResponse.json({ error: "Could not save progress" }, { status: 500 });
   }
-  return NextResponse.json({ ok: true });
+  return NextResponse.json(rejected.length ? { ok: true, rejected } : { ok: true });
 }

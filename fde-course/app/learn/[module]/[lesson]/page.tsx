@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import LessonWorkspace from "@/components/LessonWorkspace";
 import BuyButton from "@/components/BuyButton";
 import { canAccessLesson, getViewer, toClientViewer } from "@/lib/access";
-import { getCourse, getLesson, getLessonSequence, getModule } from "@/lib/content";
+import { getCourse, getLesson, getLessonSequence, getModule, toClientLesson } from "@/lib/content";
 
 // Rendered per request so paid lesson content is only sent to learners who bought the course.
 export const dynamic = "force-dynamic";
@@ -57,28 +57,8 @@ export default async function LessonPage({ params }: { params: Promise<{ module:
     <LessonWorkspace
       key={`${module}/${lessonSlug}`}
       viewer={clientViewer}
-      lesson={{
-        moduleSlug: lesson.moduleSlug,
-        slug: lesson.slug,
-        title: lesson.title,
-        type: lesson.type,
-        minutes: lesson.minutes,
-        briefHtml: lesson.briefHtml,
-        html: lesson.html,
-        hints: lesson.hints,
-        questions: lesson.questions,
-        starter: lesson.starter,
-        setup: lesson.setup,
-        tests: lesson.tests,
-        levels: lesson.levels,
-        timeLimit: lesson.timeLimit,
-        sections: lesson.sections,
-        rubric: lesson.rubric,
-        passScore: lesson.passScore,
-        persona: lesson.persona,
-        opening: lesson.opening,
-        maxTurns: lesson.maxTurns,
-      }}
+      // toClientLesson drops graderNotes, personaBrief, constraints and anchors: they must never reach the browser.
+      lesson={toClientLesson(lesson)}
       track={mod.track}
       moduleLabel={mod.label}
       moduleTitle={mod.title}

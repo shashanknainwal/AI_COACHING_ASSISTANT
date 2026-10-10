@@ -54,6 +54,23 @@ export interface DrillLevel {
   html: string;
 }
 
+/** Role-play only: the server injects `text` into the persona's reply after learner turn `afterTurn`. Server-only. */
+export interface DesignConstraint {
+  afterTurn: number;
+  text: string;
+}
+
+/**
+ * Grader calibration answer (scripts/grader-eval.mjs). Server-only.
+ * `answer` is a string (written lessons with one section, or a role-play conversation as text),
+ * an object keyed by section key (written), or a list of transcript lines (role-play).
+ */
+export interface GraderAnchor {
+  label: string;
+  expect: [number, number];
+  answer: string | Record<string, string> | { from: "persona" | "learner"; text: string }[];
+}
+
 export interface LessonMeta {
   slug: string;
   moduleSlug: string;
@@ -81,6 +98,7 @@ export interface Lesson extends LessonMeta {
   tests: string;
   /** drill */
   levels: DrillLevel[];
+  /** Minutes. Drills: the drill clock. Role-plays: the session clock (the server closes the session when it runs out). 0 = none. */
   timeLimit: number;
   /** written and roleplay */
   sections: AnswerSection[];
@@ -89,9 +107,30 @@ export interface Lesson extends LessonMeta {
   persona: Persona | null;
   opening: string;
   maxTurns: number;
-  /** Server-only: never send these two to the browser. */
+  /** roleplay: "design" for an interactive design interview, else null */
+  mode: "design" | null;
+  /** roleplay, written: show a diagram box (text, Mermaid or ASCII) */
+  diagram: boolean;
+  /** roleplay, written: "module/lesson" ids whose saved work is given to the persona or grader as <learner_prior_work> */
+  contextFrom: string[];
+  /** Server-only: never send these to the browser (see toClientLesson). */
   graderNotes: string;
   personaBrief: string;
+  constraints: DesignConstraint[];
+  anchors: GraderAnchor[];
+}
+
+/** Fields of Lesson that must never reach the browser. */
+export const SERVER_ONLY_LESSON_FIELDS = ["graderNotes", "personaBrief", "constraints", "anchors"] as const;
+
+/** A Lesson without its server-only fields: safe to pass to client components. */
+export type ClientLesson = Omit<Lesson, (typeof SERVER_ONLY_LESSON_FIELDS)[number]>;
+
+/** Strips grader notes, persona brief, constraints and anchors. Use for every lesson object sent to the browser. */
+export function toClientLesson(lesson: Lesson): ClientLesson {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { graderNotes, personaBrief, constraints, anchors, ...rest } = lesson;
+  return rest;
 }
 
 export interface ModuleMeta {
@@ -268,8 +307,15 @@ export function getLesson(moduleSlug: string, lessonSlug: string): Lesson | null
     persona: (data.persona as Persona) ?? null,
     opening: String(data.opening ?? ""),
     maxTurns: Number(data.maxTurns ?? 8),
+    mode: data.mode === "design" ? "design" : null,
+    diagram: data.diagram === true,
+    contextFrom: list<unknown>(data.contextFrom).filter((x): x is string => typeof x === "string"),
     graderNotes: String(data.graderNotes ?? ""),
     personaBrief: String(data.personaBrief ?? ""),
+    constraints: list<Record<string, unknown>>(data.constraints)
+      .map((c) => ({ afterTurn: Number(c?.afterTurn), text: String(c?.text ?? "").trim() }))
+      .filter((c) => Number.isInteger(c.afterTurn) && c.afterTurn > 0 && c.text),
+    anchors: list<GraderAnchor>(data.anchors),
   };
 }
 
@@ -288,7 +334,11 @@ export function getLessonSequence(trackSlug: string): LessonMeta[] {
     .flatMap((m) => m.lessons);
 }
 
-/** Lessons anyone can open without buying: the first lesson of every track. */
+/**
+ * Lessons anyone can open without buying (besides FREE_MODULES): the first lesson of every
+ * track, plus a taster of each graded format: the first C3 drill, the C5 mock values
+ * interview, and the FDE customer-discovery field drill (found by type, not slug number).
+ */
 export function freeLessonIds(): Set<string> {
   const ids = new Set<string>();
   const course = getCourse();
@@ -296,5 +346,12 @@ export function freeLessonIds(): Set<string> {
     const first = course.modules.find((m) => m.track === t.slug && m.lessons.length > 0);
     if (first) ids.add(`${first.slug}/${first.lessons[0].slug}`);
   }
+  const add = (moduleSlug: string, pick: (l: LessonMeta) => boolean) => {
+    const lesson = course.modules.find((m) => m.slug === moduleSlug)?.lessons.find(pick);
+    if (lesson) ids.add(`${moduleSlug}/${lesson.slug}`);
+  };
+  add("c3-progressive-coding", (l) => l.type === "drill");
+  add("c5-values-and-behavioral", (l) => l.type === "roleplay" && l.slug.endsWith("mock-values-interview"));
+  add("02-customer-discovery", (l) => l.type === "roleplay");
   return ids;
 }
