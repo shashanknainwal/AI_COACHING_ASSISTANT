@@ -15,7 +15,7 @@ So why spend two hours on this module? Two rounds reward it.
 | Where it helps | What happens there | Label |
 |---|---|---|
 | The written application | A "Why Anthropic?"-style answer, reported as 200–400 words. Generic answers are easy to spot. | Reported |
-| The values / culture round | A culture interview in the first onsite loop (Reported). Prompts said to come up include mission versus share price, and someone you respect but disagree with on values; those come from a newsletter and guides that may share one origin. | Reported (secondary sources) |
+| The values / culture round | A culture interview in the first onsite loop. Module C5 sets out what else is said about it, and how far each claim can be trusted. | Reported |
 
 In both rounds, the weak answer is praise ("I love your mission") and the strong answer is engagement ("Here's the part of your argument I find convincing, here's where I'm unsure, and here's how that shapes the work I want to do"). Reading the labs' own writing carefully is the cheapest way to have something specific to say.
 
