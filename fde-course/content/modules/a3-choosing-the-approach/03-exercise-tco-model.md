@@ -10,7 +10,7 @@ hints:
   - "`compare`: build the baseline curve once. For every other option, the break-even month is the first `m + 1` where `curve[m] <= base_curve[m]`, else `None`. Sort by `(total, name)` and add `rank` starting at 1."
 ---
 
-Grace Liu here. **Harborview Mutual** (fictional) is an insurer that processes about 40,000 claim documents a month. Today a team of adjusters reads every one: eight minutes each, at a fully loaded $42 an hour. The VP of Claims has two proposals on her desk. One is a claims-intake product from an independent software vendor built on a frontier model. The other is an internal build on the Claude API that her platform team wants to own.
+Grace Liu here. **Harborview Mutual** (fictional) is an insurer that processes about 40,000 claim documents a month. Today a team of adjusters reads every one: eight minutes each, at a fully loaded $42 an hour. Rosa Delgado, the VP of Claims (also fictional), has two proposals on her desk. One is a claims-intake product from an independent software vendor built on a frontier model. The other is an internal build on the Claude API that her platform team wants to own.
 
 She asked us one question: "Which one is cheaper, and when does it pay for itself?" The honest answer is "it depends on the horizon and on how much human review each option still needs", so we'll show her the numbers instead of an opinion. Build the model in plain Python. Prices are passed in, never hard-coded in the math, so we can re-run it when the price list changes or the customer moves to a cloud platform with different rates.
 

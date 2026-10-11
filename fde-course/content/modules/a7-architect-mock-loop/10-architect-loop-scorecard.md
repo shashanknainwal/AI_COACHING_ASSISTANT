@@ -89,7 +89,7 @@ Look at the rubric line, not just the round. A design score of 64 made of 18/20 
 | Round 4: low 'Depth under follow-up' on evals or injection | Retrieval quality and security | A6 Reference Architectures; E3 Retrieval at Scale and E2 Tool Use & Agents as deeper background |
 | Round 4: low 'Numbers and cost' | Arithmetic isn't automatic | A3 lesson 04 (unit economics), C2 cost lessons |
 | Round 5: stories didn't hold up, or numbers changed under questioning | Thin or unrehearsed deal stories | Rewrite lesson 08 with a specific moment and number per story, then rerun lesson 09 |
-| Round 5: low 'Ownership of failure' or 'Technical and commercial judgement' | Defensiveness about losses; going along with sales pressure | A5 "Live Practice: Saying No" and "Your Own Account Executive" role-plays |
+| Round 5: low 'Ownership of failure' or 'Technical and commercial judgement' | Defensiveness about losses; going along with sales pressure | A5 "Live Practice: Saying No Without Losing the Deal" and "Live Practice: Pressure From Your Own Account Executive" |
 | Round 6: values | Unclear view on the lab's mission and tradeoffs | C4 Reading the Labs, C5 "Answering Mission Questions Honestly" |
 | Rounds 1, 3, 5 or 6: stories feel thin | Story bank | C5 "Building Your Story Bank" and "Write It: Two Stories" |
 | Any round: generic motivation came up | No specific reason written down | C1 "Write It: Why This Lab?" |

@@ -12,7 +12,7 @@ An executive who objects is still engaged. Silence and "send me something" are w
 
 The trap is the urge to win the point. Under pressure, architects say things like "it doesn't hallucinate with our setup" or "the cost is fixed". Those sentences close the meeting and open a problem: the first time production contradicts them, you lose the account's trust, and often the account.
 
-How it shows up in interviews: customer role-plays in architect loops are reported to include an interviewer pushing back as a skeptical executive (**Anecdotal**). Interviewers are usually listening for whether you hold your ground on facts while giving up ground you shouldn't hold. Lessons 04 to 06 let you practise exactly that.
+How it shows up in interviews: customer role-plays in architect loops are reported to include an interviewer pushing back as a skeptical executive (**Anecdotal**). Interviewers are usually listening for whether you hold your ground on facts while giving up ground you shouldn't hold. Lessons 04 to 08 let you practise exactly that, including a three-person steering committee and pressure from your own account executive.
 
 ## The method: acknowledge, evidence, offer a test
 
@@ -41,7 +41,7 @@ Two rules hold across all of it:
 ### 2. "Our data can't leave our environment." (or "Is our data secure?")
 
 - **Acknowledge.** Their obligations are real, and the security team should decide, not you.
-- **Evidence.** Facts you can point to in a document: the data flow (what is sent, where it's stored, for how long), the access path (Claude is available through the Anthropic API and also through Amazon Bedrock, Google Vertex AI and Microsoft Foundry, so it can often be reached through a cloud account they already approved), and the contract. For example, Anthropic's [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) state that Anthropic may not train models on customer content from its services.
+- **Evidence.** Facts you can point to in a document: the data flow (what is sent, where it's stored, for how long), the access path (Claude is available through the Anthropic API, Claude Platform on AWS, Amazon Bedrock, Google Vertex AI and Microsoft Foundry, so it can often be reached through a cloud account they already approved; on Bedrock and Vertex AI the cloud provider is the data processor, while on the Claude API, Claude Platform on AWS and Foundry it's Anthropic), and the contract. For example, Anthropic's [Commercial Terms](https://www.anthropic.com/legal/commercial-terms) state that Anthropic may not train models on customer content from its services.
 - **Test.** A security review with their team using the provider's current documentation, before any real data is used.
 - **Don't say:** "It's fully compliant" or name certifications from memory. Certifications, retention terms and regional options change. Point to the current trust and legal documents, and say "let's confirm that with the current documentation" when you aren't sure.
 

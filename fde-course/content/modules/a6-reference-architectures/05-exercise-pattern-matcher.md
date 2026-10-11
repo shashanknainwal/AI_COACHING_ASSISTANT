@@ -12,7 +12,7 @@ hints:
 
 Grace here. Sales hands me five or six new customer briefs a week, and the first thing I do with each is the same: which reference architecture is this, how sure am I, and what in the brief will hurt us if nobody says it out loud in the first call? I'd like a tool that does that first pass consistently, so the account team arrives at discovery with the right questions.
 
-You'll write it. It's plain Python: a brief is a dictionary of structured requirements, and your code scores it against the four patterns from this module, picks one, and flags mismatches and risks with reasons a salesperson can read. The scoring tables and thresholds are given at the top of the file. Five real-looking (fictional) briefs are loaded as `BRIEFS` so you can see the output.
+You'll write it. It's plain Python: a brief is a dictionary of structured requirements, and your code scores it against the four patterns from this module, picks one, and flags mismatches and risks with reasons a salesperson can read. The scoring tables and thresholds are given at the top of the file. Five real-looking (fictional) briefs are loaded as `BRIEFS` so you can see the output. The most detailed one came from Jana Novak, Head of Claims Operations at Ostrava Re (both fictional), and it's the one we're meeting first.
 
 This is a triage aid, not an architect. Its job is to make sure the hard questions get asked, not to answer them.
 
