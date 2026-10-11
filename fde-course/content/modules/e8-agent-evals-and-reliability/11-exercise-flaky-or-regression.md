@@ -63,7 +63,7 @@ Press **Run**, then **Submit**.
 
 ## What to notice
 
-- **The average says nothing happened, and the candidate is still blocked.** The mean per-case change is -1.3 points with an interval from -10.7 to +8.2. Meanwhile one vulnerable-customer case went from 5 of 5 to 0 of 4. Averages hide concentrated harm, which is why critical categories get case-level rules.
+- **The average says nothing happened, and the candidate is still blocked.** The mean per-case change is about -1.3 points with an interval from -10.7 to +8.2. Meanwhile one vulnerable-customer case went from 5 of 5 to 0 of 4. Averages hide concentrated harm, which is why critical categories get case-level rules.
 - **Three of the five "regressions" weren't.** Two are flaky on both versions, and one passed every rerun. Quarantine flaky cases into their own report line and fix or replace them. Don't let them block, and don't let them silently pass either.
 - **The design effect is about 2.7.** Pooling 79 observations as if they were independent makes the standard error look 40% smaller than it is. The pooled rate is also skewed toward the eight rerun cases. Report per-case numbers.
 - **The budget is a policy decision.** Rerunning every flip costs 80 calls here. With a smaller budget, regressions go first because they can block; the ones you couldn't rerun stay as review items, never as silent passes.

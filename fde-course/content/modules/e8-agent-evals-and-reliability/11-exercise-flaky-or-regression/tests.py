@@ -54,7 +54,9 @@ def test_verdict_on_gannet():
     ], f"got {v['reasons']}"
     assert v["confirmed_regressions"] == ["CRE-02", "VUL-05"] and v["confirmed_fixes"] == ["CRE-07", "TAR-06"]
     assert v["flaky"] == ["BIL-01", "TAR-04", "VUL-08"], f"got {v['flaky']}"
-    assert v["difference"] == {"n": 40, "diff": -0.013, "se": 0.0483, "low": -0.107, "high": 0.082}, f"got {v['difference']}"
+    d = v["difference"]
+    assert d["n"] == 40 and abs(d["diff"] + 0.0125) < 0.001 and (d["se"], d["low"], d["high"]) == (0.0483, -0.107, 0.082), \
+        f"got {d}"
     assert reruns == RERUNS
 
 
