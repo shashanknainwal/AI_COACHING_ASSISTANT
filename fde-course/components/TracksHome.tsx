@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ClientViewer } from "@/lib/access";
 import type { Course } from "@/lib/content";
 import { SITE_NAME } from "@/lib/config";
+import testimonials from "@/content/testimonials.json";
 import AccountBadge from "./AccountBadge";
 import BuyButton from "./BuyButton";
 import { Avatar, Mark } from "./Playbook";
@@ -52,10 +53,19 @@ const FAQ: [string, string][] = [
   ],
   [
     "Do I need an API key or any installs?",
-    "No. Everything runs in your browser. Coding exercises use a built-in simulator of the Anthropic SDK, so your code works against the real API unchanged.",
+    "No. Everything runs in your browser. Coding exercises use a built-in simulator of the Anthropic SDK that uses the same calls as the real SDK for the features taught; your capstone runs against the real API with your own key.",
   ],
   ["Can I try it before buying?", "Yes. The first Foundations module, the first lesson of every track and FDE Module 1 are free, with no credit card."],
   ["Does it follow the labs' AI-use rules?", "Yes. Timed drills switch the AI tutor off, the same as real assessments, and the written lessons teach Anthropic's published candidate guidance."],
+];
+
+const FEATURES: [string, string][] = [
+  ["Voice mock interviews", "Talk to the interviewer out loud with your microphone, hear the replies, and see a timer on every answer. Or type, if you prefer."],
+  ["Interactive design rounds", "The interviewer reveals requirements only when you ask, adds a new constraint mid-round, and grades the diagram you draw as you talk."],
+  ["Progress dashboard", "Your loop scorecard builds itself: every round's score, your weakest rubric lines, drill times, and the module to fix next."],
+  ["A plan to your date", "Set your interview date and hours, take a ten-question self-check, and get a week-by-week plan with a countdown."],
+  ["Portfolio capstone", "Build a project against the real API with your own key, then defend it in the deep-dive rounds and link it from a public record of verified results."],
+  ["Peer mocks and daily review", "Printable interviewer scripts to practise with a partner, plus five-minute spaced-repetition flashcards for the numbers."],
 ];
 
 function Tick({ className = "text-forest" }: { className?: string }) {
@@ -70,37 +80,41 @@ function Eyebrow({ children, className = "text-vermilion" }: { children: React.R
   return <p className={`text-[11px] font-semibold uppercase tracking-[0.18em] ${className}`}>{children}</p>;
 }
 
-/** The product in one picture: a mock loop in progress, with a graded answer. */
+/** The product in one picture: the progress dashboard's loop scorecard, and a live session being graded. Example numbers. */
 function LoopComposition() {
-  const rounds: [string, string, "done" | "live" | "next"][] = [
-    ["Coding screen", "4 / 4 levels · 71 min", "done"],
-    ["LLM system design", "Rubric 84%", "done"],
-    ["Values interview", "Turn 5 of 8", "live"],
-    ["Project deep dive", "Tomorrow", "next"],
+  const rounds: [string, string, number, "pass" | "close"][] = [
+    ["Coding drill", "3 of 4 levels in time", 85, "pass"],
+    ["Design, live", "first attempt", 78, "pass"],
+    ["Technical deep dive", "first attempt", 64, "close"],
+    ["Experiences and goals", "first attempt", 81, "pass"],
   ];
   return (
-    <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
+    <div className="relative mx-auto w-full max-w-xl lg:max-w-none" role="img" aria-label="Example of the progress dashboard: a mock-loop scorecard with a score and pass or close status for each round, and a live interview answer being graded against a rubric line.">
       <div className="relative z-10 rotate-[-1.5deg] rounded-2xl border border-rule bg-white shadow-[0_30px_60px_-35px_rgba(29,27,22,0.6)] sm:w-[84%]">
         <div className="flex items-center gap-2 border-b border-rule bg-paper-2/70 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-graphite-3">
-          <span className="font-semibold text-vermilion">Mock loop</span>
+          <span className="font-semibold text-vermilion">Loop scorecard</span>
           <span>·</span>
           <span>Applied AI Engineer</span>
+          <span className="ml-auto normal-case tracking-normal">example</span>
         </div>
         <ol className="divide-y divide-rule px-4">
-          {rounds.map(([name, meta, state]) => (
-            <li key={name} className="flex items-center gap-3 py-3">
-              <span
-                className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${
-                  state === "done" ? "bg-forest text-white" : state === "live" ? "animate-pulse bg-vermilion text-white" : "border border-rule text-graphite-3"
-                }`}
-              >
-                {state === "done" ? "✓" : state === "live" ? "●" : ""}
+          {rounds.map(([name, meta, score, state]) => (
+            <li key={name} className="flex items-center gap-3 py-2.5">
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-graphite">{name}</span>
+                <span className="block font-mono text-[10px] text-graphite-3">{meta}</span>
               </span>
-              <span className="flex-1 text-sm font-semibold text-graphite">{name}</span>
-              <span className="font-mono text-[11px] text-graphite-3">{meta}</span>
+              <span className="font-mono text-sm font-semibold tabular-nums text-graphite">{score}</span>
+              <span className={`w-12 rounded-full px-2 py-0.5 text-center text-[10px] font-semibold ${state === "pass" ? "bg-forest text-white" : "bg-amber-100 text-amber-900"}`}>
+                {state === "pass" ? "Pass" : "Close"}
+              </span>
             </li>
           ))}
         </ol>
+        <div className="border-t border-rule px-4 py-3 text-[12px] text-graphite-2">
+          <span className="font-semibold text-graphite">Readiness: close.</span> Weakest round 64; lowest line &ldquo;Depth on one decision&rdquo;.{" "}
+          <span className="text-forest">Next: E4 Evals as Engineering →</span>
+        </div>
       </div>
 
       <div className="relative -mt-2 ml-auto rotate-[1deg] overflow-hidden rounded-2xl bg-console text-gray-200 shadow-[0_40px_80px_-30px_rgba(13,17,23,0.75)] sm:-mt-3 sm:w-[86%]">
@@ -108,7 +122,7 @@ function LoopComposition() {
           <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-          <span className="ml-2 rounded bg-console-2 px-2 py-0.5 font-mono text-[11px] text-gray-400">live session</span>
+          <span className="ml-2 rounded bg-console-2 px-2 py-0.5 font-mono text-[11px] text-gray-400">live session · voice on</span>
         </div>
         <div className="space-y-3 p-4">
           <div className="flex gap-2.5">
@@ -137,6 +151,73 @@ function LoopComposition() {
   );
 }
 
+// A fictional sample answer and debrief for one written lesson (E7 Round 2 prep), so visitors can see what grading looks like.
+const SAMPLE_LINES: [string, number, number, string][] = [
+  ["Scoping with numbers", 12, 15, "Good volume and diff-size numbers. Missing: how many comments per PR reviewers will tolerate."],
+  ["Context selection and architecture", 19, 25, "Diff plus touched files plus the repo's style guide is right. No plan for PRs larger than the context budget."],
+  ["Evals and quality bar", 9, 20, "\u201cWe'll track thumbs-up rate\u201d isn't a gate. Needs a labelled set of past PRs and a precision target before launch."],
+  ["Failure modes, security and trust", 15, 20, "Read-only token and no auto-merge: good. Prompt injection through PR text isn't mentioned."],
+  ["Cost, latency and rollout", 14, 20, "The arithmetic follows, but 1.5K output ignores thinking: Sonnet 5.5 defaults to effort high, so set effort or budget more. Rollout jumps straight to every repo."],
+];
+
+function SampleDebrief() {
+  const total = SAMPLE_LINES.reduce((n, l) => n + l[1], 0);
+  const max = SAMPLE_LINES.reduce((n, l) => n + l[2], 0);
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
+      <div className="min-w-0 rounded-3xl border border-rule bg-white/80 p-6">
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-vermilion">Sample answer · fictional</p>
+        <p className="mt-1 text-sm font-semibold text-graphite">E7 · Design a pull-request review assistant (excerpt)</p>
+        <div className="mt-4 space-y-3 font-serif text-[15px] leading-relaxed text-graphite-2">
+          <p>
+            &ldquo;About 400 PRs a day, median diff around 300 lines. With the touched files and the style guide, a review request is roughly 12K input
+            tokens and 1.5K output. On Sonnet 5.5 at $2 and $10 per million that&apos;s about $0.039 a review, or $16 a day.
+          </p>
+          <p>
+            The bot gets a read-only token and posts comments only; it can never approve or merge. We&apos;ll track the thumbs-up rate on its comments and
+            tune the prompt from there. Once it looks good, we turn it on for every repository.&rdquo;
+          </p>
+        </div>
+      </div>
+      <div className="min-w-0 rounded-3xl bg-graphite p-6 text-paper">
+        <div className="flex items-baseline justify-between gap-3">
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-300">Sample debrief</p>
+          <p className="font-serif text-3xl font-semibold">
+            {total}
+            <span className="text-base text-paper-3"> / {max}</span>
+          </p>
+        </div>
+        <p className="mt-1 text-sm text-paper-3">Just under the pass mark of 70. Every line gets a score and one specific note.</p>
+        <ul className="mt-5 space-y-4">
+          {SAMPLE_LINES.map(([name, got, of, note]) => (
+            <li key={name}>
+              <div className="flex items-baseline justify-between gap-3 text-sm">
+                <span className="font-semibold">{name}</span>
+                <span className="shrink-0 font-mono tabular-nums text-paper-3">
+                  {got} / {of}
+                </span>
+              </div>
+              <div className="mt-1.5 h-1.5 rounded-full bg-white/10" role="img" aria-label={`${name}: ${got} of ${of}`}>
+                <div className={`h-1.5 rounded-full ${got / of >= 0.7 ? "bg-emerald-400" : "bg-amber-400"}`} style={{ width: `${(got / of) * 100}%` }} />
+              </div>
+              <p className="mt-1.5 text-xs leading-relaxed text-paper-3">{note}</p>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-5 border-t border-white/10 pt-4 text-sm">
+          <span className="font-semibold text-emerald-300">Fix first:</span> <span className="text-paper-3">replace the thumbs-up metric with a release gate on 50 labelled past PRs.</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+interface Testimonial {
+  quote: string;
+  name: string;
+  role?: string;
+}
+
 export default function TracksHome({ course, viewer }: { course: Course; viewer: ClientViewer }) {
   const price = course.priceUsd;
   const all = course.modules.flatMap((m) => m.lessons);
@@ -152,7 +233,13 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
       hours: Math.round(mods.reduce((s, m) => s + m.minutes, 0) / 60),
     };
   };
-  const navLinks = [["#tracks", "Tracks"], ["#loop", "The loop"], ["#syllabus", "Syllabus"], ["#instructor", "Instructor"], ["#pricing", "Pricing"]];
+  const navLinks = [["#tracks", "Tracks"], ["#loop", "The loop"], ["#sample", "Sample grade"], ["#syllabus", "Syllabus"], ["#pricing", "Pricing"]];
+  const instructor = {
+    name: process.env.NEXT_PUBLIC_INSTRUCTOR_NAME?.trim() || null,
+    linkedin: process.env.NEXT_PUBLIC_INSTRUCTOR_LINKEDIN?.trim() || null,
+    photo: process.env.NEXT_PUBLIC_INSTRUCTOR_PHOTO?.trim() || null,
+  };
+  const quotes = (Array.isArray(testimonials) ? (testimonials as Testimonial[]) : []).filter((t) => t && t.quote && t.name);
 
   return (
     <div className="playbook-page min-h-screen">
@@ -213,7 +300,10 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
               >
                 Start free →
               </Link>
-              <a href="#pricing" className="rounded-full border border-graphite/20 px-6 py-3 font-semibold text-graphite hover:border-graphite/50">
+              <Link href="/start" className="rounded-full border border-graphite/20 px-6 py-3 font-semibold text-graphite hover:border-graphite/50">
+                Build my plan
+              </Link>
+              <a href="#pricing" className="px-2 py-3 font-semibold text-graphite-2 underline decoration-rule underline-offset-4 hover:text-graphite">
                 All tracks · ${price}
               </a>
             </div>
@@ -331,6 +421,55 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
         </ol>
       </section>
 
+      {/* What you get */}
+      <section className="border-t border-rule bg-paper-2/60">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+          <Eyebrow>What&apos;s inside</Eyebrow>
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map(([title, text]) => (
+              <li key={title} className="rounded-3xl border border-rule bg-white/70 p-6">
+                <h3 className="font-serif text-xl font-semibold text-graphite">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-graphite-2">{text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Sample graded answer */}
+      <section id="sample" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-24 sm:px-6">
+        <Eyebrow>Sample graded answer</Eyebrow>
+        <h2 className="mt-4 max-w-3xl font-serif text-4xl font-semibold leading-tight tracking-[-0.015em] text-graphite">See exactly how an answer gets graded.</h2>
+        <p className="mt-4 max-w-2xl text-graphite-2">
+          A fictional answer to a design round and the kind of debrief Claude returns: a score per rubric line, a note on each, and the one fix to make
+          first. Your real debriefs are about your own answers.
+        </p>
+        <div className="mt-10">
+          <SampleDebrief />
+        </div>
+      </section>
+
+      {quotes.length > 0 && (
+        <section aria-labelledby="quotes-title" className="border-t border-rule">
+          <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+            <h2 id="quotes-title" className="font-serif text-3xl font-semibold text-graphite">
+              From learners
+            </h2>
+            <ul className="mt-8 grid gap-4 md:grid-cols-2">
+              {quotes.map((t) => (
+                <li key={t.quote} className="rounded-3xl border border-rule bg-white/70 p-6">
+                  <blockquote className="font-serif text-lg leading-relaxed text-graphite">&ldquo;{t.quote}&rdquo;</blockquote>
+                  <p className="mt-3 text-sm text-graphite-3">
+                    {t.name}
+                    {t.role ? `, ${t.role}` : ""}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
       {/* Syllabus */}
       <section id="syllabus" className="scroll-mt-20 border-y border-rule bg-paper-2/60">
         <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
@@ -381,12 +520,23 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
         <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.4fr]">
           <div className="rotate-[-2deg] rounded-3xl border border-rule bg-white/80 p-8 shadow-[0_30px_60px_-40px_rgba(29,27,22,0.6)]">
             <Eyebrow>Who I am</Eyebrow>
-            <div className="mt-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-graphite text-emerald-300" aria-hidden="true">
-              <svg viewBox="0 0 24 24" className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" strokeLinecap="round" />
-              </svg>
-            </div>
+            {instructor.photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={instructor.photo} alt={instructor.name ? `Photo of ${instructor.name}` : "Photo of the instructor"} className="mt-6 h-20 w-20 rounded-2xl object-cover" />
+            ) : (
+              <div className="mt-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-graphite text-emerald-300" aria-hidden="true">
+                <svg viewBox="0 0 24 24" className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" strokeLinecap="round" />
+                </svg>
+              </div>
+            )}
+            {instructor.name && <p className="mt-4 font-serif text-2xl font-semibold text-graphite">{instructor.name}</p>}
+            {instructor.linkedin && (
+              <a href={instructor.linkedin} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-sm font-semibold text-forest hover:underline">
+                LinkedIn profile →
+              </a>
+            )}
             <ul className="mt-6 space-y-2 text-sm text-graphite-2">
               {["AI Architect", "Ex-Amazon", "FDE Architect at an AI startup", "Ships AI to enterprise customers"].map((t) => (
                 <li key={t} className="flex gap-2">
@@ -438,8 +588,10 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
               {[
                 `Foundations plus all three role tracks: ${all.length} lessons, ${hours}+ hours`,
                 `${graded} graded tasks: Python exercises, timed drills, written answers and live sessions`,
-                "Three full mock interview loops, one per role, with scorecards",
-                "Claude-graded system design, memos and STAR stories",
+                "Three full mock interview loops, one per role, with an auto-built scorecard",
+                "Voice mock interviews and interactive design rounds, graded by Claude",
+                "Progress dashboard, week-by-week plan and daily review",
+                "A portfolio capstone on the real API, and a public record of verified results",
                 "AI tutor on every exercise, and all future updates",
               ].map((f) => (
                 <li key={f} className="flex gap-2.5">
@@ -450,6 +602,7 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
             </ul>
             <BuyButton viewer={viewer} price={price} className="mt-9 block w-full rounded-full text-center" />
             <p className="mt-3 text-center text-xs text-paper-3">Free lessons need no credit card.</p>
+            <p className="mt-1 text-center text-xs text-paper-3">Refunds: email us within 14 days (reply to your receipt). A refund ends access.</p>
           </div>
         </div>
       </section>

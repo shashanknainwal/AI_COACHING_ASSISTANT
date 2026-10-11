@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import type { ClientViewer } from "@/lib/access";
 import { enableServerSync, lessonId, resetProgress, useProgress } from "@/lib/progress";
 import { Avatar, Ring } from "./Playbook";
+import DashboardLoopStart from "./DashboardLoopStart";
+import type { RoleTrack } from "./SiteTypes";
 
 interface MapModule {
   slug: string;
@@ -17,8 +19,24 @@ interface MapModule {
   minutes: number;
   locked: boolean;
   customer: { company: string; sector: string; contact: string; role: string };
-  lessons: { slug: string; title: string; type: string; minutes: number }[];
+  /** free: open without buying even when the module is locked (free taster lessons). */
+  lessons: { slug: string; title: string; type: string; minutes: number; free?: boolean }[];
 }
+
+function LockIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" className={className} fill="currentColor" aria-hidden="true">
+      <path fillRule="evenodd" d="M10 2a4 4 0 0 0-4 4v2H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-1V6a4 4 0 0 0-4-4Zm2 6V6a2 2 0 1 0-4 0v2h4Z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+const QUICK_LINKS: [string, string, string][] = [
+  ["/learn/progress", "Progress", "Loop scorecard and weak spots"],
+  ["/start", "My plan", "Week-by-week plan to your interview"],
+  ["/review", "Daily review", "Five-minute flashcards"],
+  ["/community", "Peer mocks", "Interviewer scripts for a partner"],
+];
 
 const NUMBER_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
 const customerWord = (n: number) => NUMBER_WORDS[n] ?? String(n);
@@ -55,6 +73,7 @@ export default function CourseMap({
   headline,
   sectionTitle = "Engagements",
   taskLabel = "cases resolved",
+  loop,
 }: {
   modules: MapModule[];
   viewer: ClientViewer;
@@ -64,6 +83,8 @@ export default function CourseMap({
   sectionTitle?: string;
   /** Caption for the count of graded tasks (exercises, drills, written and live practice). */
   taskLabel?: string;
+  /** Role tracks: the mock loop this map ends in, for the "Start mock loop" button. */
+  loop?: { track: RoleTrack; firstLessonHref: string };
 }) {
   const progress = useProgress();
   useEffect(() => {
@@ -77,7 +98,8 @@ export default function CourseMap({
   const resolved = exercises.filter(({ m, l }) => isDone(m, l.slug)).length;
   const minutesLeft = all.filter(({ m, l }) => !isDone(m, l.slug)).reduce((s, { l }) => s + l.minutes, 0);
   const pct = all.length ? doneCount / all.length : 0;
-  const nextUp = all.find(({ m, l }) => !m.locked && !isDone(m, l.slug)) ?? all.find(({ m, l }) => !isDone(m, l.slug));
+  const open = (m: MapModule, l: MapModule["lessons"][number]) => !m.locked || Boolean(l.free);
+  const nextUp = all.find(({ m, l }) => open(m, l) && !isDone(m, l.slug)) ?? all.find(({ m, l }) => !isDone(m, l.slug));
 
   const moduleProgress = (m: MapModule) => (m.lessons.length ? m.lessons.filter((l) => isDone(m, l.slug)).length / m.lessons.length : 0);
   const currentIdx = nextUp ? modules.findIndex((m) => m.slug === nextUp.m.slug) : modules.length;
@@ -153,6 +175,27 @@ export default function CourseMap({
         )}
       </section>
 
+      <nav aria-label="Your tools" className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {QUICK_LINKS.map(([href, label, hint]) => (
+          <Link key={href} href={href} className="rounded-2xl border border-rule bg-white/60 px-4 py-3 transition hover:border-graphite-3">
+            <span className="block font-semibold text-graphite">{label} →</span>
+            <span className="mt-0.5 block text-xs text-graphite-3">{hint}</span>
+          </Link>
+        ))}
+      </nav>
+
+      {loop && (
+        <section aria-label="Mock loop" className="mt-6 flex flex-col gap-3 rounded-3xl border border-vermilion/25 bg-vermilion/[0.04] p-5 sm:flex-row sm:items-center">
+          <div className="min-w-0 flex-1">
+            <p className="font-serif text-lg font-semibold text-graphite">Ready for the full loop?</p>
+            <p className="mt-0.5 text-sm text-graphite-2">Loop mode is closed book: no tutor, hints or reveals, and your first graded attempt on each round is the score.</p>
+          </div>
+          <div className="shrink-0">
+            <DashboardLoopStart track={loop.track} firstLessonHref={loop.firstLessonHref} compact />
+          </div>
+        </section>
+      )}
+
       {/* The route */}
       <section className="mt-12 hidden rounded-3xl border border-rule bg-white/50 px-4 pb-4 pt-2 md:block" aria-label="Course route">
         <svg viewBox="0 0 1000 230" className="w-full">
@@ -175,8 +218,14 @@ export default function CourseMap({
             const labelY = p.y > 100 ? p.y + 42 : p.y - 34;
             return (
               <a key={m.slug} href={`#module-${m.number}`} className="group">
-                <title>{`${m.label}: ${m.title} (${m.customer.company})`}</title>
+                <title>{`${m.label}: ${m.title} (${m.customer.company})${m.locked ? ", full course" : ""}${complete ? ", complete" : ""}`}</title>
                 {current && <circle cx={p.x} cy={p.y} r="22" fill="var(--color-forest)" opacity="0.12" />}
+                {m.locked && !complete && (
+                  <g transform={`translate(${p.x + 9} ${p.y - 21})`} aria-hidden="true">
+                    <circle cx="6" cy="6" r="8" fill="var(--color-graphite)" />
+                    <path d="M3.5 6V4.6a2.5 2.5 0 0 1 5 0V6M3 6h6v4.2H3Z" fill="none" stroke="#fff" strokeWidth="1.2" strokeLinejoin="round" />
+                  </g>
+                )}
                 <circle
                   cx={p.x}
                   cy={p.y}
@@ -195,7 +244,7 @@ export default function CourseMap({
                   fontWeight="600"
                   fill={complete || current ? "#fff" : "var(--color-graphite-2)"}
                 >
-                  {complete ? "✓" : m.locked ? "🔒" : m.code}
+                  {complete ? "✓" : m.code}
                 </text>
                 <text x={p.x} y={labelY} textAnchor="middle" fontSize="12.5" fontWeight="600" fill="var(--color-graphite)" className="font-sans">
                   {m.customer.company}
@@ -238,7 +287,12 @@ export default function CourseMap({
                         {m.status === "coming-soon" && (
                           <span className="shrink-0 whitespace-nowrap rounded-full border border-rule px-2 py-0.5 text-[10px] tracking-wider text-graphite-3">Coming soon</span>
                         )}
-                        {m.locked && m.status === "live" && <span className="shrink-0 whitespace-nowrap rounded-full bg-graphite px-2 py-0.5 text-[10px] tracking-wider text-paper">Full course</span>}
+                        {m.locked && m.status === "live" && (
+                          <span className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-graphite px-2 py-0.5 text-[10px] tracking-wider text-paper">
+                            <LockIcon className="h-2.5 w-2.5" />
+                            Full course
+                          </span>
+                        )}
                         {current && !m.locked && <span className="shrink-0 whitespace-nowrap rounded-full bg-vermilion/10 px-2 py-0.5 text-[10px] text-vermilion">In progress</span>}
                       </div>
                       <h3 className="mt-2 font-serif text-xl font-semibold leading-snug text-graphite">{m.title}</h3>
@@ -263,6 +317,7 @@ export default function CourseMap({
                   <ul className="border-t border-rule px-3 py-2">
                     {m.lessons.map((l) => {
                       const complete = isDone(m, l.slug);
+                      const lockedLesson = m.locked && !l.free;
                       return (
                         <li key={l.slug}>
                           <Link href={`/learn/${m.slug}/${l.slug}`} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm hover:bg-paper-2">
@@ -272,7 +327,16 @@ export default function CourseMap({
                               {TYPE_MARK[l.type] ?? "·"}
                             </span>
                             <span className={complete ? "text-graphite-3 line-through decoration-rule" : "text-graphite"}>{shortTitle(l.title)}</span>
-                            <span className="ml-auto text-xs text-graphite-3">{l.minutes}m</span>
+                            {m.locked && l.free && (
+                              <span className="shrink-0 whitespace-nowrap rounded-full bg-forest/10 px-2 py-0.5 text-[10px] font-semibold text-forest">Free preview</span>
+                            )}
+                            <span className="ml-auto shrink-0 text-xs text-graphite-3">{l.minutes}m</span>
+                            {lockedLesson && (
+                              <span className="shrink-0 text-graphite-3" title="Part of the full course">
+                                <LockIcon />
+                                <span className="sr-only">Locked: part of the full course</span>
+                              </span>
+                            )}
                             <span
                               className={`flex h-4 w-4 items-center justify-center rounded-full text-[9px] ${complete ? "bg-forest text-white" : "border border-rule"}`}
                             >
