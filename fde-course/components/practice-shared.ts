@@ -195,6 +195,9 @@ export interface LoopState {
  * Reads profile.loopMode from /api/profile. The loop applies to this lesson only when the lesson
  * is in its track's mock-loop module. A missing route (404) or { disabled: true } means no loop.
  */
+/** Same key as components/SiteProfile.tsx PROFILE_KEY. */
+const LOCAL_PROFILE_KEY = "fde-profile-v1";
+
 export function useLoopMode(moduleSlug: string, track: string) {
   const [loop, setLoop] = useState<LoopState | null>(null);
 
@@ -203,12 +206,24 @@ export function useLoopMode(moduleSlug: string, track: string) {
     (async () => {
       try {
         const res = await fetch("/api/profile", { cache: "no-store" });
-        if (!res.ok) return;
-        const data = (await res.json()) as { disabled?: boolean; profile?: { loopMode?: LoopState | null } | null };
-        const lm = data.disabled ? null : (data.profile?.loopMode ?? null);
+        if (res.ok) {
+          const data = (await res.json()) as { disabled?: boolean; profile?: { loopMode?: LoopState | null } | null };
+          if (!data.disabled) {
+            const lm = data.profile?.loopMode ?? null;
+            if (live && lm && typeof lm.startedAt === "string") setLoop(lm);
+            return;
+          }
+        }
+      } catch {
+        // No profile service: fall back to the browser copy below.
+      }
+      // Dev mode, signed out, or no profiles table: the dashboard keeps the profile in localStorage.
+      try {
+        const raw = window.localStorage.getItem(LOCAL_PROFILE_KEY);
+        const lm = raw ? ((JSON.parse(raw) as { loopMode?: LoopState | null }).loopMode ?? null) : null;
         if (live && lm && typeof lm.startedAt === "string") setLoop(lm);
       } catch {
-        // No profile service: no loop.
+        // Storage blocked: no loop.
       }
     })();
     return () => {
@@ -224,6 +239,12 @@ export function useLoopMode(moduleSlug: string, track: string) {
       await fetch("/api/profile", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ loopMode: null }) });
     } catch {
       // Offline: end it in this tab anyway.
+    }
+    try {
+      const raw = window.localStorage.getItem(LOCAL_PROFILE_KEY);
+      if (raw) window.localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify({ ...JSON.parse(raw), loopMode: null }));
+    } catch {
+      // Storage blocked: nothing to clear.
     }
     setLoop(null);
   }, []);
