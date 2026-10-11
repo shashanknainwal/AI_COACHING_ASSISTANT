@@ -28,7 +28,7 @@ export default async function LessonPage({ params }: { params: Promise<{ module:
     return (
       <main className="playbook-page flex min-h-screen items-center justify-center px-6">
         <div className="w-full max-w-lg rounded-3xl border border-rule bg-white/75 p-8 text-center shadow-[0_30px_60px_-40px_rgba(29,27,22,0.6)] sm:p-10">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-graphite text-lg text-paper">🔒</div>
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-graphite text-lg text-paper"><span aria-hidden="true">🔒</span><span className="sr-only">Locked</span></div>
           <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-graphite-3">
             {mod.label} · {mod.customer.company}
           </p>

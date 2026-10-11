@@ -130,7 +130,7 @@ export async function POST(req: Request) {
   const action = body.action === "reply" && lesson.type === "roleplay" ? "reply" : "grade";
   const transcript = lesson.type === "roleplay" ? checkTranscript(lesson, body.transcript) : [];
   if (transcript === null) return NextResponse.json({ error: TAMPERED }, { status: 400 });
-  const diagram = lesson.diagram || lesson.mode === "design" ? clip(body.diagram, MAX_DIAGRAM_CHARS).trim() : "";
+  const diagram = lesson.diagram || lesson.mode === "design" ? clip(body.diagram ?? body.answers?.diagram, MAX_DIAGRAM_CHARS).trim() : "";
   const loopMode = body.loopMode === true && (MOCK_LOOP_MODULES as readonly string[]).includes(lesson.moduleSlug);
 
   // Validate before spending an AI call.
