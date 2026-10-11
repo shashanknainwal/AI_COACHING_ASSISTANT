@@ -1,5 +1,5 @@
 ---
-title: "Round 2: Design a Pull-Request Review Assistant"
+title: "Round 2 Prep: Design a Pull-Request Review Assistant (Written)"
 type: written
 minutes: 45
 sections:
@@ -38,12 +38,12 @@ rubric:
     lookFor: "Names realistic risks: noisy or wrong comments that train engineers to ignore the bot, prompt injection through code or PR descriptions, secrets or sensitive code in prompts, hallucinated APIs, huge diffs, outages. Gives detection and mitigation for each, including a cap on comments per PR and a way to give feedback."
   - name: Cost, latency and rollout
     points: 20
-    lookFor: "An explicit cost-per-review estimate from token counts and real prices, a monthly total, a latency estimate against the target, at least one lever (prompt caching of stable context, routing small diffs to a cheaper model, batch processing for non-urgent passes), and a phased rollout with an opt-in pilot."
+    lookFor: "An explicit cost-per-review estimate from token counts and real prices, with the effort level stated or thinking counted as output, a monthly total, a latency estimate against the target, at least one lever (prompt caching of stable context, routing small diffs to a cheaper model, batch processing for non-urgent passes), and a phased rollout with an opt-in pilot."
 passScore: 70
 graderNotes: "The key judgement is precision over recall: a bot that posts 15 comments per PR gets muted. Mark down designs that never say how noise is measured or capped, that feed only the raw diff with no wider context, that let the model approve or block merges on its own, or that ignore prompt injection from PR content. An answer with no cost estimate cannot score above 8 on the cost criterion. Reward stated assumptions and arithmetic over long component lists. Check that any prices used are close to the facts given in the lesson body; don't reward invented model features."
 ---
 
-Round 2 of your mock loop. Set a 45-minute timer, write in the five sections on the right, and don't look anything up beyond the facts on this page. System design for LLM products is reported in applied AI loops at every lab this course covers (**Reported**; see module C1). This prompt is original.
+Preparation for Round 2 of your mock loop. Write this design first, then run the live design interview in the next lesson (03b), where an interviewer reveals the real requirements only when you ask and changes the problem halfway through. The live round is the one you score. Set a 45-minute timer, write in the five sections on the right, and don't look anything up beyond the facts on this page. System design for LLM products is reported in applied AI loops at every lab this course covers (**Reported**; see module C1). This prompt is original.
 
 ## The prompt
 
@@ -66,7 +66,8 @@ You don't need all of these. You need the important ones, with reasons.
 
 - Claude Opus 5.5 costs $4 per million input tokens and $20 per million output tokens. Claude Sonnet 5.5 is $2 and $10. Claude Haiku 5.5 is $0.10 and $0.50 for prompts up to 100K tokens.
 - Prompt caching matches a prefix of tools, then system prompt, then messages. Cache reads cost $0.20 per million tokens on Opus 5.5 and $0.10 on Sonnet 5.5 (5% of base input); a cache write costs about 1.25 times normal input for the default five-minute lifetime.
-- The Message Batches API takes 50% off every token, for work nobody is waiting on.
+- All three think by default (Opus 5.5 and Haiku 5.5 at effort `medium`, Sonnet 5.5 at `high`). Thinking tokens are billed as output and count toward `max_tokens`, so state the effort you'd set or add a thinking line to your estimate. Caching is opt-in: the request needs a `cache_control` marker.
+- The Message Batches API takes 50% off every token, for work nobody is waiting on. It isn't available on Bedrock, Vertex AI or Foundry.
 - Opus 5.5, Sonnet 5.5 and Haiku 5.5 have a 1-million-token context window. Fitting a whole repository in the window is possible for small repos; whether it's wise is part of your answer.
 
-When you submit, Claude grades your design against the interviewer rubric below. Write the score on your loop scorecard before you read the feedback in detail.
+When you submit, Claude grades your design against the interviewer rubric below. Then go straight to lesson 03b while the design is fresh.

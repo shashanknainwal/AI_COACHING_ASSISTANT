@@ -10,7 +10,7 @@ levels:
   - "Rollback and history"
 hints:
   - "Level 4 asks which version a user got at any past time. That depends on two things that change over time: the active version and the split. Keep a per-template list of (time, active_version, split) entries from Level 1, and append one on every change."
-  - "Write one regex for placeholders, r\"\\{\\{([A-Za-z0-9_]+)\\}\\}\", and use it for render, get_variables and the missing-variable check. re.sub with a function fills every occurrence."
+  - "Write one placeholder pattern (a name inside double braces) and reuse it for render, get_variables and the missing-variable check, so the three can never disagree. re.sub accepts a function as the replacement."
   - "For a split, sort the version numbers, walk them while adding up percentages, and return the first version whose running total is greater than the user's bucket."
   - "Factor the version choice into one helper that takes (active, split, user_id). assign calls it with the current config; version_at calls it with the config found in history."
 ---
