@@ -8,7 +8,7 @@ The FDE posting asks for Python plus one other language. These examples use the 
 | `src/toolLoop.ts` | A manual tool loop handling `tool_use`, `pause_turn`, `refusal`, `max_tokens` and `end_turn`, with append-only history and explicit `effort` |
 | `src/mcpServer.ts` | A hand-written, minimal MCP server over stdio (JSON-RPC: `initialize`, `ping`, `tools/list`, `tools/call`). Teaching code: use an official MCP SDK for real work and check its docs |
 | `src/tools.ts` | Tool definitions with `strict: true` and an executor that validates input and refuses writes without approval |
-| `test/*.test.ts` | vitest tests with mocked clients: no key, no network |
+| `test/*.test.mts` | vitest tests with mocked clients: no key, no network (`.mts` keeps them out of the course site's own type-check) |
 
 ```bash
 cd typescript
