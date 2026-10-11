@@ -49,7 +49,7 @@ rubric:
     lookFor: "Thanks the recruiter, expresses genuine interest, and asks clarifying questions about the offer before negotiating (level, vesting and cliff, refreshers, sign-on repayment, deadline, liquidity for a private company)."
   - name: Honest use of the competing offer
     points: 25
-    lookFor: "Mentions the competing offer accurately and calmly, without inflating it, inventing details or threatening. Answers follow-up questions consistently and is willing to share the relevant parts if asked. Compares structure honestly (options versus RSUs, private versus private), not just the headline."
+    lookFor: "Mentions the competing offer accurately and calmly, without inflating it, inventing details or threatening. Answers follow-up questions consistently and is willing to share the relevant parts if asked. Compares structure honestly (early-stage options versus RSUs), not just the headline."
   - name: Specific, reasoned asks
     points: 25
     lookFor: "Makes a small number of specific requests (base toward the top of the band, a larger equity grant, a sign-on to cover unvested equity left behind, a deadline extension, a level review) each with a reason. Asks what's flexible. Doesn't negotiate against themselves or accept the first answer without asking a follow-up."
