@@ -15,7 +15,7 @@ The course's browser editor runs Python only. **TypeScript can't run in this bro
 3. **Written lessons graded by a rubric.** You'll review a buggy handler and port a Python tool loop to TypeScript.
 4. **A local lab.** You run the TypeScript examples in `capstone-kit/typescript/` on your own machine with Node and paste your results.
 
-Why bother? Many customer teams build their product in TypeScript, often a Next.js front end with route handlers on the server. Candidate accounts describe some applied AI roles asking for Python plus a second language (**Reported**; check each posting). An FDE who can review the customer's TypeScript route on the first call is more useful than one who asks for a Python version.
+Why bother? Many customer teams build their product in TypeScript, often a Next.js front end with route handlers on the server. The Anthropic FDE posting reviewed for this course asks for Python plus one other language (**Official**, from the posting; postings change, so check the current one). An FDE who can review the customer's TypeScript route on the first call is more useful than one who asks for a Python version.
 
 Fernhollow Travel is this module's fictional customer: a booking site built on Next.js. Their staff engineer, Ada Wexley, is fictional too.
 
