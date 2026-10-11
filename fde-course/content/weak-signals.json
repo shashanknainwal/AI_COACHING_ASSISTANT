@@ -1,5 +1,5 @@
 {
-  "_note": "Loop scorecards for the progress dashboard (/learn/progress). Rounds, formulas and the weak-signal → module tables are transcribed from each track's scorecard lesson: e7-engineer-mock-loop/06-your-loop-scorecard, a7-architect-mock-loop/10-architect-loop-scorecard, 11-fde-mock-loop/06-fde-loop-scorecard. Keep them in sync when a scorecard lesson changes. 'criteria' are lowercase fragments matched against rubric line names; 'drill' is stuck (cleared 2+ but not all levels), edge (fewer than 2 levels) or slow (all levels, some after the clock). Combo rounds weight two lessons (weights). A fix is either a lesson id (module/lesson) or a module slug.",
+  "_note": "Loop scorecards for the progress dashboard (/learn/progress). Rounds, formulas and the weak-signal → module tables are transcribed from each track's scorecard lesson: e7-engineer-mock-loop/06-your-loop-scorecard, a7-architect-mock-loop/10-architect-loop-scorecard, 11-fde-mock-loop/06-fde-loop-scorecard. Keep them in sync when a scorecard lesson changes. 'criteria' are lowercase fragments matched against rubric line names; 'drill' is stuck (cleared 2+ but not all levels), edge (fewer than 2 levels) or slow (all levels, some after the clock). Combo rounds weight two lessons (weights). A fix is either a lesson id (module/lesson) or a module slug. Preparation lessons (E7 03c, 05c; FDE 04b) are not scored rounds.",
   "passMark": 70,
   "drillPoints": {
     "inTime": 25,
@@ -22,10 +22,10 @@
         },
         {
           "key": "r2",
-          "label": "Round 2 · Design (PR review)",
+          "label": "Round 2 · Design, live (Nadia)",
           "kind": "graded",
           "lessons": [
-            "e7-engineer-mock-loop/03-design-a-pr-review-assistant"
+            "e7-engineer-mock-loop/03b-design-interview-pr-review"
           ]
         },
         {
@@ -46,7 +46,23 @@
         },
         {
           "key": "r5",
-          "label": "Round 5 · Values (C5, optional)",
+          "label": "Round 5 · Customer-engineer session",
+          "kind": "graded",
+          "lessons": [
+            "e7-engineer-mock-loop/05b-customer-engineer-round"
+          ]
+        },
+        {
+          "key": "r6",
+          "label": "Round 6 · Take-home panel",
+          "kind": "graded",
+          "lessons": [
+            "e7-engineer-mock-loop/05d-take-home-panel"
+          ]
+        },
+        {
+          "key": "rv",
+          "label": "Values round (C5, optional)",
           "kind": "graded",
           "optional": true,
           "lessons": [
@@ -105,30 +121,67 @@
             "r2"
           ],
           "criteria": [
-            "scoping"
+            "scoping",
+            "asked for the numbers"
           ],
-          "signal": "Low scoping",
+          "signal": "Low scoping, or 'Asked for the numbers'",
           "cause": "Jumping to boxes before numbers",
           "fix": [
             {
               "module": "e6-llm-system-design",
-              "note": "practise the first five minutes on several prompts"
+              "note": "the live design interviews, where requirements only appear when you ask"
+            },
+            {
+              "lesson": "e6-llm-system-design/06-design-a-multi-tenant-llm-gateway"
+            },
+            {
+              "lesson": "e6-llm-system-design/07-design-a-coding-agent"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "criteria": [
+            "adapted to the new constraint"
+          ],
+          "signal": "Low 'Adapted to the new constraints'",
+          "cause": "Defending the first design instead of revising it",
+          "fix": [
+            {
+              "lesson": "e6-llm-system-design/06-design-a-multi-tenant-llm-gateway",
+              "note": "rerun a live design interview and say what changes after each constraint"
+            },
+            {
+              "lesson": "e7-engineer-mock-loop/03b-design-interview-pr-review",
+              "note": "then rerun Round 2"
             }
           ]
         },
         {
           "rounds": [
             "r2",
-            "r3"
+            "r3",
+            "r6"
           ],
           "criteria": [
-            "evals"
+            "evals",
+            "precision",
+            "rigour"
           ],
-          "signal": "Low evals",
+          "signal": "Low evals, or evaluation rigour",
           "cause": "No habit of proving quality",
           "fix": [
             {
               "module": "e4-evals-engineering"
+            },
+            {
+              "lesson": "e4-evals-engineering/01-evals-are-the-job"
+            },
+            {
+              "lesson": "e4-evals-engineering/04-exercise-pairwise-judge",
+              "note": "then rebuild the take-home eval with a held-out set"
             }
           ]
         },
@@ -179,7 +232,8 @@
             "r3"
           ],
           "criteria": [
-            "failure"
+            "failure",
+            "security"
           ],
           "signal": "Thin failure modes",
           "cause": "Haven't run an LLM system in production",
@@ -196,7 +250,8 @@
         },
         {
           "rounds": [
-            "r3"
+            "r3",
+            "r6"
           ],
           "criteria": [
             "pushback",
@@ -206,14 +261,43 @@
           "cause": "Decisions you made but never wrote down the reasons for",
           "fix": [
             {
+              "lesson": "e7-engineer-mock-loop/03c-project-summary-for-marcus",
+              "note": "write a one-page decision record for your project"
+            },
+            {
               "lesson": "e7-engineer-mock-loop/04-deep-dive-with-marcus",
-              "note": "write a one-page decision record for your project, then rerun Round 3"
+              "note": "then rerun Round 3"
             }
           ]
         },
         {
           "rounds": [
             "r3"
+          ],
+          "criteria": [
+            "depth on one decision",
+            "evidence"
+          ],
+          "signal": "Low 'Depth on one decision'",
+          "cause": "You know the choice but not the measurement behind it",
+          "fix": [
+            {
+              "lesson": "e7-engineer-mock-loop/03c-project-summary-for-marcus",
+              "note": "answer why, the alternative's result, how it was measured, how sure"
+            },
+            {
+              "module": "e4-evals-engineering",
+              "note": "the measurement habits"
+            },
+            {
+              "module": "e6-llm-system-design"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r3",
+            "r6"
           ],
           "criteria": [
             "ownership",
@@ -269,6 +353,57 @@
         {
           "rounds": [
             "r5"
+          ],
+          "criteria": [
+            "diagnosis",
+            "root cause",
+            "reads the eval"
+          ],
+          "signal": "Missed root causes",
+          "cause": "Migration details not automatic",
+          "fix": [
+            {
+              "module": "e1-production-prompting"
+            },
+            {
+              "module": "e2-tools-and-agents",
+              "note": "forced tool_choice, prefill, append-only history"
+            },
+            {
+              "module": "e5-production-concerns",
+              "note": "max_tokens and thinking"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r5",
+            "r6"
+          ],
+          "criteria": [
+            "explains to the non-expert",
+            "customer translation",
+            "customer manner"
+          ],
+          "signal": "Low 'Explains to the non-expert'",
+          "cause": "Answering a decision-maker with detail instead of a decision",
+          "fix": [
+            {
+              "lesson": "e1-production-prompting/05-defend-your-prompt"
+            },
+            {
+              "lesson": "e4-evals-engineering/01-evals-are-the-job",
+              "note": "say what the eval means in one sentence"
+            },
+            {
+              "module": "a5-executive-communication",
+              "note": "Architect track; practise a one-sentence answer plus a date"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "rv"
           ],
           "signal": "Values",
           "cause": "Unclear view on the lab's mission and tradeoffs",
@@ -523,7 +658,7 @@
             "r2"
           ],
           "criteria": [
-            "adapted",
+            "adapted to the new constraint",
             "diagram"
           ],
           "signal": "Didn't adapt to the constraint updates, or the diagram didn't match the narration",
@@ -532,6 +667,10 @@
             {
               "lesson": "a7-architect-mock-loop/06-whiteboard-aldermoor-design",
               "note": "rerun with a different first question; redraw before explaining"
+            },
+            {
+              "module": "e6-llm-system-design",
+              "note": "the live design interviews"
             }
           ]
         },
@@ -1103,12 +1242,17 @@
             "r5"
           ],
           "criteria": [
+            "adapted to the new constraint",
             "constraint",
             "architecture"
           ],
           "signal": "Ignored or fumbled the new constraint",
           "cause": "Re-scoping live",
           "fix": [
+            {
+              "lesson": "e6-llm-system-design/06-design-a-multi-tenant-llm-gateway",
+              "note": "a live design interview with injected constraints"
+            },
             {
               "lesson": "07-tool-use-rag-agents/07-workflows-agents-and-guardrails",
               "note": "then redo Round 5 with your own added constraint"
