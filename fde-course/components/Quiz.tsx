@@ -55,6 +55,7 @@ export default function Quiz({ questions, onPass }: { questions: QuizQuestion[];
                 <button
                   key={oi}
                   disabled={checked}
+                  aria-pressed={chosen}
                   onClick={() => setPicked((p) => p.map((v, i) => (i === qi ? oi : v)))}
                   className={`flex w-full items-start gap-3 rounded-xl border px-3.5 py-2.5 text-left text-[15px] text-graphite-2 transition ${cls}`}
                 >
@@ -75,7 +76,7 @@ export default function Quiz({ questions, onPass }: { questions: QuizQuestion[];
         </div>
       ))}
 
-      <div className="sticky bottom-4 z-10">
+      <div className="sticky bottom-4 z-10" aria-live="polite">
         {!checked ? (
           <div className="flex items-center justify-between gap-4 rounded-2xl bg-graphite px-5 py-3.5 text-paper shadow-[0_18px_40px_-20px_rgba(29,27,22,0.8)]">
             <span className="text-sm text-paper-3">

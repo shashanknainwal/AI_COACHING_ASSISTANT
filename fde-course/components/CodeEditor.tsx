@@ -34,7 +34,7 @@ export default function CodeEditor({
           colors: {
             "editor.background": "#0d1117",
             "editor.lineHighlightBackground": "#161b22",
-            "editorLineNumber.foreground": "#3b434e",
+            "editorLineNumber.foreground": "#6e7681",
             "editorLineNumber.activeForeground": "#8b949e",
             "editorCursor.foreground": "#6ee7b7",
             "editor.selectionBackground": "#264f78",
@@ -59,7 +59,7 @@ export default function CodeEditor({
         automaticLayout: true,
         padding: { top: 12 },
       }}
-      loading={<div className="p-4 text-sm text-gray-400">Loading editor…</div>}
+      loading={<div className="p-4 text-sm text-gray-300">Loading editor…</div>}
     />
   );
 }

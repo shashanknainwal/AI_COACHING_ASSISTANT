@@ -17,13 +17,16 @@
   --color-rule: #ddd2bd;
   --color-graphite: #1d1b16;
   --color-graphite-2: #4a443a;
-  --color-graphite-3: #7a7262;
+  /* Meta text: 5.6:1 on paper, 5.1:1 on paper-2 (WCAG AA). */
+  --color-graphite-3: #68604f;
   --color-forest: #0f6b52;
   --color-forest-2: #0b5341;
   --color-vermilion: #c2410c;
   --color-console: #0d1117;
   --color-console-2: #161b22;
   --color-console-line: #262c36;
+  /* Secondary text on the console: 6.2:1 on console, 5.6:1 on console-2 (replaces gray-500/600 there). */
+  --color-console-muted: #8b949e;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-serif: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;

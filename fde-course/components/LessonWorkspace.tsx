@@ -13,6 +13,21 @@ import { Avatar, Mark } from "./Playbook";
 import TraceView from "./TraceView";
 import { Diagram, DIAGRAM_PATTERN } from "./Diagrams";
 import { AnswerSheet, RoleplayChat, RubricCard, type PracticePersona, type PracticeSection } from "./AiPractice";
+import LoopBanner from "./LoopBanner";
+import { DrillHistory, LevelTimes } from "./AttemptHistory";
+import {
+  clock,
+  drillRunFromServer,
+  fetchAttempts,
+  localDrillRuns,
+  postDrillAttempt,
+  readLocal,
+  saveLocalDrillRun,
+  useHardMode,
+  useLoopMode,
+  writeLocal,
+  type DrillRun,
+} from "./practice-shared";
 
 const CodeEditor = dynamic(() => import("./CodeEditor"), { ssr: false });
 
@@ -37,6 +52,10 @@ export interface WorkspaceLesson {
   persona: PracticePersona | null;
   opening: string;
   maxTurns: number;
+  /** roleplay: "design" for an interactive design interview */
+  mode?: "design" | null;
+  /** roleplay, written: show a diagram box */
+  diagram?: boolean;
 }
 
 export interface WorkspaceCustomer {
@@ -82,33 +101,36 @@ interface DrillState {
   startedAt: number | null;
   cleared: number;
   finishedAt: number | null;
+  /** ms from start to clearing each level, in order. */
+  levelMs: number[];
+  /** Extended time (1.5x): an accessibility accommodation chosen before starting. */
+  extended: boolean;
+  /** Started during a mock loop on this lesson. */
+  loopMode: boolean;
+  /** This run has been recorded (finish or time-up), so it isn't posted twice. */
+  posted: boolean;
 }
 
+const FRESH_DRILL: DrillState = { startedAt: null, cleared: 0, finishedAt: null, levelMs: [], extended: false, loopMode: false, posted: false };
+
 function loadDrill(id: string): DrillState {
-  try {
-    const raw = window.localStorage.getItem(drillKey(id));
-    if (raw) return { startedAt: null, cleared: 0, finishedAt: null, ...JSON.parse(raw) };
-  } catch {
-    // Storage blocked: the drill still works for this visit.
-  }
-  return { startedAt: null, cleared: 0, finishedAt: null };
+  const saved = readLocal<Partial<DrillState> | null>(drillKey(id), null);
+  if (!saved || typeof saved !== "object") return FRESH_DRILL;
+  // Runs saved before levelMs existed were already finished or abandoned: don't re-post them.
+  const legacy = !Array.isArray(saved.levelMs);
+  return { ...FRESH_DRILL, ...saved, levelMs: legacy ? [] : saved.levelMs!, posted: saved.posted ?? legacy };
 }
 
 function saveDrill(id: string, d: DrillState) {
-  try {
-    window.localStorage.setItem(drillKey(id), JSON.stringify(d));
-  } catch {
-    // Storage blocked.
-  }
+  writeLocal(drillKey(id), d);
 }
 
-const clock = (ms: number) => {
-  const t = Math.max(0, Math.round(ms / 1000));
-  const h = Math.floor(t / 3600);
-  const m = Math.floor((t % 3600) / 60);
-  const sec = String(t % 60).padStart(2, "0");
-  return h ? `${h}:${String(m).padStart(2, "0")}:${sec}` : `${m}:${sec}`;
-};
+const drillLimitMs = (timeLimit: number, extended: boolean) => timeLimit * 60_000 * (extended ? 1.5 : 1);
+const inTimeCount = (levelMs: number[], limitMs: number) => levelMs.filter((ms) => ms !== undefined && ms !== null && (!limitMs || ms <= limitMs)).length;
+
+/** Splitter limits, in percent of the window width taken by the lesson pane. */
+const SPLIT_MIN = 32;
+const SPLIT_MAX = 68;
 
 export default function LessonWorkspace({
   lesson,
@@ -155,29 +177,20 @@ export default function LessonWorkspace({
   const [pyStatus, setPyStatus] = useState("loading");
   const [tab, setTab] = useState<"output" | "checks" | "trace">("output");
   const [hintsShown, setHintsShown] = useState(0);
-  const [split, setSplit] = useState(48);
+  const [split, setSplit] = useState(lesson.mode === "design" ? 40 : 48);
   const dragging = useRef(false);
   const edited = useRef(false);
 
-  // Drill state: when the clock started, how many levels are cleared, when the last one was.
-  const [drill, setDrill] = useState<DrillState>({ startedAt: null, cleared: 0, finishedAt: null });
+  // Loop mode (from the learner's profile) and hard mode (this browser) both hide hints and reveals.
+  const loop = useLoopMode(lesson.moduleSlug, track);
+  const [hard, setHard] = useHardMode();
+
+  // Drill state: when the clock started, per-level clear times, when the last level was cleared.
+  const [drill, setDrill] = useState<DrillState>(FRESH_DRILL);
+  const [runs, setRuns] = useState<DrillRun[]>([]);
+  const [runsOnServer, setRunsOnServer] = useState(false);
   const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    if (isDrill) setDrill(loadDrill(id));
-  }, [id, isDrill]);
-  const drillRunning = isDrill && drill.startedAt !== null && drill.finishedAt === null;
-  useEffect(() => {
-    if (!drillRunning) return;
-    const t = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(t);
-  }, [drillRunning]);
-  const levelCount = lesson.levels.length;
-  const unlocked = Math.min(levelCount, drill.cleared + 1);
-  const limitMs = lesson.timeLimit * 60_000;
-  const elapsed = drill.startedAt ? Math.max(0, (drill.finishedAt ?? now) - drill.startedAt) : 0;
-  const timeUp = isDrill && limitMs > 0 && drill.startedAt !== null && elapsed >= limitMs;
-  // The tutor and hints stay off while the clock runs, like the real assessments.
-  const assistOff = isDrill && drill.finishedAt === null && !timeUp;
+  const posting = useRef(false);
 
   const updateDrill = useCallback(
     (next: DrillState) => {
@@ -186,6 +199,98 @@ export default function LessonWorkspace({
     },
     [id],
   );
+
+  // Restore the drill from this browser, then from the account: a run finished on another device
+  // shows here when this browser has none of its own.
+  useEffect(() => {
+    if (!isDrill) return;
+    const local = loadDrill(id);
+    setDrill(local);
+    setRuns(localDrillRuns(id));
+    let live = true;
+    void fetchAttempts(id).then((r) => {
+      if (!live || !r) return;
+      const serverRuns = r.drills.map(drillRunFromServer);
+      setRunsOnServer(true);
+      setRuns(serverRuns);
+      const newest = serverRuns[0];
+      if (newest && (local.startedAt === null || (local.posted && newest.startedAt > local.startedAt))) {
+        updateDrill({
+          startedAt: newest.startedAt,
+          cleared: newest.cleared,
+          finishedAt: newest.cleared >= lesson.levels.length ? newest.finishedAt : null,
+          levelMs: newest.levelMs,
+          extended: newest.extended,
+          loopMode: newest.loopMode,
+          posted: true,
+        });
+      }
+    });
+    return () => {
+      live = false;
+    };
+  }, [id, isDrill, lesson.levels.length, updateDrill]);
+
+  const drillRunning = isDrill && drill.startedAt !== null && drill.finishedAt === null;
+  useEffect(() => {
+    if (!drillRunning) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [drillRunning]);
+  const levelCount = lesson.levels.length;
+  const unlocked = Math.min(levelCount, drill.cleared + 1);
+  const limitMs = drillLimitMs(lesson.timeLimit, drill.extended);
+  const elapsed = drill.startedAt ? Math.max(0, (drill.finishedAt ?? now) - drill.startedAt) : 0;
+  const timeUp = isDrill && limitMs > 0 && drill.startedAt !== null && elapsed >= limitMs;
+  // The tutor and hints stay off while the clock runs, like the real assessments.
+  const assistOff = isDrill && drill.finishedAt === null && !timeUp;
+  const hintsHidden = hard || loop.active;
+
+  /** Save a run to this browser's history and post it to the account (once per run). */
+  const recordRun = useCallback(
+    (state: DrillState, endedAt: number | null) => {
+      if (state.startedAt === null) return;
+      const lim = drillLimitMs(lesson.timeLimit, state.extended);
+      const levelMs = state.levelMs.map((ms) => Math.max(0, Math.round(ms)));
+      const run: DrillRun = {
+        startedAt: state.startedAt,
+        finishedAt: endedAt,
+        timeLimitMin: lesson.timeLimit,
+        extended: state.extended,
+        levelMs,
+        cleared: state.cleared,
+        clearedInTime: Math.min(state.cleared, inTimeCount(levelMs, lim)),
+        loopMode: state.loopMode,
+      };
+      saveLocalDrillRun(id, run);
+      setRuns((list) => [run, ...list.filter((r) => r.startedAt !== run.startedAt)]);
+      if (state.posted || posting.current) return;
+      posting.current = true;
+      void postDrillAttempt({
+        kind: "drill",
+        lesson: id,
+        startedAt: new Date(run.startedAt).toISOString(),
+        finishedAt: endedAt !== null ? new Date(Math.min(endedAt, Date.now())).toISOString() : null,
+        timeLimitMin: run.timeLimitMin,
+        extended: run.extended,
+        levelMs: run.levelMs,
+        cleared: run.cleared,
+        clearedInTime: run.clearedInTime,
+        loopMode: run.loopMode,
+      }).finally(() => {
+        posting.current = false;
+      });
+    },
+    [id, lesson.timeLimit],
+  );
+
+  // Time-up: record the run as it stood when the clock ran out (practice can continue after).
+  useEffect(() => {
+    if (!timeUp || drill.posted || drill.finishedAt !== null || drill.startedAt === null) return;
+    const next = { ...drill, posted: true };
+    recordRun(drill, drill.startedAt + limitMs);
+    updateDrill(next);
+  }, [timeUp, drill, limitMs, recordRun, updateDrill]);
 
   // Restore saved code for this lesson.
   useEffect(() => {
@@ -245,8 +350,18 @@ export default function LessonWorkspace({
           const shown = r.tests.filter((t) => testLevel(t.id) <= visible);
           r.tests = shown;
           r.passed = shown.length > 0 && shown.every((t) => t.passed);
-          if (best !== drill.cleared) {
-            updateDrill({ ...drill, startedAt: drill.startedAt ?? Date.now(), cleared: best, finishedAt: best === levelCount ? Date.now() : drill.finishedAt });
+          if (best > drill.cleared) {
+            const t = Date.now();
+            const start = drill.startedAt ?? t;
+            const levelMs = [...drill.levelMs];
+            for (let l = drill.cleared; l < best; l++) levelMs[l] = t - start;
+            const finished = best === levelCount;
+            const next: DrillState = { ...drill, startedAt: start, cleared: best, levelMs, finishedAt: finished ? t : drill.finishedAt };
+            if (finished) {
+              recordRun(next, t);
+              next.posted = true;
+            }
+            updateDrill(next);
           }
           if (best === levelCount) markComplete(id);
         } else if (mode === "submit" && r.passed) markComplete(id);
@@ -260,7 +375,7 @@ export default function LessonWorkspace({
         setBusy(null);
       }
     },
-    [code, lesson.setup, lesson.tests, id, isDrill, levelCount, drill, updateDrill],
+    [code, lesson.setup, lesson.tests, id, isDrill, levelCount, drill, updateDrill, recordRun],
   );
 
   const resetCode = () => {
@@ -270,11 +385,41 @@ export default function LessonWorkspace({
     setResult(null);
   };
 
+  /** Archive the current run (history + account) and start over: fresh clock, starting code. */
+  const resetDrill = () => {
+    if (!confirm("Reset this drill? Your current run is saved to your history, the clock resets and the editor goes back to the starting code.")) return;
+    if (drill.startedAt !== null) recordRun(drill, drill.finishedAt ?? (timeUp ? drill.startedAt + limitMs : Date.now()));
+    updateDrill({ ...FRESH_DRILL, extended: drill.extended });
+    setCode(initial);
+    saveCode(id, initial);
+    setResult(null);
+    setHintsShown(0);
+    setTab("output");
+  };
+
+  const startDrill = (extended: boolean) => {
+    const t = Date.now();
+    setNow(t);
+    updateDrill({ ...FRESH_DRILL, startedAt: t, extended, loopMode: loop.active });
+  };
+
+  const onSplitKey = (e: React.KeyboardEvent) => {
+    const step = e.shiftKey ? 8 : 2;
+    const set = (v: number) => {
+      e.preventDefault();
+      setSplit(Math.min(SPLIT_MAX, Math.max(SPLIT_MIN, v)));
+    };
+    if (e.key === "ArrowLeft") set(split - step);
+    else if (e.key === "ArrowRight") set(split + step);
+    else if (e.key === "Home") set(SPLIT_MIN);
+    else if (e.key === "End") set(SPLIT_MAX);
+  };
+
   useEffect(() => {
     const move = (e: PointerEvent) => {
       if (!dragging.current) return;
       const pct = (e.clientX / window.innerWidth) * 100;
-      setSplit(Math.min(68, Math.max(32, pct)));
+      setSplit(Math.min(SPLIT_MAX, Math.max(SPLIT_MIN, pct)));
     };
     const up = () => (dragging.current = false);
     window.addEventListener("pointermove", move);
@@ -358,10 +503,13 @@ export default function LessonWorkspace({
         </div>
       </header>
 
+      {loop.active && loop.loop && <LoopBanner loop={loop.loop} onEnd={loop.end} />}
+
       {/* Phones: one scrolling column (lesson, then editor). Desktop: resizable side-by-side panes. */}
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
         {/* Left: the playbook page */}
         <section
+          id="lesson-pane"
           className="playbook-page shrink-0 lg:min-h-0 lg:shrink lg:basis-[var(--split)] lg:overflow-y-auto"
           style={{ "--split": fullWidth ? "100%" : `${split}%` } as React.CSSProperties}
         >
@@ -370,6 +518,18 @@ export default function LessonWorkspace({
               <span className={isExercise ? "text-vermilion" : isQuiz ? "text-graphite" : "text-forest"}>{TYPE_LABEL[lesson.type]}</span>
               <span className="h-px w-6 bg-rule" />
               <span className="text-graphite-3">{lesson.minutes} min</span>
+              {isExercise && (
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={hard}
+                  onClick={() => setHard(!hard)}
+                  title="Hard mode hides hints and reveals on exercises and drills"
+                  className={`rounded-full border px-2.5 py-0.5 normal-case tracking-normal ${hard ? "border-graphite bg-graphite text-paper" : "border-rule text-graphite-2 hover:border-graphite-3"}`}
+                >
+                  Hard mode {hard ? "on" : "off"}
+                </button>
+              )}
               {done && (
                 <span className="ml-auto rotate-[-3deg] rounded border-2 border-forest px-2 py-0.5 text-forest">
                   {lesson.type === "exercise" ? "Resolved" : isDrill ? "Cleared" : isAi ? "Passed" : "Done"}
@@ -391,19 +551,25 @@ export default function LessonWorkspace({
                 state={drill}
                 unlocked={unlocked}
                 timeUp={timeUp}
-                onStart={() => {
-                  const t = Date.now();
-                  setNow(t);
-                  updateDrill({ startedAt: t, cleared: 0, finishedAt: null });
-                }}
+                elapsed={elapsed}
+                onStart={startDrill}
+                onReset={resetDrill}
+                hintsOff={hintsHidden}
               />
             )}
+            {isDrill && <DrillHistory runs={runs} levels={levelCount} server={runsOnServer} />}
 
             {isAi && lesson.rubric.length > 0 && <RubricCard rubric={lesson.rubric} passScore={lesson.passScore} />}
 
             {isQuiz && <Quiz questions={lesson.questions} onPass={() => markComplete(id)} />}
 
-            {isExercise && !assistOff && lesson.hints.length > 0 && (
+            {isExercise && !assistOff && hintsHidden && lesson.hints.length > 0 && (
+              <p className="mt-10 rounded-2xl border border-dashed border-rule p-4 text-sm text-graphite-2">
+                {loop.active ? "Hints are off during the mock loop." : "Hard mode is on: hints are hidden. Switch it off at the top of the page to see them."}
+              </p>
+            )}
+
+            {isExercise && !assistOff && !hintsHidden && lesson.hints.length > 0 && (
               <div className="mt-10 rounded-2xl border border-rule bg-white/60 p-5">
                 <div className="flex items-center justify-between gap-4">
                   <h3 className="font-serif text-lg font-semibold">Field notes</h3>
@@ -427,7 +593,23 @@ export default function LessonWorkspace({
               </div>
             )}
 
-            {isExercise && !assistOff && <TutorPanel lessonTitle={lesson.title} instructionsHtml={lesson.briefHtml + lesson.html} code={code} result={result} />}
+            {isExercise && (
+              <TutorPanel
+                moduleSlug={lesson.moduleSlug}
+                lessonSlug={lesson.slug}
+                code={code}
+                result={result}
+                assistOff={assistOff}
+                loopMode={loop.active}
+                offReason={
+                  loop.active
+                    ? "The tutor is off during a mock loop, like in the real interview. End the loop to use it again."
+                    : assistOff
+                      ? "The tutor is off while the drill clock runs. It comes back when you finish or time runs out."
+                      : undefined
+                }
+              />
+            )}
 
             {next && done && (
               <Link
@@ -446,16 +628,18 @@ export default function LessonWorkspace({
 
         {isAi && (
           <>
-            <div
-              className="group hidden w-2 cursor-col-resize items-center justify-center bg-paper-3 lg:flex"
-              onPointerDown={() => (dragging.current = true)}
-              title="Drag to resize"
-            >
-              <span className="h-10 w-0.5 rounded bg-graphite-3/40 group-hover:bg-forest" />
-            </div>
+            <Splitter value={split} onPointerDown={() => (dragging.current = true)} onKeyDown={onSplitKey} />
             <section className="flex h-[88vh] shrink-0 flex-col bg-console text-gray-200 lg:h-auto lg:min-h-0 lg:flex-1 lg:shrink">
               {lesson.type === "written" ? (
-                <AnswerSheet id={id} moduleSlug={lesson.moduleSlug} lessonSlug={lesson.slug} sections={lesson.sections} onPass={() => markComplete(id)} />
+                <AnswerSheet
+                  id={id}
+                  moduleSlug={lesson.moduleSlug}
+                  lessonSlug={lesson.slug}
+                  sections={lesson.sections}
+                  diagram={Boolean(lesson.diagram)}
+                  loop={{ active: loop.active, startedAt: loop.loop?.startedAt }}
+                  onPass={() => markComplete(id)}
+                />
               ) : lesson.persona ? (
                 <RoleplayChat
                   id={id}
@@ -464,6 +648,10 @@ export default function LessonWorkspace({
                   persona={lesson.persona}
                   opening={lesson.opening}
                   maxTurns={lesson.maxTurns}
+                  timeLimit={lesson.timeLimit}
+                  design={lesson.mode === "design"}
+                  diagram={Boolean(lesson.diagram)}
+                  loop={{ active: loop.active, startedAt: loop.loop?.startedAt }}
                   onPass={() => markComplete(id)}
                 />
               ) : null}
@@ -473,13 +661,7 @@ export default function LessonWorkspace({
 
         {!fullWidth && !isAi && (
           <>
-            <div
-              className="group hidden w-2 cursor-col-resize items-center justify-center bg-paper-3 lg:flex"
-              onPointerDown={() => (dragging.current = true)}
-              title="Drag to resize"
-            >
-              <span className="h-10 w-0.5 rounded bg-graphite-3/40 group-hover:bg-forest" />
-            </div>
+            <Splitter value={split} onPointerDown={() => (dragging.current = true)} onKeyDown={onSplitKey} />
 
             {/* Right: the console */}
             <section className="flex h-[88vh] shrink-0 flex-col bg-console text-gray-200 lg:h-auto lg:min-h-0 lg:flex-1 lg:shrink">
@@ -498,14 +680,15 @@ export default function LessonWorkspace({
                     title={drill.finishedAt ? "Your finishing time" : "Time left"}
                   >
                     {drill.finishedAt ? `✓ ${clock(elapsed)}` : timeUp ? "Time's up" : clock(limitMs - elapsed)}
+                    {drill.extended && <span className="ml-1 opacity-80">1.5×</span>}
                   </span>
                 )}
-                <span className="hidden items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-gray-500 sm:flex">
+                <span className="hidden items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-console-muted sm:flex">
                   <span className={`h-1.5 w-1.5 rounded-full ${ready ? "bg-emerald-400" : "animate-pulse bg-amber-400"}`} />
                   {ready ? "Runtime ready" : pyStatus === "loading" ? "Booting Python" : pyStatus}
                 </span>
                 <div className="ml-auto flex items-center gap-1.5">
-                  <button onClick={resetCode} className="rounded-md px-2 py-1 text-xs text-gray-500 hover:bg-console-2 hover:text-gray-300" title="Reset code">
+                  <button onClick={resetCode} className="rounded-md px-2 py-1 text-xs text-console-muted hover:bg-console-2 hover:text-gray-200" title="Reset the editor to the starting code">
                     Reset
                   </button>
                   <button
@@ -538,7 +721,8 @@ export default function LessonWorkspace({
                     <button
                       key={t}
                       onClick={() => setTab(t)}
-                      className={`relative px-3 py-2 font-mono uppercase tracking-wider ${tab === t ? "text-gray-100" : "text-gray-500 hover:text-gray-300"}`}
+                      aria-pressed={tab === t}
+                      className={`relative px-3 py-2 font-mono uppercase tracking-wider ${tab === t ? "text-gray-100" : "text-console-muted hover:text-gray-200"}`}
                     >
                       {t === "output" ? "Output" : t === "checks" ? "Checks" : "Trace"}
                       {t === "trace" && <span className="ml-2 rounded bg-sky-400/15 px-1.5 py-0.5 text-sky-300">{trace.reduce((n, r) => n + r.steps.length, 0)}</span>}
@@ -564,7 +748,7 @@ export default function LessonWorkspace({
                       customer={customer}
                       reply={reply}
                       next={next}
-                      drill={isDrill ? { cleared: drill.cleared, total: levelCount, time: drill.finishedAt ? clock(elapsed) : null } : undefined}
+                      drill={isDrill ? { cleared: drill.cleared, total: levelCount, time: drill.finishedAt ? clock(elapsed) : null, levelMs: drill.levelMs } : undefined}
                     />
                   )}
                 </div>
@@ -620,13 +804,13 @@ function CaseFile({ customer, briefHtml, resolved }: { customer: WorkspaceCustom
 }
 
 function Output({ result, busy }: { result: RunResult | null; busy: null | "run" | "submit" }) {
-  if (busy) return <div className="font-mono text-sm text-gray-500">Running…</div>;
-  if (!result) return <div className="font-mono text-sm text-gray-600">Run your code to see output here. Ctrl/Cmd + Enter runs it.</div>;
+  if (busy) return <div className="font-mono text-sm text-console-muted">Running…</div>;
+  if (!result) return <div className="font-mono text-sm text-console-muted">Run your code to see output here. Ctrl/Cmd + Enter runs it.</div>;
   return (
     <div className="font-mono text-sm">
       {result.stdout && <pre className="whitespace-pre-wrap text-gray-200">{result.stdout}</pre>}
       {result.error && <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-red-500/10 p-3 text-red-300">{result.error}</pre>}
-      {!result.stdout && !result.error && <div className="text-gray-600">(no output)</div>}
+      {!result.stdout && !result.error && <div className="text-console-muted">(no output)</div>}
     </div>
   );
 }
@@ -644,7 +828,7 @@ function ChecksPanel({
   customer: WorkspaceCustomer;
   reply: string;
   next: NavLink | null;
-  drill?: { cleared: number; total: number; time: string | null };
+  drill?: { cleared: number; total: number; time: string | null; levelMs: number[] };
 }) {
   if (busy) {
     return (
@@ -658,7 +842,7 @@ function ChecksPanel({
     if (result?.error) {
       return <pre className="whitespace-pre-wrap rounded-lg bg-red-500/10 p-3 font-mono text-sm text-red-300">{result.error}</pre>;
     }
-    return <div className="font-mono text-sm text-gray-600">Press Submit to run the checks for this task.</div>;
+    return <div className="font-mono text-sm text-console-muted">Press Submit to run the checks for this task.</div>;
   }
   const tests = result.tests;
   const passedCount = tests.filter((t) => t.passed).length;
@@ -676,6 +860,11 @@ function ChecksPanel({
               ? `Drill complete${drill.time ? ` in ${drill.time}` : ""}. Now reread your code as an interviewer would: is the data model one you could extend again?`
               : `Level ${drill.cleared + 1} is open on the left. Read it before you touch the code: the change it asks for is the point.`}
           </p>
+          {drill.levelMs.length > 0 && (
+            <p className="mt-2 font-mono text-[11px] text-gray-300">
+              Level times: {drill.levelMs.map((ms, i) => `L${i + 1} ${clock(ms)}`).join(" · ")}
+            </p>
+          )}
         </div>
       )}
       {result.passed && !drill && (
@@ -700,7 +889,7 @@ function ChecksPanel({
         </div>
       )}
       <div className="flex items-baseline justify-between">
-        <span className="font-mono text-xs uppercase tracking-wider text-gray-500">Checks</span>
+        <span className="font-mono text-xs uppercase tracking-wider text-console-muted">Checks</span>
         <span className={`font-mono text-sm ${result.passed ? "text-emerald-300" : "text-gray-300"}`}>
           {passedCount} / {tests.length} passing
         </span>
@@ -720,10 +909,11 @@ function ChecksPanel({
                   t.passed ? "bg-emerald-400/15 text-emerald-300" : "bg-red-400/15 text-red-300"
                 }`}
               >
-                {t.passed ? "✓" : "✗"}
+                <span aria-hidden="true">{t.passed ? "✓" : "✗"}</span>
+                <span className="sr-only">{t.passed ? "Passed:" : "Failed:"}</span>
               </span>
               <div className="min-w-0 flex-1">
-                <div className={`text-sm ${t.passed ? "text-gray-400" : "text-gray-100"}`}>
+                <div className={`text-sm ${t.passed ? "text-gray-300" : "text-gray-100"}`}>
                   {drill && testLevel(t.id) > 0 && <span className="mr-2 rounded bg-console-2 px-1.5 py-0.5 font-mono text-[10px] text-gray-400">L{testLevel(t.id)}</span>}
                   {t.name}
                 </div>
@@ -747,41 +937,124 @@ function ChecksPanel({
   );
 }
 
+/** Keyboard-operable pane splitter: drag it, or focus it and use the arrow keys (Shift for bigger steps), Home and End. */
+function Splitter({ value, onPointerDown, onKeyDown }: { value: number; onPointerDown: () => void; onKeyDown: (e: React.KeyboardEvent) => void }) {
+  return (
+    <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="Resize the lesson and workspace panes"
+      aria-controls="lesson-pane"
+      aria-valuenow={Math.round(value)}
+      aria-valuemin={SPLIT_MIN}
+      aria-valuemax={SPLIT_MAX}
+      tabIndex={0}
+      className="group hidden w-2 cursor-col-resize items-center justify-center bg-paper-3 outline-none focus-visible:bg-forest/30 lg:flex"
+      onPointerDown={onPointerDown}
+      onKeyDown={onKeyDown}
+      title="Drag, or focus and use the arrow keys, to resize"
+    >
+      <span className="h-10 w-0.5 rounded bg-graphite-3/50 group-hover:bg-forest group-focus-visible:bg-forest" />
+    </div>
+  );
+}
+
 function DrillLevels({
   levels,
   timeLimit,
   state,
   unlocked,
   timeUp,
+  elapsed,
   onStart,
+  onReset,
+  hintsOff,
 }: {
   levels: { title: string; html: string }[];
   timeLimit: number;
   state: DrillState;
   unlocked: number;
   timeUp: boolean;
-  onStart: () => void;
+  elapsed: number;
+  onStart: (extended: boolean) => void;
+  onReset: () => void;
+  hintsOff: boolean;
 }) {
+  const [extended, setExtended] = useState(false);
+  useEffect(() => setExtended(state.extended), [state.extended]);
+
   if (state.startedAt === null) {
+    const minutes = timeLimit * (extended ? 1.5 : 1);
     return (
       <div className="mt-10 rounded-2xl bg-graphite p-6 text-paper">
         <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-emerald-300">Ready when you are</p>
         <p className="mt-2 font-serif text-xl leading-snug">
-          {levels.length} levels{timeLimit ? `, ${timeLimit} minutes` : ""}. Each level unlocks when every check on the previous one passes.
+          {levels.length} levels{timeLimit ? `, ${Number.isInteger(minutes) ? minutes : minutes.toFixed(1)} minutes` : ""}. Each level unlocks when every check on the previous one passes.
         </p>
-        <p className="mt-2 text-sm text-paper-3">The hints and the AI tutor switch off until you finish or the clock runs out, the same as a real assessment.</p>
-        <button onClick={onStart} className="mt-5 rounded-full bg-emerald-400 px-5 py-2.5 text-sm font-semibold text-graphite hover:bg-emerald-300">
+        <p className="mt-2 text-sm text-paper-3">
+          {hintsOff ? "Hints are hidden for this run" : "The hints"} and the AI tutor switch off until you finish or the clock runs out, the same as a real assessment.
+        </p>
+        {timeLimit > 0 && (
+          <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-sm text-paper-2">
+            <input type="checkbox" checked={extended} onChange={(e) => setExtended(e.target.checked)} className="mt-0.5 h-4 w-4 accent-emerald-400" />
+            <span>
+              Extended time (1.5×). An accessibility accommodation; the run is recorded as extended.
+            </span>
+          </label>
+        )}
+        <button onClick={() => onStart(extended)} className="mt-5 rounded-full bg-emerald-400 px-5 py-2.5 text-sm font-semibold text-graphite hover:bg-emerald-300">
           Start the clock →
         </button>
       </div>
     );
   }
+
+  const limitMs = drillLimitMs(timeLimit, state.extended);
+  const over = state.finishedAt !== null || timeUp;
+  const run: DrillRun = {
+    startedAt: state.startedAt,
+    finishedAt: state.finishedAt,
+    timeLimitMin: timeLimit,
+    extended: state.extended,
+    levelMs: state.levelMs,
+    cleared: state.cleared,
+    clearedInTime: Math.min(state.cleared, inTimeCount(state.levelMs, limitMs)),
+    loopMode: state.loopMode,
+  };
+
   return (
     <div className="mt-10 space-y-6">
-      {timeUp && !state.finishedAt && (
-        <p className="rounded-xl border border-vermilion/30 bg-vermilion/5 p-3 text-sm text-graphite-2">
-          Time&apos;s up: you cleared {state.cleared} of {levels.length} levels in {timeLimit} minutes. Keep going to finish for practice; hints and the tutor are back on.
-        </p>
+      {over ? (
+        <section className="rounded-2xl border border-rule bg-white/70 p-5" aria-labelledby="drill-summary">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h2 id="drill-summary" className="font-serif text-lg font-semibold text-graphite">
+              Run summary
+            </h2>
+            <span className="text-sm text-graphite-2">
+              {state.cleared} of {levels.length} levels · {run.clearedInTime} in time{state.finishedAt ? ` · finished in ${clock(elapsed)}` : ""}
+            </span>
+            {state.extended && <span className="rounded bg-paper-3 px-1.5 py-0.5 text-[11px] font-semibold text-graphite-2">Extended time 1.5×</span>}
+            <button type="button" onClick={onReset} className="ml-auto rounded-lg border border-rule px-3 py-1 text-sm font-medium text-graphite-2 hover:bg-paper-3">
+              Reset drill
+            </button>
+          </div>
+          {timeUp && !state.finishedAt && (
+            <p className="mt-3 rounded-xl border border-vermilion/30 bg-vermilion/5 p-3 text-sm text-graphite-2">
+              Time&apos;s up: you cleared {state.cleared} of {levels.length} levels in {clock(limitMs)}. Keep going to finish for practice
+              {hintsOff ? "" : "; hints and the tutor are back on"}. Only levels cleared in time count on the scorecard.
+            </p>
+          )}
+          <LevelTimes run={run} levels={levels.length} />
+        </section>
+      ) : (
+        <div className="flex flex-wrap items-center gap-3 text-sm text-graphite-2">
+          <span>
+            Clock running{state.extended ? " · extended time 1.5×" : ""}. {state.cleared > 0 && `Cleared so far: ${state.levelMs.map((ms, i) => `L${i + 1} ${clock(ms)}`).join(", ")}.`}
+          </span>
+          <button type="button" onClick={onReset} className="ml-auto rounded-lg border border-rule px-3 py-1 font-medium text-graphite-2 hover:bg-paper-3">
+            Reset drill
+          </button>
+        </div>
       )}
       {levels.map((lvl, i) => {
         const n = i + 1;
@@ -791,16 +1064,32 @@ function DrillLevels({
           <section key={n} className={`rounded-2xl border ${open ? "border-rule bg-white/60" : "border-dashed border-rule bg-paper-2/40"} p-5`}>
             <div className="flex items-center gap-3">
               <span
-                className={`flex h-7 w-7 items-center justify-center rounded-full font-mono text-xs font-semibold ${
-                  cleared ? "bg-forest text-white" : open ? "bg-vermilion text-white" : "bg-paper-3 text-graphite-3"
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-xs font-semibold ${
+                  cleared ? "bg-forest text-white" : open ? "bg-vermilion text-white" : "bg-paper-3 text-graphite-2"
                 }`}
               >
-                {cleared ? "✓" : open ? n : "🔒"}
+                {cleared ? (
+                  <>
+                    <span aria-hidden="true">✓</span>
+                    <span className="sr-only">Cleared:</span>
+                  </>
+                ) : open ? (
+                  n
+                ) : (
+                  <>
+                    <span aria-hidden="true">🔒</span>
+                    <span className="sr-only">Locked:</span>
+                  </>
+                )}
               </span>
               <span className="font-serif text-lg font-semibold text-graphite">
                 Level {n}: {lvl.title}
               </span>
-              {cleared && <span className="ml-auto text-xs font-medium text-forest">Cleared</span>}
+              {cleared && (
+                <span className="ml-auto text-xs font-medium text-forest">
+                  Cleared{state.levelMs[i] !== undefined ? ` · ${clock(state.levelMs[i])}` : ""}
+                </span>
+              )}
             </div>
             {open ? (
               <article className="playbook-prose mt-2 [&>h2:first-child]:hidden" dangerouslySetInnerHTML={{ __html: lvl.html }} />
