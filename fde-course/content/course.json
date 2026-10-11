@@ -78,7 +78,9 @@
         "08-evals-and-reliability",
         "09-shipping-to-production",
         "10-capstone",
-        "11-fde-mock-loop"
+        "11-fde-mock-loop",
+        "12-fde-enterprise-field",
+        "13-fde-drills-and-war-room"
       ]
     }
   ],
@@ -1264,6 +1266,81 @@
           "That's the first version that says 'not sure' instead of guessing. Ship it.",
           "My desk can see why every line was accepted. That's what I needed.",
           "Overnight run, one report, every failure explained. Perfect."
+        ]
+      }
+    },
+    {
+      "slug": "12-fde-enterprise-field",
+      "title": "Enterprise Field Work",
+      "summary": "Ship inside a locked-down regulated customer: proxies, private networks, SSO, air-gapped installs and platform gaps; data at scale; refusals in regulated domains; writing reusable assets back to product; and the realities of travel, access and juggling customers.",
+      "outcomes": [
+        "Get a Claude integration through TLS-inspecting proxies, private networks, SSO and air-gapped installs, and audit what breaks on each platform",
+        "Aggregate a 50,000-ticket backfill in chunks and measure refusal rates by slice with honest intervals",
+        "Turn repeated field workarounds into a product request and a reusable connector",
+        "Handle simultaneous escalations, a sceptical customer reviewer and a residency questionnaire without overclaiming"
+      ],
+      "plannedMinutes": 422,
+      "plannedLessons": [
+        "01-locked-down-customer-environments",
+        "02-exercise-port-audit",
+        "03-exercise-proxy-and-ca-bundle",
+        "04-exercise-oidc-tool-permissions",
+        "05-exercise-air-gapped-wheelhouse",
+        "06-written-residency-questionnaire",
+        "07-exercise-backfill-at-scale",
+        "08-refusals-in-regulated-domains",
+        "09-exercise-refusal-rate-by-slice",
+        "10-written-field-report-to-product",
+        "11-exercise-one-configurable-connector",
+        "12-field-realities",
+        "13-roleplay-two-escalations",
+        "14-roleplay-territorial-pr-review",
+        "15-module-quiz"
+      ],
+      "customer": {
+        "company": "Quarrybank",
+        "sector": "Regional banking (fictional)",
+        "contact": "Sana Iqbal",
+        "role": "Director of Platform Engineering",
+        "replies": [
+          "That passes our checks. Security will actually read this one.",
+          "Good. That's one less round trip with intake.",
+          "Clear and honest. I can take that to the architecture board."
+        ]
+      }
+    },
+    {
+      "slug": "13-fde-drills-and-war-room",
+      "title": "FDE Drills and the War Room",
+      "summary": "A higher coding bar for FDE loops: pre-model for Level 4, then four timed progressive drills with interaction-heavy hidden checks (idempotent webhooks, rate-limited sync with backfill, a tool and permission engine, and an AI-allowed SSE client), a 30-minute incident war room, tests graded by mutation testing, a minimal change in a customer's multi-file repo, and a live-coding round where the requirements move.",
+      "outcomes": [
+        "Pre-model a progressive problem in five minutes so Levels 3 and 4 need no rewrite, and find feature interactions before hidden checks do",
+        "Build idempotent, order-aware and rate-limited integration code that survives retries, replays, gaps, backfills and deletes",
+        "Stabilise, root-cause, patch and report a broken multi-file service from raw logs inside 30 minutes",
+        "Write tests that catch real bugs, land minimal changes through a customer's extension points, and adapt code out loud when requirements change"
+      ],
+      "plannedMinutes": 428,
+      "plannedLessons": [
+        "01-pre-modelling-for-level-4",
+        "02-drill-webhook-ingest",
+        "03-drill-rate-limited-sync",
+        "04-drill-tool-permission-engine",
+        "05-drill-sse-stream-parser",
+        "06-drill-war-room",
+        "07-exercise-tests-that-catch-bugs",
+        "08-exercise-customer-repo-change",
+        "09-roleplay-onsite-live-coding",
+        "10-module-quiz"
+      ],
+      "customer": {
+        "company": "Marram Commerce",
+        "sector": "B2B ordering platform",
+        "contact": "Petra Havel",
+        "role": "VP Engineering",
+        "replies": [
+          "That's the first version of this I'd trust in production. Ship it.",
+          "Good. You found the edge case that bit us last quarter.",
+          "Clear, small and tested. My team can review that in ten minutes."
         ]
       }
     }

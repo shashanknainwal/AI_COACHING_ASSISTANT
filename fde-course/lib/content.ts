@@ -111,6 +111,8 @@ export interface Lesson extends LessonMeta {
   mode: "design" | null;
   /** roleplay, written: show a diagram box (text, Mermaid or ASCII) */
   diagram: boolean;
+  /** drill: an AI-allowed screen, so the tutor stays on while the clock runs */
+  aiAllowed: boolean;
   /** roleplay, written: "module/lesson" ids whose saved work is given to the persona or grader as <learner_prior_work> */
   contextFrom: string[];
   /** Server-only: never send these to the browser (see toClientLesson). */
@@ -309,6 +311,7 @@ export function getLesson(moduleSlug: string, lessonSlug: string): Lesson | null
     maxTurns: Number(data.maxTurns ?? 8),
     mode: data.mode === "design" ? "design" : null,
     diagram: data.diagram === true,
+    aiAllowed: data.aiAllowed === true,
     contextFrom: list<unknown>(data.contextFrom).filter((x): x is string => typeof x === "string"),
     graderNotes: String(data.graderNotes ?? ""),
     personaBrief: String(data.personaBrief ?? ""),

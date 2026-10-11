@@ -56,6 +56,8 @@ export interface WorkspaceLesson {
   mode?: "design" | null;
   /** roleplay, written: show a diagram box */
   diagram?: boolean;
+  /** drill: AI-allowed screen; the tutor stays on while the clock runs */
+  aiAllowed?: boolean;
 }
 
 export interface WorkspaceCustomer {
@@ -243,7 +245,7 @@ export default function LessonWorkspace({
   const elapsed = drill.startedAt ? Math.max(0, (drill.finishedAt ?? now) - drill.startedAt) : 0;
   const timeUp = isDrill && limitMs > 0 && drill.startedAt !== null && elapsed >= limitMs;
   // The tutor and hints stay off while the clock runs, like the real assessments.
-  const assistOff = isDrill && drill.finishedAt === null && !timeUp;
+  const assistOff = isDrill && !lesson.aiAllowed && drill.finishedAt === null && !timeUp;
   const hintsHidden = hard || loop.active;
 
   /** Save a run to this browser's history and post it to the account (once per run). */
