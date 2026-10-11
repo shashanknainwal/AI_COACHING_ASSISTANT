@@ -14,7 +14,11 @@
         "c2-llm-fundamentals",
         "c3-progressive-coding",
         "c4-reading-the-labs",
-        "c5-values-and-behavioral"
+        "c5-values-and-behavioral",
+        "c6-how-llms-work",
+        "c7-modern-agent-stack",
+        "c8-portfolio-capstone",
+        "c9-getting-the-job"
       ]
     },
     {
@@ -31,7 +35,11 @@
         "e4-evals-engineering",
         "e5-production-concerns",
         "e6-llm-system-design",
-        "e7-engineer-mock-loop"
+        "e7-engineer-mock-loop",
+        "e8-agent-evals-and-reliability",
+        "e9-multimodal-streaming-scale",
+        "e10-inference-and-model-choices",
+        "e11-typescript-for-claude"
       ]
     },
     {
@@ -48,7 +56,9 @@
         "a4-poc-that-closes",
         "a5-executive-communication",
         "a6-reference-architectures",
-        "a7-architect-mock-loop"
+        "a7-architect-mock-loop",
+        "a8-governance-and-commercial",
+        "a9-demos-and-enterprise-rollout"
       ]
     },
     {
@@ -702,14 +712,14 @@
       "plannedMinutes": 120,
       "plannedLessons": [],
       "customer": {
-        "company": "The role",
-        "sector": "Applied AI Architect",
-        "contact": "Grace Liu",
-        "role": "Principal architect",
+        "company": "Whitlock Mutual Insurance",
+        "sector": "Property and casualty insurer",
+        "contact": "Carla Dorsey",
+        "role": "VP of Operations",
         "replies": [
-          "The CTO will sign off on that.",
-          "Clear tradeoffs, honest numbers. That's an architect.",
-          "That's the conversation the customer needed."
+          "That's the first time anyone asked about Corbel before pitching. Thank you.",
+          "Now I have numbers I can take to the board, not buzzwords.",
+          "Clear, honest and something Dev and Raj can actually review."
         ]
       }
     },
@@ -726,14 +736,14 @@
       "plannedMinutes": 150,
       "plannedLessons": [],
       "customer": {
-        "company": "Enterprise",
-        "sector": "Applied AI Architect",
-        "contact": "Grace Liu",
-        "role": "Principal architect",
+        "company": "Granite Mutual Bank",
+        "sector": "Regional bank (US and EU)",
+        "contact": "Helen Strand",
+        "role": "Chief Information Security Officer",
         "replies": [
-          "The CTO will sign off on that.",
-          "Clear tradeoffs, honest numbers. That's an architect.",
-          "That's the conversation the customer needed."
+          "Sourced, scoped, and with an owner on every open item. That's what I need.",
+          "You didn't guess. I'll take 'I'll confirm by Thursday' over a confident wrong answer.",
+          "This goes straight into our risk register."
         ]
       }
     },
@@ -750,14 +760,14 @@
       "plannedMinutes": 150,
       "plannedLessons": [],
       "customer": {
-        "company": "Approach",
-        "sector": "Applied AI Architect",
-        "contact": "Grace Liu",
-        "role": "Principal architect",
+        "company": "Harborview Mutual",
+        "sector": "Insurer, claims intake",
+        "contact": "Rosa Delgado",
+        "role": "VP of Claims",
         "replies": [
-          "The CTO will sign off on that.",
-          "Clear tradeoffs, honest numbers. That's an architect.",
-          "That's the conversation the customer needed."
+          "Finally, a comparison with the horizon stated up front.",
+          "Now I know which assumption to test before I sign anything.",
+          "The numbers add up, and I can show my CFO the arithmetic."
         ]
       }
     },
@@ -774,14 +784,14 @@
       "plannedMinutes": 150,
       "plannedLessons": [],
       "customer": {
-        "company": "Proof of concept",
-        "sector": "Applied AI Architect",
-        "contact": "Grace Liu",
-        "role": "Principal architect",
+        "company": "Thornbury Mutual",
+        "sector": "Insurer, claims operations",
+        "contact": "Ruth Okafor",
+        "role": "VP of Claims Operations",
         "replies": [
-          "The CTO will sign off on that.",
-          "Clear tradeoffs, honest numbers. That's an architect.",
-          "That's the conversation the customer needed."
+          "That's a readout I can decide on, not a demo.",
+          "We agreed the rules up front and you applied them. Thank you.",
+          "Fair, measured and no vibes. I'll take it to the steering group."
         ]
       }
     },
@@ -798,14 +808,14 @@
       "plannedMinutes": 150,
       "plannedLessons": [],
       "customer": {
-        "company": "Executives",
-        "sector": "Applied AI Architect",
-        "contact": "Grace Liu",
-        "role": "Principal architect",
+        "company": "Ashgrove Industrial",
+        "sector": "Manufacturer",
+        "contact": "Marta Kovač",
+        "role": "Chief Technology Officer",
         "replies": [
-          "The CTO will sign off on that.",
-          "Clear tradeoffs, honest numbers. That's an architect.",
-          "That's the conversation the customer needed."
+          "One page, a clear ask and arithmetic I can check. Approved for review.",
+          "You told me what you don't know. That's why I believe the rest.",
+          "I can say yes or no to this by Friday."
         ]
       }
     },
@@ -822,14 +832,14 @@
       "plannedMinutes": 150,
       "plannedLessons": [],
       "customer": {
-        "company": "Patterns",
-        "sector": "Applied AI Architect",
-        "contact": "Grace Liu",
-        "role": "Principal architect",
+        "company": "Ostrava Re",
+        "sector": "Reinsurer, document-heavy back office",
+        "contact": "Jana Novak",
+        "role": "Head of Claims Operations",
         "replies": [
-          "The CTO will sign off on that.",
-          "Clear tradeoffs, honest numbers. That's an architect.",
-          "That's the conversation the customer needed."
+          "You flagged the review queue before it flagged us. Good catch.",
+          "Now the account team knows which questions to ask on day one.",
+          "That's the right pattern, with the risks said out loud."
         ]
       }
     },
@@ -846,14 +856,14 @@
       "plannedMinutes": 240,
       "plannedLessons": [],
       "customer": {
-        "company": "Mock loop",
-        "sector": "Applied AI Architect",
-        "contact": "Grace Liu",
-        "role": "Principal architect",
+        "company": "Corvane Pumps & Systems",
+        "sector": "Industrial equipment and field service",
+        "contact": "Ingrid Brandt",
+        "role": "VP Global Field Service",
         "replies": [
-          "The CTO will sign off on that.",
-          "Clear tradeoffs, honest numbers. That's an architect.",
-          "That's the conversation the customer needed."
+          "You led with the answer and the number. The committee will follow that.",
+          "You held your ground on safety and still gave me a plan.",
+          "That's the story I can take to the executive committee."
         ]
       }
     },
@@ -878,6 +888,382 @@
           "That's the round that gets offers.",
           "You scoped it like someone who's done this before.",
           "Clear, honest, and you owned the outcome. Strong signal."
+        ]
+      }
+    },
+    {
+      "slug": "a8-governance-and-commercial",
+      "code": "A8",
+      "title": "Governance, Commercials and Partners",
+      "summary": "The conversations that decide enterprise deals after the demo: getting an LLM through a bank's model risk validation, the EU AI Act, NIST AI RMF and ISO/IEC 42001, capacity at peak and how customers buy, fair positioning against an incumbent, honest RFP answers, and three-party work with SIs and cloud providers.",
+      "outcomes": [
+        "Map LLM evals to model risk validation evidence (SR 11-7, PRA SS1/23) and design change control for model upgrades",
+        "Place a use case in the EU AI Act's tiers, name provider and deployer duties, and state the timeline without overclaiming",
+        "Plan capacity at peak per model and platform, explain Priority Tier's status and marketplace billing, and never promise commercial terms",
+        "Answer RFPs and competitive objections with evidence and honest statuses, and keep three-party designs correct"
+      ],
+      "plannedMinutes": 341,
+      "plannedLessons": [
+        "01-model-risk-management-for-llms",
+        "02-eu-ai-act-nist-iso",
+        "03-written-validation-pack-outline",
+        "04-roleplay-head-of-model-risk",
+        "05-capacity-and-commercials",
+        "06-exercise-capacity-plan",
+        "07-fair-competitive-positioning",
+        "08-roleplay-cio-on-a-competitor",
+        "09-rfp-and-rfi-responses",
+        "10-exercise-rfp-answer-checker",
+        "11-written-rfp-extract",
+        "12-partners-and-systems-integrators",
+        "13-roleplay-three-party-call",
+        "14-module-quiz"
+      ],
+      "customer": {
+        "company": "Brackenridge Bank",
+        "sector": "Retail bank (UK, Ireland, US)",
+        "contact": "Owen Hartwell",
+        "role": "Head of AI Platform",
+        "replies": [
+          "Numbers at peak, with the assumptions written down. Model risk will actually read this.",
+          "No roadmap, no guesses, an owner on every open item. That's an answer I can score.",
+          "You told me where it breaks before launch day did. Thank you."
+        ]
+      }
+    },
+    {
+      "slug": "a9-demos-and-enterprise-rollout",
+      "code": "A9",
+      "title": "Demos and Enterprise Rollout",
+      "summary": "Build demos on the customer's own data with an honest scoreboard, recover when they break live, and take the deal further: a Claude Enterprise, Claude Code and connectors rollout, a 90-day adoption plan with works councils in the room, a back-office agent and MCP reference architecture, a public-sector whiteboard round, a startup model-migration consult and a workshop that ends in a build.",
+      "outcomes": [
+        "Build a two-hour demo on customer data with an eval beside the 'wow', and recover honestly when it fails live",
+        "Plan a Claude Enterprise, Claude Code and connectors rollout, including Bedrock or Vertex with pinned models and MDM-delivered policy",
+        "Write a 90-day adoption plan with champions, role-based training, guardrails, outcome measures and works-council consultation",
+        "Design a back-office agent with an MCP gateway, approval queues and contained computer use, choose the runtime by platform, and run an eval-gated model migration"
+      ],
+      "plannedMinutes": 374,
+      "plannedLessons": [
+        "01-demo-craft",
+        "02-exercise-demo-backend-with-scoreboard",
+        "03-roleplay-live-demo-goes-wrong",
+        "04-rolling-out-claude-enterprise-and-claude-code",
+        "05-the-90-day-adoption-plan",
+        "06-written-90-day-plan-for-5000-staff",
+        "07-enterprise-agent-and-mcp-reference-architecture",
+        "08-written-adapt-the-agent-architecture",
+        "09-whiteboard-marrowfield-permits-agent",
+        "10-digital-natives-and-model-migrations",
+        "11-roleplay-startup-cto-migration",
+        "12-written-workshop-and-enablement-design",
+        "13-module-quiz"
+      ],
+      "customer": {
+        "company": "Halberd Freight Group",
+        "sector": "Freight forwarding and logistics",
+        "contact": "Imogen Pryce",
+        "role": "Chief Operating Officer",
+        "replies": [
+          "You showed us the three it got wrong. That's why Bas trusts the other seventeen.",
+          "Dates, owners, numbers. I can take this to the CEO and the works council.",
+          "Nothing writes to the ERP without an auditor saying yes. Security will like that."
+        ]
+      }
+    },
+    {
+      "slug": "c6-how-llms-work",
+      "code": "C6",
+      "title": "How LLMs Work: Model Literacy",
+      "summary": "Transformers, attention, the KV cache, prefill versus decode, tokenization, sampling, the training pipeline, hallucination, prompt injection, evals and embeddings: the why behind model behaviour that fundamentals and design rounds probe, vendor-neutral where interviews are.",
+      "outcomes": [
+        "Explain latency, cost and context behaviour from attention, the KV cache and prefill versus decode",
+        "Implement toy BPE, a seeded sampler and cosine retrieval, and explain token-cost skew and why temperature 0 isn't deterministic",
+        "Explain how training produces sycophancy, reward hacking and hallucination, and mitigate them in a product",
+        "Defend an agent against prompt injection and measure quality with an eval harness and confidence intervals"
+      ],
+      "plannedMinutes": 412,
+      "plannedLessons": [],
+      "customer": {
+        "company": "Fundamentals round",
+        "sector": "Shared core",
+        "contact": "Mira Vasquez",
+        "role": "Fundamentals-round interviewer (fictional practice persona)",
+        "replies": [
+          "Good. You told me why, not just what.",
+          "That's the mechanism. Now say it in two sentences and you're ready.",
+          "Correct, and you named what you'd measure. That's the bar."
+        ]
+      }
+    },
+    {
+      "slug": "c7-modern-agent-stack",
+      "code": "C7",
+      "title": "The Modern Agent Stack: MCP, Sub-Agents, Skills and Claude Code",
+      "summary": "Build and secure an MCP server, fan work out to cheap sub-agents and prove it paid off, package a playbook as an Agent Skill, keep long agents append-only under preserved thinking, red-team an agent, and defend a build-or-buy platform decision to a CTO.",
+      "outcomes": [
+        "Implement an MCP server's JSON-RPC handler with tools, resources, pagination and correct error codes, then secure it with scopes, validation, audit logging and an allowlisted connector.",
+        "Design an orchestrator-workers run with per-worker budgets and failure isolation, and compare its cost and recall with a single-agent baseline.",
+        "Package a customer playbook as an Agent Skill with progressive disclosure, and test it with trigger and behaviour evals.",
+        "Choose between manual loop, tool runner, Agent SDK and Managed Agents, and keep long-running agents append-only with server-side context management."
+      ],
+      "plannedMinutes": 487,
+      "plannedLessons": [
+        "01-the-agent-stack-map",
+        "02-mcp-fundamentals",
+        "03-exercise-build-an-mcp-server",
+        "04-exercise-secure-the-mcp-server",
+        "05-written-ciso-security-brief",
+        "06-sub-agents-in-practice",
+        "07-exercise-contract-review-fan-out",
+        "08-agent-skills",
+        "09-exercise-package-a-skill",
+        "10-context-engineering-for-long-runs",
+        "11-exercise-trim-a-long-trace",
+        "12-claude-code-for-fdes",
+        "13-computer-use",
+        "14-exercise-red-team-and-defend",
+        "15-design-build-or-buy-the-agent-platform",
+        "16-module-quiz"
+      ],
+      "customer": {
+        "company": "Cindervale Freight (fictional)",
+        "sector": "Freight forwarding and logistics",
+        "contact": "Rhea Petrakis",
+        "role": "Head of Platform Engineering",
+        "replies": [
+          "That's the shape I wanted. My team can port it to the SDK this sprint.",
+          "Security signed off on that in one meeting. That never happens.",
+          "Good. Now I can show the CTO numbers instead of opinions."
+        ]
+      }
+    },
+    {
+      "slug": "c8-portfolio-capstone",
+      "code": "C8",
+      "title": "Portfolio Capstone",
+      "summary": "The Foundations portfolio capstone: build a real project against the Claude API on your own key, in a domain you choose, starting from the capstone-kit repository template. Run four real-model labs, write the README, decision record and eval report, then defend it to a practice reviewer who has read them.",
+      "outcomes": [
+        "Scope and build a capstone on the real API for your track, with your personal part obvious in the repo",
+        "Measure it honestly: golden set, results over several runs with Wilson intervals, a calibrated judge and a CI gate",
+        "Report real-model variance, refusals, latency and cost from measured usage in four lab reports",
+        "Defend your design, numbers and decisions in a deep-dive review that reads your README"
+      ],
+      "plannedMinutes": 276,
+      "plannedLessons": [
+        "01-why-a-portfolio-project",
+        "02-scoping-your-capstone",
+        "03-running-real-model-labs",
+        "04-lab1-report-prompt-iteration",
+        "05-lab2-report-retrieval-eval",
+        "06-lab3-report-judge-calibration",
+        "07-lab4-report-classifier-cost",
+        "08-capstone-readme",
+        "09-eval-report",
+        "10-capstone-review-with-ondine",
+        "11-module-quiz"
+      ],
+      "customer": {
+        "company": "Practice review panel (fictional)",
+        "sector": "Portfolio review",
+        "contact": "Ondine Corriveau",
+        "role": "Staff engineer and portfolio reviewer",
+        "replies": [
+          "Counts, intervals and the runs behind them. That's a number I can check.",
+          "You told me what your eval can't show before I asked. Good.",
+          "I'd put this README in front of a hiring panel."
+        ]
+      }
+    },
+    {
+      "slug": "c9-getting-the-job",
+      "code": "C9",
+      "title": "Getting the Job",
+      "summary": "Career mechanics around the loop: choose the role your evidence supports, decode postings, write resume bullets and outreach notes that survive the screen, handle the recruiter screen, take-homes and the online assessment, and understand levels, equity and negotiation. Every claim is labelled; general hiring practice is marked General.",
+      "outcomes": [
+        "Choose one applied role from a scored self-assessment and decode any posting into a gap report",
+        "Rewrite resume bullets as decision, sourced metric and LLM relevance, and write a referral or outreach note people answer",
+        "Handle a recruiter screen and an offer negotiation honestly, including level, logistics, compensation and competing offers",
+        "Explain levels, options versus RSUs, vesting, cliffs and private-company liquidity, and plan timing, team matching and reapplication"
+      ],
+      "plannedMinutes": 303,
+      "plannedLessons": [
+        "01-choosing-your-role",
+        "02-exercise-decode-the-posting",
+        "03-resume-bullets-that-survive-the-screen",
+        "04-rewrite-three-bullets",
+        "05-linkedin-and-public-proof",
+        "06-referrals-and-outreach",
+        "07-the-application-and-why-us",
+        "08-recruiter-screen-roleplay",
+        "09-take-homes-and-case-studies",
+        "10-the-online-assessment-environment",
+        "11-levels-compensation-and-equity",
+        "12-negotiation-roleplay",
+        "13-team-matching-offers-and-reapplying",
+        "14-other-employers",
+        "15-module-quiz"
+      ],
+      "customer": {
+        "company": "Ossian Careers (fictional)",
+        "sector": "Career coaching",
+        "contact": "Hana Ostrowski",
+        "role": "Career Coach, Applied AI Roles",
+        "replies": [
+          "Now I can see exactly where your evidence is thin. That's the list we work on.",
+          "Every number has a source. A recruiter can't trip you up on this.",
+          "Clear, honest and easy to say yes to. Send it."
+        ]
+      }
+    },
+    {
+      "slug": "e10-inference-and-model-choices",
+      "code": "E10",
+      "title": "Inference, Embeddings and Model Choices",
+      "summary": "What happens below the API: prefill and decode, the KV cache, batching and rate-limit pools; embeddings and approximate search; when fine-tuning or distillation is justified; OpenTelemetry for LLM calls; and choosing and migrating between Opus 5.5, Sonnet 5.5, Haiku 5.5 and Fable 5.1.",
+      "outcomes": [
+        "Explain prefill, decode, the KV cache and batching, and size a self-hosted serving tier for stated latency targets in a design round.",
+        "Build tenant admission control with token buckets, an aging priority queue and per-tenant cost attribution.",
+        "Measure the recall-latency tradeoff of an IVF index against brute force, and plan a re-embedding migration.",
+        "Choose a model by cost per completed task at an explicit effort, map call logs onto OpenTelemetry GenAI spans, and lint request bodies for the Opus 5.5 breaking changes."
+      ],
+      "plannedMinutes": 329,
+      "plannedLessons": [
+        "01-inference-and-serving-basics",
+        "02-exercise-tenant-rate-limiter",
+        "03-design-an-inference-serving-tier",
+        "04-embeddings-internals",
+        "05-exercise-brute-force-vs-ivf",
+        "06-fine-tuning-and-distillation",
+        "07-written-should-we-fine-tune",
+        "08-observability-with-opentelemetry",
+        "09-exercise-log-records-to-spans",
+        "10-choosing-and-migrating-models",
+        "11-exercise-opus-5-5-migration-linter",
+        "12-module-quiz"
+      ],
+      "customer": {
+        "company": "Lumenfold Media (fictional)",
+        "sector": "Publishing software: AI writing and tagging for about 300 publishers",
+        "contact": "Noor Haddad",
+        "role": "Head of ML Platform",
+        "replies": [
+          "That's the first time anyone showed me the numbers behind the setting. Shipping it.",
+          "Good. The SRE team can finally see our Claude calls next to everything else.",
+          "Clear and honest. I can take that to the exec meeting as it is."
+        ]
+      }
+    },
+    {
+      "slug": "e11-typescript-for-claude",
+      "code": "E11",
+      "title": "TypeScript for Claude",
+      "summary": "The TypeScript side of the job, run locally with Node (the browser course runs Python only): typed Messages API calls, streaming to a Next.js route handler, tool loops, structured outputs and prompt caching with @anthropic-ai/sdk, and an MCP server with @modelcontextprotocol/sdk. Practised through code-reading checks, a code review, a Python-to-TypeScript port and a local lab.",
+      "outcomes": [
+        "Write typed @anthropic-ai/sdk calls that set effort explicitly, narrow content blocks, check stop reasons and handle typed errors.",
+        "Stream Claude through a Next.js route handler that keeps the key server-side, reports refusals and truncation, and aborts on disconnect.",
+        "Build tool loops, structured outputs and cached prompts in TypeScript, and an MCP server with the official SDK that builds on C7.",
+        "Review a customer's buggy TypeScript handler, port a Python tool loop to TypeScript, and run and extend the capstone kit's TypeScript examples locally."
+      ],
+      "plannedMinutes": 223,
+      "plannedLessons": [
+        "01-typescript-runs-locally",
+        "02-streaming-to-a-route-handler",
+        "03-tool-loops-structured-outputs-caching",
+        "04-an-mcp-server-in-typescript",
+        "05-quiz-read-the-code",
+        "06-written-review-a-buggy-handler",
+        "07-written-port-the-python-tool-loop",
+        "08-lab-run-the-typescript-kit",
+        "09-module-quiz"
+      ],
+      "customer": {
+        "company": "Fernhollow Travel (fictional)",
+        "sector": "Online travel booking (Next.js and TypeScript stack)",
+        "contact": "Ada Wexley",
+        "role": "Staff Engineer",
+        "replies": [
+          "That's exactly the review I needed. Fixing the blockers today.",
+          "Reads like our own code. The team can maintain this.",
+          "Good. Numbers from a real run beat a design doc every time."
+        ]
+      }
+    },
+    {
+      "slug": "e8-agent-evals-and-reliability",
+      "code": "E8",
+      "title": "Agent Evals and Reliability",
+      "summary": "Evaluate agents the way they fail in production: end-state and trajectory grading in a sandbox, pass^k with clustered intervals, simulated users, error analysis into a ranked taxonomy, overfitting-safe hill-climbing, synthetic and adversarial suites with attack success rate as a gate, rerun policies for flaky cases, and a broken harness to debug. Builds on E4.",
+      "outcomes": [
+        "Grade agent runs by sandbox end state plus policy trajectory rules, and report pass^k with cluster-robust intervals",
+        "Drive multi-turn evals with a user simulator and turn 60 failures into a cost-ranked taxonomy with fixes and evals",
+        "Hill-climb prompts behind a frozen test set, and build synthetic and injection suites that gate releases",
+        "Separate flaky cases from real regressions, fix a broken eval harness, and defend an eval plan to a skeptical executive"
+      ],
+      "plannedMinutes": 472,
+      "plannedLessons": [
+        "01-agent-evals-end-state-and-trajectory",
+        "02-exercise-grade-agent-runs",
+        "03-simulated-users-and-multi-turn-evals",
+        "04-exercise-simulated-user-harness",
+        "05-exercise-failure-taxonomy",
+        "06-hill-climbing-without-overfitting",
+        "07-drill-frozen-test-protocol",
+        "08-synthetic-and-adversarial-suites",
+        "09-exercise-synthetic-cases-from-seeds",
+        "10-exercise-injection-suite-gate",
+        "11-exercise-flaky-or-regression",
+        "12-exercise-debug-the-broken-harness",
+        "13-written-eval-plan-for-a-new-agent",
+        "14-roleplay-ship-on-twenty-examples",
+        "15-module-quiz"
+      ],
+      "customer": {
+        "company": "Gannet Home Energy",
+        "sector": "Energy retail",
+        "contact": "Teodora Kessler",
+        "role": "Head of AI Quality",
+        "replies": [
+          "Good. That's a number I can put in front of the steering group without footnotes.",
+          "This is exactly the case our old dashboard would have counted as a win. Thank you.",
+          "Clear and reproducible. I'm adding it to CI this afternoon."
+        ]
+      }
+    },
+    {
+      "slug": "e9-multimodal-streaming-scale",
+      "code": "E9",
+      "title": "Multimodal Input, Streaming and Throughput at Scale",
+      "summary": "Route PDFs and phone photos into Claude with page-verified extraction and an abstain path, ground answers on the native Citations API, parse the raw streaming protocol with cancellation and TTFT, run async pools and Message Batches jobs that respect rate limits, and find the exact byte that breaks a prompt cache.",
+      "outcomes": [
+        "Choose image, PDF, OCR-first or Files API input for a document intake, estimate its token cost from the documented limits, and validate extracted fields against evidence and a system of record with an abstain path.",
+        "Build grounded answers on native citations, state exactly what they guarantee compared with a home-made ID scheme, and work around their conflict with structured outputs.",
+        "Parse a raw Messages API event stream, including thinking, tool-input and citation deltas, mid-stream errors and refusals, with cancellation and a correct TTFT measurement, and design the streaming UX on top of it.",
+        "Run large backlogs with an async pool or the Message Batches API (and know where Batches isn't available), and diagnose prompt-cache breaks by diffing request bodies in cache order."
+      ],
+      "plannedMinutes": 357,
+      "plannedLessons": [
+        "01-documents-and-images-as-input",
+        "02-exercise-purchase-order-intake",
+        "03-native-citations",
+        "04-exercise-native-citations",
+        "05-the-streaming-protocol",
+        "06-exercise-sse-stream-parser",
+        "07-throughput-async-and-batches",
+        "08-exercise-async-backfill",
+        "09-exercise-message-batches",
+        "10-exercise-find-the-cache-break",
+        "11-written-streaming-ux-design",
+        "12-module-quiz"
+      ],
+      "customer": {
+        "company": "Tallowmere Industrial Supply (fictional)",
+        "sector": "Industrial distribution (fasteners, cable, safety gear)",
+        "contact": "Imani Ferrowell",
+        "role": "VP of Order Operations",
+        "replies": [
+          "That's the first version that says 'not sure' instead of guessing. Ship it.",
+          "My desk can see why every line was accepted. That's what I needed.",
+          "Overnight run, one report, every failure explained. Perfect."
         ]
       }
     }
