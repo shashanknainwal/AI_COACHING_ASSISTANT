@@ -1,7 +1,10 @@
 {
-  "_note": "Loop scorecards for the progress dashboard (/learn/progress). Rounds, formulas and the weak-signal → module tables are transcribed from each track's scorecard lesson: e7-engineer-mock-loop/06-your-loop-scorecard, a7-architect-mock-loop/10-architect-loop-scorecard, 11-fde-mock-loop/06-fde-loop-scorecard. Keep them in sync when a scorecard lesson changes. 'criteria' are lowercase fragments matched against rubric line names; 'drill' is stuck (cleared 2+ but not all levels), edge (fewer than 2 levels) or slow (all levels, some after the clock). A fix is either a lesson id (module/lesson) or a module slug.",
+  "_note": "Loop scorecards for the progress dashboard (/learn/progress). Rounds, formulas and the weak-signal → module tables are transcribed from each track's scorecard lesson: e7-engineer-mock-loop/06-your-loop-scorecard, a7-architect-mock-loop/10-architect-loop-scorecard, 11-fde-mock-loop/06-fde-loop-scorecard. Keep them in sync when a scorecard lesson changes. 'criteria' are lowercase fragments matched against rubric line names; 'drill' is stuck (cleared 2+ but not all levels), edge (fewer than 2 levels) or slow (all levels, some after the clock). Combo rounds weight two lessons (weights). A fix is either a lesson id (module/lesson) or a module slug.",
   "passMark": 70,
-  "drillPoints": { "inTime": 25, "late": 10 },
+  "drillPoints": {
+    "inTime": 25,
+    "late": 10
+  },
   "tracks": [
     {
       "track": "engineer",
@@ -9,26 +12,275 @@
       "loopModule": "e7-engineer-mock-loop",
       "scorecardLesson": "e7-engineer-mock-loop/06-your-loop-scorecard",
       "rounds": [
-        { "key": "r1", "label": "Round 1 · Coding (registry)", "kind": "drill", "lessons": ["e7-engineer-mock-loop/02-drill-prompt-template-registry"] },
-        { "key": "r2", "label": "Round 2 · Design (PR review)", "kind": "graded", "lessons": ["e7-engineer-mock-loop/03-design-a-pr-review-assistant"] },
-        { "key": "r3", "label": "Round 3 · Deep dive (Marcus)", "kind": "graded", "lessons": ["e7-engineer-mock-loop/04-deep-dive-with-marcus"] },
-        { "key": "r4", "label": "Round 4 · Experiences and goals (Elena)", "kind": "graded", "lessons": ["e7-engineer-mock-loop/05-experiences-and-goals-with-elena"] },
-        { "key": "r5", "label": "Round 5 · Values (C5, optional)", "kind": "graded", "optional": true, "lessons": ["c5-values-and-behavioral/05-mock-values-interview"] }
+        {
+          "key": "r1",
+          "label": "Round 1 · Coding (registry)",
+          "kind": "drill",
+          "lessons": [
+            "e7-engineer-mock-loop/02-drill-prompt-template-registry"
+          ]
+        },
+        {
+          "key": "r2",
+          "label": "Round 2 · Design (PR review)",
+          "kind": "graded",
+          "lessons": [
+            "e7-engineer-mock-loop/03-design-a-pr-review-assistant"
+          ]
+        },
+        {
+          "key": "r3",
+          "label": "Round 3 · Deep dive (Marcus)",
+          "kind": "graded",
+          "lessons": [
+            "e7-engineer-mock-loop/04-deep-dive-with-marcus"
+          ]
+        },
+        {
+          "key": "r4",
+          "label": "Round 4 · Experiences and goals (Elena)",
+          "kind": "graded",
+          "lessons": [
+            "e7-engineer-mock-loop/05-experiences-and-goals-with-elena"
+          ]
+        },
+        {
+          "key": "r5",
+          "label": "Round 5 · Values (C5, optional)",
+          "kind": "graded",
+          "optional": true,
+          "lessons": [
+            "c5-values-and-behavioral/05-mock-values-interview"
+          ]
+        }
       ],
       "signals": [
-        { "rounds": ["r1"], "drill": "stuck", "signal": "Stuck on Level 3 or 4, rewriting earlier code", "cause": "A Level 1 data model that couldn't grow", "fix": [{ "lesson": "c3-progressive-coding/03-data-models-that-survive-level-4" }, { "lesson": "c3-progressive-coding/05-drill-llm-gateway-ledger", "note": "then redo the C3 drills on the clock" }] },
-        { "rounds": ["r1"], "drill": "edge", "signal": "Levels fail on edge cases you missed", "cause": "Reading the spec too fast", "fix": [{ "lesson": "c3-progressive-coding/01-how-progressive-screens-work", "note": "the first-ten-minutes routine" }] },
-        { "rounds": ["r1"], "drill": "slow", "signal": "Slow everywhere, right in the end", "cause": "Python fluency: sorting, formatting, dict handling", "fix": [{ "lesson": "c3-progressive-coding/04-exercise-ranking-and-formatting", "note": "repeat until it's under 15 minutes" }] },
-        { "rounds": ["r2"], "criteria": ["scoping"], "signal": "Low scoping", "cause": "Jumping to boxes before numbers", "fix": [{ "module": "e6-llm-system-design", "note": "practise the first five minutes on several prompts" }] },
-        { "rounds": ["r2", "r3"], "criteria": ["evals"], "signal": "Low evals", "cause": "No habit of proving quality", "fix": [{ "module": "e4-evals-engineering" }] },
-        { "rounds": ["r2"], "criteria": ["context", "architecture"], "signal": "Low context or architecture", "cause": "Retrieval and context selection", "fix": [{ "module": "e3-retrieval-at-scale" }, { "module": "e2-tools-and-agents" }] },
-        { "rounds": ["r2", "r3"], "criteria": ["cost"], "signal": "Low cost and latency", "cause": "Token math not automatic", "fix": [{ "lesson": "c2-llm-fundamentals/01-tokens-context-and-cost" }, { "lesson": "c2-llm-fundamentals/06-prompt-caching-and-latency" }, { "module": "e5-production-concerns" }] },
-        { "rounds": ["r2", "r3"], "criteria": ["failure"], "signal": "Thin failure modes", "cause": "Haven't run an LLM system in production", "fix": [{ "module": "e2-tools-and-agents", "note": "tool failures, traces" }, { "module": "e5-production-concerns", "note": "rate limits, fallbacks, observability" }] },
-        { "rounds": ["r3"], "criteria": ["pushback", "alternative"], "signal": "Folded under pushback", "cause": "Decisions you made but never wrote down the reasons for", "fix": [{ "lesson": "e7-engineer-mock-loop/04-deep-dive-with-marcus", "note": "write a one-page decision record for your project, then rerun Round 3" }] },
-        { "rounds": ["r3"], "criteria": ["ownership", "overview"], "signal": "\"We\" answers, unclear part", "cause": "Ownership", "fix": [{ "lesson": "c5-values-and-behavioral/02-building-your-story-bank" }, { "lesson": "c5-values-and-behavioral/06-project-deep-dive" }] },
-        { "rounds": ["r4"], "criteria": ["motivation"], "signal": "Generic motivation", "cause": "No specific reason written down", "fix": [{ "lesson": "c1-how-labs-hire/02-why-this-lab" }] },
-        { "rounds": ["r4"], "criteria": ["conflict", "customer", "goals", "self-awareness"], "signal": "Weak conflict or customer story", "cause": "Thin story bank", "fix": [{ "lesson": "c5-values-and-behavioral/02-building-your-story-bank" }, { "lesson": "c5-values-and-behavioral/03-write-two-stories" }] },
-        { "rounds": ["r5"], "signal": "Values", "cause": "Unclear view on the lab's mission and tradeoffs", "fix": [{ "module": "c4-reading-the-labs" }, { "lesson": "c5-values-and-behavioral/04-mission-questions" }] }
+        {
+          "rounds": [
+            "r1"
+          ],
+          "drill": "stuck",
+          "signal": "Stuck on Level 3 or 4, rewriting earlier code",
+          "cause": "A Level 1 data model that couldn't grow",
+          "fix": [
+            {
+              "lesson": "c3-progressive-coding/03-data-models-that-survive-level-4"
+            },
+            {
+              "lesson": "c3-progressive-coding/05-drill-llm-gateway-ledger",
+              "note": "then redo the C3 drills on the clock"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "drill": "edge",
+          "signal": "Levels fail on edge cases you missed",
+          "cause": "Reading the spec too fast",
+          "fix": [
+            {
+              "lesson": "c3-progressive-coding/01-how-progressive-screens-work",
+              "note": "the first-ten-minutes routine"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "drill": "slow",
+          "signal": "Slow everywhere, right in the end",
+          "cause": "Python fluency: sorting, formatting, dict handling",
+          "fix": [
+            {
+              "lesson": "c3-progressive-coding/04-exercise-ranking-and-formatting",
+              "note": "repeat until it's under 15 minutes"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "criteria": [
+            "scoping"
+          ],
+          "signal": "Low scoping",
+          "cause": "Jumping to boxes before numbers",
+          "fix": [
+            {
+              "module": "e6-llm-system-design",
+              "note": "practise the first five minutes on several prompts"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2",
+            "r3"
+          ],
+          "criteria": [
+            "evals"
+          ],
+          "signal": "Low evals",
+          "cause": "No habit of proving quality",
+          "fix": [
+            {
+              "module": "e4-evals-engineering"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "criteria": [
+            "context",
+            "architecture"
+          ],
+          "signal": "Low context or architecture",
+          "cause": "Retrieval and context selection",
+          "fix": [
+            {
+              "module": "e3-retrieval-at-scale"
+            },
+            {
+              "module": "e2-tools-and-agents"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2",
+            "r3"
+          ],
+          "criteria": [
+            "cost"
+          ],
+          "signal": "Low cost and latency",
+          "cause": "Token math not automatic",
+          "fix": [
+            {
+              "lesson": "c2-llm-fundamentals/01-tokens-context-and-cost"
+            },
+            {
+              "lesson": "c2-llm-fundamentals/06-prompt-caching-and-latency"
+            },
+            {
+              "module": "e5-production-concerns"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2",
+            "r3"
+          ],
+          "criteria": [
+            "failure"
+          ],
+          "signal": "Thin failure modes",
+          "cause": "Haven't run an LLM system in production",
+          "fix": [
+            {
+              "module": "e2-tools-and-agents",
+              "note": "tool failures, traces"
+            },
+            {
+              "module": "e5-production-concerns",
+              "note": "rate limits, fallbacks, observability"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r3"
+          ],
+          "criteria": [
+            "pushback",
+            "alternative"
+          ],
+          "signal": "Folded under pushback",
+          "cause": "Decisions you made but never wrote down the reasons for",
+          "fix": [
+            {
+              "lesson": "e7-engineer-mock-loop/04-deep-dive-with-marcus",
+              "note": "write a one-page decision record for your project, then rerun Round 3"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r3"
+          ],
+          "criteria": [
+            "ownership",
+            "overview"
+          ],
+          "signal": "\"We\" answers, unclear part",
+          "cause": "Ownership",
+          "fix": [
+            {
+              "lesson": "c5-values-and-behavioral/02-building-your-story-bank"
+            },
+            {
+              "lesson": "c5-values-and-behavioral/06-project-deep-dive"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r4"
+          ],
+          "criteria": [
+            "motivation"
+          ],
+          "signal": "Generic motivation",
+          "cause": "No specific reason written down",
+          "fix": [
+            {
+              "lesson": "c1-how-labs-hire/02-why-this-lab"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r4"
+          ],
+          "criteria": [
+            "conflict",
+            "customer",
+            "goals",
+            "self-awareness"
+          ],
+          "signal": "Weak conflict or customer story",
+          "cause": "Thin story bank",
+          "fix": [
+            {
+              "lesson": "c5-values-and-behavioral/02-building-your-story-bank"
+            },
+            {
+              "lesson": "c5-values-and-behavioral/03-write-two-stories"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r5"
+          ],
+          "signal": "Values",
+          "cause": "Unclear view on the lab's mission and tradeoffs",
+          "fix": [
+            {
+              "module": "c4-reading-the-labs"
+            },
+            {
+              "lesson": "c5-values-and-behavioral/04-mission-questions"
+            }
+          ]
+        }
       ]
     },
     {
@@ -37,27 +289,409 @@
       "loopModule": "a7-architect-mock-loop",
       "scorecardLesson": "a7-architect-mock-loop/10-architect-loop-scorecard",
       "rounds": [
-        { "key": "r1", "label": "Round 1 · Case (0.4 prep + 0.6 Sofia)", "kind": "combo", "lessons": ["a7-architect-mock-loop/02-case-prep-corvane-field-service", "a7-architect-mock-loop/03-present-to-sofia"], "weights": [0.4, 0.6] },
-        { "key": "r2", "label": "Round 2 · Design (Aldermoor claims)", "kind": "graded", "lessons": ["a7-architect-mock-loop/04-design-claims-platform"] },
-        { "key": "r2b", "label": "Round 2b · Live whiteboard (optional)", "kind": "graded", "optional": true, "lessons": ["a7-architect-mock-loop/06-whiteboard-aldermoor-design"] },
-        { "key": "r3", "label": "Round 3 · Customer (Victor Hale)", "kind": "graded", "lessons": ["a7-architect-mock-loop/05-customer-roleplay-victor"] },
-        { "key": "r4", "label": "Round 4 · Depth check (self-scored)", "kind": "self", "lessons": [] },
-        { "key": "r5", "label": "Round 5 · Values (C5)", "kind": "graded", "lessons": ["c5-values-and-behavioral/05-mock-values-interview"] }
+        {
+          "key": "r1",
+          "label": "Round 1 · Case (0.4 prep + 0.6 Sofia)",
+          "kind": "combo",
+          "lessons": [
+            "a7-architect-mock-loop/02-case-prep-corvane-field-service",
+            "a7-architect-mock-loop/03-present-to-sofia"
+          ],
+          "weights": [
+            0.4,
+            0.6
+          ]
+        },
+        {
+          "key": "r2",
+          "label": "Round 2 · Design (0.4 written + 0.6 live whiteboard)",
+          "kind": "combo",
+          "lessons": [
+            "a7-architect-mock-loop/04-design-claims-platform",
+            "a7-architect-mock-loop/06-whiteboard-aldermoor-design"
+          ],
+          "weights": [
+            0.4,
+            0.6
+          ]
+        },
+        {
+          "key": "r3",
+          "label": "Round 3 · Customer (Victor Hale)",
+          "kind": "graded",
+          "lessons": [
+            "a7-architect-mock-loop/05-customer-roleplay-victor"
+          ]
+        },
+        {
+          "key": "r4",
+          "label": "Round 4 · Technical depth (Anika Rao)",
+          "kind": "graded",
+          "lessons": [
+            "a7-architect-mock-loop/07-technical-depth-round"
+          ]
+        },
+        {
+          "key": "r5",
+          "label": "Round 5 · Pre-sales (0.3 stories + 0.7 deep dive)",
+          "kind": "combo",
+          "lessons": [
+            "a7-architect-mock-loop/08-three-deal-stories",
+            "a7-architect-mock-loop/09-presales-deep-dive"
+          ],
+          "weights": [
+            0.3,
+            0.7
+          ]
+        },
+        {
+          "key": "r6",
+          "label": "Round 6 · Values (C5)",
+          "kind": "graded",
+          "lessons": [
+            "c5-values-and-behavioral/05-mock-values-interview"
+          ]
+        }
       ],
       "signals": [
-        { "rounds": ["r1"], "criteria": ["recommendation", "ask"], "signal": "No clear recommendation, or it came late", "cause": "Thinking in options instead of decisions", "fix": [{ "module": "a5-executive-communication", "note": "one-pagers" }, { "module": "a1-architects-job", "note": "solution design docs" }] },
-        { "rounds": ["r1"], "criteria": ["cost", "numbers"], "signal": "Cost and value thin, or numbers fell apart when Sofia asked", "cause": "Cost and value modelling isn't automatic", "fix": [{ "module": "a3-choosing-the-approach" }, { "lesson": "c2-llm-fundamentals/01-tokens-context-and-cost" }, { "lesson": "c2-llm-fundamentals/02-exercise-cost-calculator" }] },
-        { "rounds": ["r1"], "criteria": ["proof-of-concept", "success criteria", "measurement"], "signal": "Success criteria vague, or no \"stop\" result", "cause": "Proof-of-concept design", "fix": [{ "module": "a4-poc-that-closes" }] },
-        { "rounds": ["r1"], "criteria": ["concise", "interruption", "leads with"], "signal": "Rambled under interruption", "cause": "Answers not rehearsed out loud", "fix": [{ "module": "a5-executive-communication", "note": "the role-plays" }, { "lesson": "a7-architect-mock-loop/03-present-to-sofia", "note": "rerun with a two-minute timer per answer" }] },
-        { "rounds": ["r1"], "criteria": ["tradeoffs", "architecture"], "signal": "Lost the fine-tuning argument", "cause": "Approach selection", "fix": [{ "module": "a3-choosing-the-approach" }] },
-        { "rounds": ["r2", "r2b"], "criteria": ["residency", "topology", "platform"], "signal": "Low residency or topology score", "cause": "Platform and data-handling knowledge", "fix": [{ "module": "a2-enterprise-deployment" }] },
-        { "rounds": ["r2", "r2b"], "criteria": ["pipeline", "decision", "architecture"], "signal": "Low pipeline or decision-boundary score", "cause": "Pattern knowledge", "fix": [{ "lesson": "a6-reference-architectures/02-document-processing" }, { "module": "a6-reference-architectures" }] },
-        { "rounds": ["r2", "r2b"], "criteria": ["evals"], "signal": "Low evals", "cause": "No habit of proving quality", "fix": [{ "module": "a4-poc-that-closes" }, { "module": "e4-evals-engineering", "note": "deeper background" }] },
-        { "rounds": ["r3"], "criteria": ["discovery", "hidden"], "signal": "Pitched too early, missed hidden concerns", "cause": "Discovery skills", "fix": [{ "lesson": "a1-architects-job/02-technical-discovery-for-ai" }] },
-        { "rounds": ["r3"], "criteria": ["compliance"], "signal": "Improvised compliance answers", "cause": "Unsure what you can say about data handling", "fix": [{ "module": "a2-enterprise-deployment", "note": "then practise \"I'll confirm that in writing\" out loud" }] },
-        { "rounds": ["r3"], "criteria": ["next step", "people"], "signal": "No next step", "cause": "Not closing", "fix": [{ "module": "a5-executive-communication" }] },
-        { "rounds": ["r4"], "signal": "Three or more zeros on the depth check", "cause": "Fundamentals", "fix": [{ "module": "c2-llm-fundamentals", "note": "all of it" }, { "module": "a6-reference-architectures", "note": "if the zeros were on retrieval quality and security" }] },
-        { "rounds": ["r5"], "signal": "Values", "cause": "Unclear view on the lab's mission and tradeoffs", "fix": [{ "module": "c4-reading-the-labs" }, { "lesson": "c5-values-and-behavioral/04-mission-questions" }] }
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "recommendation",
+            "ask"
+          ],
+          "signal": "No clear recommendation, or it came late",
+          "cause": "Thinking in options instead of decisions",
+          "fix": [
+            {
+              "module": "a5-executive-communication",
+              "note": "one-pagers"
+            },
+            {
+              "module": "a1-architects-job",
+              "note": "solution design docs"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "cost",
+            "numbers"
+          ],
+          "signal": "Cost and value thin, or numbers fell apart when Sofia asked",
+          "cause": "Cost and value modelling isn't automatic",
+          "fix": [
+            {
+              "module": "a3-choosing-the-approach"
+            },
+            {
+              "lesson": "c2-llm-fundamentals/01-tokens-context-and-cost"
+            },
+            {
+              "lesson": "c2-llm-fundamentals/02-exercise-cost-calculator"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "proof-of-concept",
+            "success criteria",
+            "measurement"
+          ],
+          "signal": "Success criteria vague, or no \"stop\" result",
+          "cause": "Proof-of-concept design",
+          "fix": [
+            {
+              "module": "a4-poc-that-closes"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "concise",
+            "interruption",
+            "leads with"
+          ],
+          "signal": "Rambled under interruption",
+          "cause": "Answers not rehearsed out loud",
+          "fix": [
+            {
+              "module": "a5-executive-communication",
+              "note": "the role-plays"
+            },
+            {
+              "lesson": "a7-architect-mock-loop/03-present-to-sofia",
+              "note": "rerun with a two-minute timer per answer"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "tradeoffs",
+            "architecture"
+          ],
+          "signal": "Lost the fine-tuning argument",
+          "cause": "Approach selection",
+          "fix": [
+            {
+              "module": "a3-choosing-the-approach"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r3"
+          ],
+          "criteria": [
+            "discovery",
+            "hidden"
+          ],
+          "signal": "Pitched too early, missed hidden concerns",
+          "cause": "Discovery skills",
+          "fix": [
+            {
+              "lesson": "a1-architects-job/02-technical-discovery-for-ai"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r3"
+          ],
+          "criteria": [
+            "compliance"
+          ],
+          "signal": "Improvised compliance answers",
+          "cause": "Unsure what you can say about data handling",
+          "fix": [
+            {
+              "module": "a2-enterprise-deployment",
+              "note": "then practise \"I'll confirm that in writing\" out loud"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r3"
+          ],
+          "criteria": [
+            "next step",
+            "people"
+          ],
+          "signal": "No next step",
+          "cause": "Not closing",
+          "fix": [
+            {
+              "module": "a5-executive-communication"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "criteria": [
+            "residency",
+            "topology",
+            "platform"
+          ],
+          "signal": "Low residency or topology score, or fell into the Foundry-for-the-EU trap",
+          "cause": "Platform and data-handling knowledge",
+          "fix": [
+            {
+              "lesson": "a2-enterprise-deployment/01-deployment-options",
+              "note": "the residency table"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "criteria": [
+            "adapted",
+            "diagram"
+          ],
+          "signal": "Didn't adapt to the constraint updates, or the diagram didn't match the narration",
+          "cause": "Designing out loud under change",
+          "fix": [
+            {
+              "lesson": "a7-architect-mock-loop/06-whiteboard-aldermoor-design",
+              "note": "rerun with a different first question; redraw before explaining"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "criteria": [
+            "pipeline",
+            "decision",
+            "architecture"
+          ],
+          "signal": "Low pipeline or decision-boundary score",
+          "cause": "Pattern knowledge",
+          "fix": [
+            {
+              "lesson": "a6-reference-architectures/02-document-processing"
+            },
+            {
+              "module": "a6-reference-architectures"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "criteria": [
+            "evals"
+          ],
+          "signal": "Low evals",
+          "cause": "No habit of proving quality",
+          "fix": [
+            {
+              "module": "a4-poc-that-closes"
+            },
+            {
+              "module": "e4-evals-engineering",
+              "note": "deeper background"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r4"
+          ],
+          "criteria": [
+            "technically correct",
+            "honest"
+          ],
+          "signal": "Low 'Technically correct' or several confident wrong answers",
+          "cause": "Fundamentals",
+          "fix": [
+            {
+              "module": "c2-llm-fundamentals",
+              "note": "all of it"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r4"
+          ],
+          "criteria": [
+            "depth"
+          ],
+          "signal": "Low 'Depth under follow-up' on evals or injection",
+          "cause": "Retrieval quality and security",
+          "fix": [
+            {
+              "module": "a6-reference-architectures"
+            },
+            {
+              "module": "e3-retrieval-at-scale",
+              "note": "deeper background"
+            },
+            {
+              "module": "e2-tools-and-agents",
+              "note": "deeper background"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r4"
+          ],
+          "criteria": [
+            "numbers",
+            "cost"
+          ],
+          "signal": "Low 'Numbers and cost'",
+          "cause": "Arithmetic isn't automatic",
+          "fix": [
+            {
+              "lesson": "a3-choosing-the-approach/04-cost-at-enterprise-scale"
+            },
+            {
+              "lesson": "c2-llm-fundamentals/01-tokens-context-and-cost"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r5"
+          ],
+          "criteria": [
+            "hold up",
+            "specific",
+            "quantified",
+            "role",
+            "substance"
+          ],
+          "signal": "Stories didn't hold up, or numbers changed under questioning",
+          "cause": "Thin or unrehearsed deal stories",
+          "fix": [
+            {
+              "lesson": "a7-architect-mock-loop/08-three-deal-stories",
+              "note": "a specific moment and number per story"
+            },
+            {
+              "lesson": "a7-architect-mock-loop/09-presales-deep-dive",
+              "note": "then rerun"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r5"
+          ],
+          "criteria": [
+            "ownership",
+            "judgement",
+            "learning"
+          ],
+          "signal": "Low 'Ownership of failure' or 'Technical and commercial judgement'",
+          "cause": "Defensiveness about losses; going along with sales pressure",
+          "fix": [
+            {
+              "lesson": "a5-executive-communication/05-roleplay-saying-no"
+            },
+            {
+              "lesson": "a5-executive-communication/08-roleplay-your-own-account-executive"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r6"
+          ],
+          "signal": "Values",
+          "cause": "Unclear view on the lab's mission and tradeoffs",
+          "fix": [
+            {
+              "module": "c4-reading-the-labs"
+            },
+            {
+              "lesson": "c5-values-and-behavioral/04-mission-questions"
+            }
+          ]
+        }
       ]
     },
     {
@@ -66,31 +700,436 @@
       "loopModule": "11-fde-mock-loop",
       "scorecardLesson": "11-fde-mock-loop/06-fde-loop-scorecard",
       "rounds": [
-        { "key": "r1", "label": "Round 1 · Take-home (Marlow & Pike)", "kind": "graded", "lessons": ["11-fde-mock-loop/02-take-home-marlow-and-pike"] },
-        { "key": "r2", "label": "Round 2 · Coding (ticket router)", "kind": "drill", "lessons": ["11-fde-mock-loop/03-drill-ticket-router"] },
-        { "key": "r3", "label": "Round 3 · Customer call (Ines)", "kind": "graded", "lessons": ["11-fde-mock-loop/04-customer-call-ines"] },
-        { "key": "r4", "label": "Round 4 · Deep dive (Theo)", "kind": "graded", "lessons": ["11-fde-mock-loop/05-deep-dive-with-theo"] },
-        { "key": "r5", "label": "Round 5 · System design (optional)", "kind": "graded", "optional": true, "lessons": ["11-fde-mock-loop/05b-system-design-round"] },
-        { "key": "r6", "label": "Round 6 · Values (C5, optional)", "kind": "graded", "optional": true, "lessons": ["c5-values-and-behavioral/05-mock-values-interview"] }
+        {
+          "key": "r1",
+          "label": "Round 1 · Take-home (Marlow & Pike)",
+          "kind": "graded",
+          "lessons": [
+            "11-fde-mock-loop/02-take-home-marlow-and-pike"
+          ]
+        },
+        {
+          "key": "r2",
+          "label": "Round 2 · Coding (ticket router)",
+          "kind": "drill",
+          "lessons": [
+            "11-fde-mock-loop/03-drill-ticket-router"
+          ]
+        },
+        {
+          "key": "r3",
+          "label": "Round 3 · Customer call (Ines)",
+          "kind": "graded",
+          "lessons": [
+            "11-fde-mock-loop/04-customer-call-ines"
+          ]
+        },
+        {
+          "key": "r4",
+          "label": "Round 4 · Deep dive (Theo)",
+          "kind": "graded",
+          "lessons": [
+            "11-fde-mock-loop/05-deep-dive-with-theo"
+          ]
+        },
+        {
+          "key": "r5",
+          "label": "Round 5 · System design (Ilse)",
+          "kind": "graded",
+          "lessons": [
+            "11-fde-mock-loop/05b-system-design-round"
+          ]
+        },
+        {
+          "key": "r6",
+          "label": "Round 6 · Values (C5, optional)",
+          "kind": "graded",
+          "optional": true,
+          "lessons": [
+            "c5-values-and-behavioral/05-mock-values-interview"
+          ]
+        }
       ],
       "signals": [
-        { "rounds": ["r1"], "criteria": ["framing", "discovery"], "signal": "Low framing, or building before asking", "cause": "Discovery habit not automatic", "fix": [{ "lesson": "02-customer-discovery/02-running-a-discovery-call" }, { "lesson": "02-customer-discovery/06-success-metrics" }] },
-        { "rounds": ["r1"], "criteria": ["scope"], "signal": "Two-week scope tried to do everything", "cause": "Saying no", "fix": [{ "lesson": "02-customer-discovery/10-scope-and-saying-no" }, { "lesson": "01-fde-role-and-mindset/04-exercise-prioritize-the-backlog" }] },
-        { "rounds": ["r1"], "criteria": ["data plan"], "signal": "Thin data plan", "cause": "Haven't profiled messy customer data on the clock", "fix": [{ "lesson": "03-python-data-wrangling/01-first-hour-with-customer-data" }, { "lesson": "03-python-data-wrangling/07-entity-resolution" }, { "lesson": "03-python-data-wrangling/09-claude-for-messy-data" }] },
-        { "rounds": ["r1"], "criteria": ["risks"], "signal": "No integration story, or writes straight to the ERP", "cause": "Integration patterns", "fix": [{ "lesson": "04-apis-and-integrations/07-incremental-sync-and-mapping" }, { "lesson": "05-sql-and-data-modeling/07-safe-production-access" }] },
-        { "rounds": ["r1", "r3"], "criteria": ["eval"], "signal": "Eval plan with no ground truth or thresholds", "cause": "No habit of proving quality", "fix": [{ "lesson": "08-evals-and-reliability/01-why-evals" }, { "lesson": "08-evals-and-reliability/07-regression-gates-and-nondeterminism" }, { "lesson": "10-capstone/06-exercise-evaluate-the-agent" }] },
-        { "rounds": ["r1"], "criteria": ["approach", "demo"], "signal": "Approach vague about where Claude fits", "cause": "Building with Claude", "fix": [{ "lesson": "06-building-with-claude/09-models-effort-and-latency" }, { "lesson": "07-tool-use-rag-agents/07-workflows-agents-and-guardrails" }] },
-        { "rounds": ["r2"], "drill": "stuck", "signal": "Stuck at Level 3 or 4, rewriting earlier code", "cause": "A Level 1 data model that couldn't grow", "fix": [{ "lesson": "c3-progressive-coding/03-data-models-that-survive-level-4" }, { "lesson": "c3-progressive-coding/02-drill-feature-flag-service", "note": "then the C3 drills on the clock" }] },
-        { "rounds": ["r2"], "drill": "edge", "signal": "Missed edge cases in the spec", "cause": "Reading too fast", "fix": [{ "lesson": "c3-progressive-coding/01-how-progressive-screens-work" }] },
-        { "rounds": ["r2"], "drill": "slow", "signal": "Right in the end but slow", "cause": "Python fluency", "fix": [{ "lesson": "c3-progressive-coding/04-exercise-ranking-and-formatting" }, { "module": "03-python-data-wrangling", "note": "exercises, timed" }] },
-        { "rounds": ["r3"], "criteria": ["listens"], "signal": "Defended the plan without asking", "cause": "Listening under pressure", "fix": [{ "lesson": "02-customer-discovery/03-exercise-analyze-a-discovery-call" }, { "lesson": "02-customer-discovery/04-stakeholder-mapping" }] },
-        { "rounds": ["r3"], "criteria": ["constraint", "disputed"], "signal": "Froze or ignored the new constraint", "cause": "Re-scoping live", "fix": [{ "lesson": "02-customer-discovery/11-exercise-change-request-calculator" }, { "lesson": "10-capstone/02-exercise-scope-the-engagement", "note": "redo it with a constraint you add yourself" }] },
-        { "rounds": ["r3"], "criteria": ["close", "trust"], "signal": "Weak close", "cause": "No habit of ending with a next step", "fix": [{ "lesson": "01-fde-role-and-mindset/05-your-first-week" }, { "lesson": "10-capstone/08-the-executive-readout" }] },
-        { "rounds": ["r4"], "criteria": ["failure"], "signal": "Failure story with no detection or lasting fix", "cause": "Haven't owned production", "fix": [{ "lesson": "09-shipping-to-production/07-incident-response-and-degradation" }, { "lesson": "09-shipping-to-production/10-postmortems-runbooks-and-handoff" }] },
-        { "rounds": ["r4"], "criteria": ["measuring", "success"], "signal": "Success claim with no baseline", "cause": "Measurement", "fix": [{ "lesson": "02-customer-discovery/07-exercise-measure-a-baseline" }, { "module": "08-evals-and-reliability" }] },
-        { "rounds": ["r4"], "criteria": ["ownership", "overview", "redo"], "signal": "\"We\" answers, unclear part", "cause": "Ownership", "fix": [{ "lesson": "c5-values-and-behavioral/02-building-your-story-bank" }, { "lesson": "c5-values-and-behavioral/06-project-deep-dive" }] },
-        { "rounds": ["r4"], "signal": "No customer deployment to talk about", "cause": "Experience gap", "fix": [{ "module": "10-capstone", "note": "finish it end to end and use it honestly as your deep-dive project" }] },
-        { "rounds": ["r5", "r6"], "signal": "Design or values weak", "cause": "Design or values", "fix": [{ "lesson": "e6-llm-system-design/01-how-the-design-round-works" }, { "module": "c4-reading-the-labs" }, { "lesson": "c5-values-and-behavioral/04-mission-questions" }] }
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "framing",
+            "discovery"
+          ],
+          "signal": "Low framing, or building before asking",
+          "cause": "Discovery habit not automatic",
+          "fix": [
+            {
+              "lesson": "02-customer-discovery/02-running-a-discovery-call"
+            },
+            {
+              "lesson": "02-customer-discovery/06-success-metrics"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "scope"
+          ],
+          "signal": "Two-week scope tried to do everything",
+          "cause": "Saying no",
+          "fix": [
+            {
+              "lesson": "02-customer-discovery/10-scope-and-saying-no"
+            },
+            {
+              "lesson": "01-fde-role-and-mindset/04-exercise-prioritize-the-backlog"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "data plan"
+          ],
+          "signal": "Thin data plan",
+          "cause": "Haven't profiled messy customer data on the clock",
+          "fix": [
+            {
+              "lesson": "03-python-data-wrangling/01-first-hour-with-customer-data"
+            },
+            {
+              "lesson": "03-python-data-wrangling/07-entity-resolution"
+            },
+            {
+              "lesson": "03-python-data-wrangling/09-claude-for-messy-data"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "risks"
+          ],
+          "signal": "No integration story, or writes straight to the ERP",
+          "cause": "Integration patterns",
+          "fix": [
+            {
+              "lesson": "04-apis-and-integrations/07-incremental-sync-and-mapping"
+            },
+            {
+              "lesson": "05-sql-and-data-modeling/07-safe-production-access"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1",
+            "r3"
+          ],
+          "criteria": [
+            "eval"
+          ],
+          "signal": "Eval plan with no ground truth or thresholds",
+          "cause": "No habit of proving quality",
+          "fix": [
+            {
+              "lesson": "08-evals-and-reliability/01-why-evals"
+            },
+            {
+              "lesson": "08-evals-and-reliability/07-regression-gates-and-nondeterminism"
+            },
+            {
+              "lesson": "10-capstone/06-exercise-evaluate-the-agent"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r1"
+          ],
+          "criteria": [
+            "approach",
+            "demo"
+          ],
+          "signal": "Approach vague about where Claude fits",
+          "cause": "Building with Claude",
+          "fix": [
+            {
+              "lesson": "06-building-with-claude/09-models-effort-and-latency"
+            },
+            {
+              "lesson": "07-tool-use-rag-agents/07-workflows-agents-and-guardrails"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "drill": "stuck",
+          "signal": "Stuck at Level 3 or 4, rewriting earlier code",
+          "cause": "A Level 1 data model that couldn't grow",
+          "fix": [
+            {
+              "lesson": "c3-progressive-coding/03-data-models-that-survive-level-4"
+            },
+            {
+              "lesson": "c3-progressive-coding/02-drill-feature-flag-service",
+              "note": "then the C3 drills on the clock"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "drill": "edge",
+          "signal": "Missed edge cases in the spec",
+          "cause": "Reading too fast",
+          "fix": [
+            {
+              "lesson": "c3-progressive-coding/01-how-progressive-screens-work"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r2"
+          ],
+          "drill": "slow",
+          "signal": "Right in the end but slow",
+          "cause": "Python fluency",
+          "fix": [
+            {
+              "lesson": "c3-progressive-coding/04-exercise-ranking-and-formatting"
+            },
+            {
+              "module": "03-python-data-wrangling",
+              "note": "exercises, timed"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r3"
+          ],
+          "criteria": [
+            "listens"
+          ],
+          "signal": "Defended the plan without asking",
+          "cause": "Listening under pressure",
+          "fix": [
+            {
+              "lesson": "02-customer-discovery/03-exercise-analyze-a-discovery-call"
+            },
+            {
+              "lesson": "02-customer-discovery/04-stakeholder-mapping"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r3"
+          ],
+          "criteria": [
+            "constraint",
+            "disputed"
+          ],
+          "signal": "Froze or ignored the new constraint",
+          "cause": "Re-scoping live",
+          "fix": [
+            {
+              "lesson": "02-customer-discovery/11-exercise-change-request-calculator"
+            },
+            {
+              "lesson": "10-capstone/02-exercise-scope-the-engagement",
+              "note": "redo it with a constraint you add yourself"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r3"
+          ],
+          "criteria": [
+            "close",
+            "trust"
+          ],
+          "signal": "Weak close",
+          "cause": "No habit of ending with a next step",
+          "fix": [
+            {
+              "lesson": "01-fde-role-and-mindset/05-your-first-week"
+            },
+            {
+              "lesson": "10-capstone/08-the-executive-readout"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r4"
+          ],
+          "criteria": [
+            "failure"
+          ],
+          "signal": "Failure story with no detection or lasting fix",
+          "cause": "Haven't owned production",
+          "fix": [
+            {
+              "lesson": "09-shipping-to-production/07-incident-response-and-degradation"
+            },
+            {
+              "lesson": "09-shipping-to-production/10-postmortems-runbooks-and-handoff"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r4"
+          ],
+          "criteria": [
+            "measuring",
+            "success"
+          ],
+          "signal": "Success claim with no baseline",
+          "cause": "Measurement",
+          "fix": [
+            {
+              "lesson": "02-customer-discovery/07-exercise-measure-a-baseline"
+            },
+            {
+              "module": "08-evals-and-reliability"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r4"
+          ],
+          "criteria": [
+            "ownership",
+            "overview",
+            "redo"
+          ],
+          "signal": "\"We\" answers, unclear part",
+          "cause": "Ownership",
+          "fix": [
+            {
+              "lesson": "c5-values-and-behavioral/02-building-your-story-bank"
+            },
+            {
+              "lesson": "c5-values-and-behavioral/06-project-deep-dive"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r4"
+          ],
+          "signal": "No customer deployment to talk about",
+          "cause": "Experience gap",
+          "fix": [
+            {
+              "module": "10-capstone",
+              "note": "finish it end to end and use it honestly as your deep-dive project"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r5"
+          ],
+          "criteria": [
+            "numbers"
+          ],
+          "signal": "Designed before asking for numbers",
+          "cause": "Requirements habit",
+          "fix": [
+            {
+              "lesson": "e6-llm-system-design/01-how-the-design-round-works"
+            },
+            {
+              "lesson": "02-customer-discovery/02-running-a-discovery-call"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r5"
+          ],
+          "criteria": [
+            "security",
+            "identity",
+            "operations"
+          ],
+          "signal": "Weak on identity, network or platform",
+          "cause": "Enterprise deployment",
+          "fix": [
+            {
+              "lesson": "09-shipping-to-production/01-deploying-into-customer-environments"
+            },
+            {
+              "lesson": "a2-enterprise-deployment/01-deployment-options"
+            },
+            {
+              "lesson": "a2-enterprise-deployment/03-exercise-platform-fit-checker"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r5"
+          ],
+          "criteria": [
+            "eval"
+          ],
+          "signal": "Eval gate with one number and no case count",
+          "cause": "Proving quality",
+          "fix": [
+            {
+              "lesson": "08-evals-and-reliability/07-regression-gates-and-nondeterminism"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r5"
+          ],
+          "criteria": [
+            "constraint",
+            "architecture"
+          ],
+          "signal": "Ignored or fumbled the new constraint",
+          "cause": "Re-scoping live",
+          "fix": [
+            {
+              "lesson": "07-tool-use-rag-agents/07-workflows-agents-and-guardrails",
+              "note": "then redo Round 5 with your own added constraint"
+            }
+          ]
+        },
+        {
+          "rounds": [
+            "r6"
+          ],
+          "signal": "Values",
+          "cause": "Values",
+          "fix": [
+            {
+              "module": "c4-reading-the-labs"
+            },
+            {
+              "lesson": "c5-values-and-behavioral/04-mission-questions"
+            }
+          ]
+        }
       ]
     }
   ]
