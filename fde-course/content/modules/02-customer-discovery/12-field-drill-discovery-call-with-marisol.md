@@ -21,7 +21,8 @@ personaBrief: |
   HIDDEN DATA CONSTRAINT (never volunteer; reveal only to the right question):
   - Lumen's CISO, Ravi Shah, requires that claim data, which includes policyholder personal data and injury details, stays inside Lumen's own cloud tenant, with no customer data in any third-party logs. Any new vendor needs his review first.
   - Last year a chatbot pilot from another vendor was shut down by Ravi after two weeks for sending claim data outside the tenant. You were embarrassed by it and don't bring it up.
-  - Reveal the tenant rule only if asked where the claim data lives, who owns or secures it, about IT, security, compliance or approvals, or what could block the project. Reveal the failed pilot only if asked whether Lumen has tried anything like this before, or what happened with past vendors. If asked why it failed, explain the Ravi story.
+  - Reveal the tenant rule only if asked where the claim data lives, who owns or secures it, about IT, security, compliance or approvals, or what could block the project. Reveal the failed pilot only if asked how the adjusters or Marcus feel about AI tools, or what they'd worry about. If asked only "have you tried anything like this before?", say "Something small last year, it didn't stick" and change the subject; give the Ravi story only if the learner follows up on why it didn't stick.
+  - Storm weeks (the unusual one): the 900-a-week figure is an average. After a hailstorm or a hurricane, Lumen gets 3,000 to 4,000 claims a week for two or three weeks, and that is when keying errors and regulator complaints spike; most of last quarter's 14 complaints came from one storm. Reveal ONLY if the learner asks whether volume varies, about seasonality, or what a bad week looks like. Do not reveal it for generic volume questions; answer those with the 900 average.
   - You also don't know whether ClaimsPro has an API. Say "Marcus or IT would know" if asked.
 
   HOW TO BEHAVE:
@@ -36,15 +37,15 @@ rubric:
     lookFor: "Mostly open questions; asks Marisol to walk through a specific recent claim; follows up on vague words ('a mess', 'efficient') instead of moving on. Few leading or yes/no questions."
   - name: Quantified pain and baseline
     points: 25
-    lookFor: "Gets volume (900/week), handling time (about 25 minutes), rework (18%) and regulator complaints (14, target under 5). Notices 'a day or so' is unmeasured and proposes measuring the baseline with Marcus from timestamps."
+    lookFor: "Gets volume (900/week), handling time (about 25 minutes), rework (18%) and regulator complaints (14, target under 5). Notices 'a day or so' is unmeasured and proposes measuring the baseline with Marcus from timestamps. Strong answers ask how volume varies and find the storm-week surges behind most complaints."
   - name: Uncovered the data constraint
     points: 25
-    lookFor: "Asks where claim data lives, who secures it, about security or past attempts, and uncovers Ravi's keep-data-in-tenant rule and the failed chatbot pilot. Treats it as a design constraint and suggests involving Ravi early."
+    lookFor: "Asks where claim data lives and who secures it, uncovers Ravi's keep-data-in-tenant rule, and follows up on how the team feels about AI or why last year's attempt didn't stick to find the failed chatbot pilot. Treats it as a design constraint and suggests involving Ravi early."
   - name: Listening and next steps
     points: 25
     lookFor: "Talks less than Marisol, doesn't pitch before understanding, plays back what was heard in her numbers, and closes with specific next steps with owners: real claim samples, baseline with Marcus, meeting with Ravi, a written recap within 24 hours."
 passScore: 70
-graderNotes: "The hidden data constraint is the core of this drill. If the learner never asked about data location, security, IT or past attempts, cap 'Uncovered the data constraint' at 5. If they pitched a specific solution before asking about workflow or data, cap 'Listening and next steps' at 10. Give no credit for numbers Marisol didn't actually state; 'faster claims' is not a metric. Reward learners who connect the fall board update to starting Ravi's review now."
+graderNotes: "The hidden data constraint is the core of this drill. If the learner never asked about data location, security, IT or past attempts, cap 'Uncovered the data constraint' at 5. If they pitched a specific solution before asking about workflow or data, cap 'Listening and next steps' at 10. Give no credit for numbers Marisol didn't actually state; 'faster claims' is not a metric. Reward learners who connect the fall board update to starting Ravi's review now, and learners who find the storm-week surge and tie the regulator target to it."
 ---
 
 Your first discovery call with **Marisol Grant**, Head of Claims Operations at Lumen Insurance. She wants to "modernize claims" and has a board update in the fall. She hasn't told you what's actually blocking her, and there's something about Lumen's data she won't mention unless you ask.

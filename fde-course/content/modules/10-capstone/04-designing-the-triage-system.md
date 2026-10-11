@@ -9,7 +9,7 @@ minutes: 6
 > - Turn customer rules into tools, guardrails and approval gates
 > - Plan evaluation and production pieces before building
 
-Marcus says never promise a refund and reroutes need a person's yes; Sam says audit everything and keep data in NorthStar's cloud. Your design must make those rules impossible to break.
+Marcus says never promise a refund and reroutes need a person's yes; Sam says SSO on anything automated, audit everything, and keep data in NorthStar's cloud. Your design must make those rules impossible to break.
 
 ## Start from the work
 
@@ -35,7 +35,8 @@ The middle ground: **a workflow with Claude inside each step**, cheaper and easi
 | Reroutes need approval | `guarded_execute` calls the approver; fail closed |
 | Audit every automated action | Every tool call appends an audit entry with approval status |
 | Platinum customers get P1 | The prompt states it; the **eval** checks it (P1 recall must be 100%) |
-| Data stays in their cloud | Deploy in their AWS account; logs hold metadata, not messages |
+| SSO for anything automated | The review and approval screens sit behind NorthStar's single sign-on (OIDC or SAML through their identity provider); approvers are identified by their SSO identity, and their group decides what they may approve |
+| Data stays in their cloud | Deploy in their AWS account; call Claude through the AWS route they already buy (Amazon Bedrock or Claude Platform on AWS), after checking that every feature you use exists there; logs hold metadata, not messages |
 
 Mechanical rules go in code; judgment calls are measured by the eval, and the gate blocks shipping if platinum cases fail.
 
@@ -56,7 +57,9 @@ Mechanical rules go in code; judgment calls are measured by the eval, and the ga
 
 ## The one-page design doc
 
-Problem and goals · architecture and why · tools and permissions · guardrails · evaluation · operations · risks and open questions.
+Problem and goals · architecture and why · tools and permissions · guardrails · security and identity · evaluation · operations · risks and open questions.
+
+You'll write it for real after the build and eval exercises, in the lesson "Write the One-Page Design Doc", where it is graded against a rubric. Sam will read the security section, so SSO, the audit log and the platform choice have to be in it.
 
 > **Key takeaways**
 > - Start from what a good coordinator does; choose workflow or agent by how much paths depend on tool results, and present the trade-off.

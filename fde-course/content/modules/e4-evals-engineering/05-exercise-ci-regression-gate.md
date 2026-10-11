@@ -3,11 +3,11 @@ title: "Exercise: A CI Regression Gate"
 type: exercise
 minutes: 35
 hints:
-  - "`pass_rates`: build the category list from every row, but count `n` and `passes` from non-error rows only. A small helper that returns `{\"n\", \"passes\", \"rate\"}` keeps it short."
-  - "`paired_flips`: make `cand = {r[\"id\"]: r[\"status\"] for r in candidate}`, then walk the baseline. Missing IDs go to `missing`. Only `pass -> fail` and `fail -> pass` count; anything involving `error` is skipped."
-  - "`sign_test_p`: `n = regressions + fixes`; the answer is `sum(math.comb(n, k) for k in range(regressions, n + 1)) / 2 ** n`, rounded to 4 decimals. Return `1.0` when `n` is 0."
-  - "`gate`: append reasons in the order of the rules table. For drops, loop over the baseline's `by_category` (already alphabetical), skip categories where either rate is `None`, and compare `round(b - c, 3) > max_category_drop`."
-  - "Severity decides the outcome: `\"block\"` if any reason is a block, else `\"review\"` if any is a review, else `\"ship\"`. Compute `p_value` even when no paired reason is added."
+  - "`pass_rates`: errors are counted but never scored. A category whose rows all errored still appears, with a rate of `None`."
+  - "`paired_flips`: look the candidate up by id. Only a clean pass-to-fail or fail-to-pass is a flip; a pair involving an error tells you nothing about quality."
+  - "`sign_test_p`: under 'no real change', each flip is a fair coin. You want the probability of at least this many regressions out of all flips. The standard library has a function for binomial coefficients."
+  - "`gate`: work through the rules table in order and append reasons as you go. For category drops you need the number of regressions *in that category*, so you'll need to know which category each flipped case belongs to."
+  - "The decision is derived from the reasons' severities, never decided separately. Return the p-value even when no paired reason was added."
 ---
 
 Leo is back with Kestrel Mobile. "They want to ship v4 of the intent router: a rewritten prompt on a cheaper model. Their headline went from 80% to 87%, so the PR author says it's obviously better. Their golden set has grown to 40 cases, including sim-swap fraud. I don't want a human eyeballing every PR. Build the gate that runs in CI and returns a decision with reasons a reviewer can read in ten seconds."
@@ -51,7 +51,7 @@ Errors aren't scored. Categories come from all rows, in alphabetical order. `rat
 | 2 | Candidate `errors / total` is at most `max_error_rate` | `error_rate` | block | `"candidate error rate 0.111 above 0.050"` |
 | 3 | For each category in `category_floors`, alphabetically: the candidate has scored cases | `no_data` | block | `"zzz has no scored cases in the candidate run"` |
 | 3 | ...and its candidate rate is at least the floor | `below_floor` | block | `"cancel pass rate 0.750 below floor 1.000"` |
-| 4 | For each baseline category, alphabetically, where both rates exist: `round(baseline_rate - candidate_rate, 3)` is at most `max_category_drop` | `category_drop` | block if the candidate's `n` ≥ `min_category_n`, else review | `"roaming dropped 0.667 -> 0.333 (n=3)"` |
+| 4 | For each baseline category, alphabetically, where both rates exist: `round(baseline_rate - candidate_rate, 3)` is at most `max_category_drop` | `category_drop` | block only if the candidate's `n` ≥ `min_category_n` **and** the category has at least `min_category_flips` regressions; else review | `"roaming dropped 0.667 -> 0.333 (n=3, regressions=1)"` |
 | 5 | If regressions outnumber fixes and `p < alpha` | `significant_regression` | block | `"6 regressions vs 0 fixes (sign test p=0.0156)"` |
 | 5 | If regressions outnumber fixes and `p >= alpha` | `net_regression` | review | same format |
 
@@ -59,7 +59,9 @@ Rules 3 and 4 use the rounded rates from `pass_rates`. Format every rate and thr
 
 `decision` is `"block"` if any reason is a block, otherwise `"review"` if any reason is a review, otherwise `"ship"`. `p_value` is `sign_test_p(regressions, fixes)`, always included.
 
-Why a "review" severity at all? A drop from 2 of 3 to 1 of 3 is one case. Blocking on it trains people to ignore the gate. Flagging it for a human keeps the gate trusted.
+Why a "review" severity, and why a minimum flip count? A drop from 2 of 3 to 1 of 3 is one case. So is 5 of 5 to 4 of 5, which is a 0.2 drop and would clear any sensible size threshold. Blocking on a single flipped case trains people to ignore the gate. Flagging it for a human keeps the gate trusted, and on a real model that human's first move is to rerun the case and see whether it flips back.
+
+There's a second reason. Kestrel has eight categories, and each one gets its own threshold check on every PR. The more categories you test, the more likely it is that one crosses the line by chance alone: the **multiple-comparisons problem**. With twenty categories, a check that is wrong 5% of the time per category fires on most runs even when nothing changed. The minimum flip count and the review severity are cheap guards. The rigorous version is a per-category paired test (the same sign test, per category) at a corrected threshold such as `alpha / number_of_categories` (Bonferroni). The overall sign test in rule 5 doesn't have this problem, because it is one test.
 
 ## Example
 

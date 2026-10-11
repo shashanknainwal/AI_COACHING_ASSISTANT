@@ -8,7 +8,7 @@ minutes: 16
 
 ## Step 1: score every round out of 100
 
-Rounds 1, 3 and 4 already have a score from Claude's rubric. Round 2 needs a formula. Use this one, written for this course (it is not how any company scores its assessments):
+Rounds 1, 3, 4 and 5 already have a score from Claude's rubric. The [progress page](/learn/progress) collects them, with each rubric line, so you don't have to dig through lessons; use it to fill in the card and, on your second loop, to compare. Round 2 needs a formula. Use this one, written for this course (it is not how any company scores its assessments):
 
 | Round 2 result | Points |
 |---|---|
@@ -28,12 +28,13 @@ Round                        Score  Pass?  One sentence: what went wrong
 2  Coding (ticket router)    ___    ___    ______________________________
 3  Customer call (Ines)      ___    ___    ______________________________
 4  Deep dive (Theo)          ___    ___    ______________________________
-5  Design (E6, optional)     ___    ___    ______________________________
+5  System design (Ilse)      ___    ___    ______________________________
 6  Values (C5, optional)     ___    ___    ______________________________
 
 Weakest round: ____   Lowest rubric line in it: ________________
 Round 2 minute marks:  L1 ___  L2 ___  L3 ___  L4 ___
 Round 1: minutes used ___ of 120, sections left thin: ________
+Round 5: asked for numbers by minute ___; adapted to the constraint? ___
 ```
 
 A round passes at 70, the same pass mark the graded lessons use.
@@ -73,7 +74,11 @@ The FDE track (modules 1 to 10) is where the job skills live. The shared core (C
 | Round 4: success claim with no baseline | Measurement | Module 2, "Exercise: Measure a Baseline from Raw Data"; module 8 |
 | Round 4: "we" answers, unclear part | Ownership | C5 "Building Your Story Bank" and "Live Practice: The Project Deep Dive" |
 | Round 4: no customer deployment to talk about | Experience gap | Finish module 10 end to end and use it honestly as your deep-dive project, then look for a real deployment to own |
-| Round 5 or 6 weak | Design or values | E6 "How the LLM Design Round Works"; C4 Reading the Labs and C5 "Answering Mission Questions Honestly" |
+| Round 5: designed before asking for numbers | Requirements habit | E6 "How the LLM Design Round Works"; module 2, "Running a Discovery Call" |
+| Round 5: weak on identity, network or platform | Enterprise deployment | Module 9, "Deploying into Customer Environments" (the platform and feature tables); A2 "Five Ways to Buy Claude: Deployment Options Compared" and the platform fit checker |
+| Round 5: eval gate with one number and no case count | Proving quality | Module 8, "Release Gates, Noise and Nondeterminism" |
+| Round 5: ignored or fumbled the new constraint | Re-scoping live | Module 7, "Workflows vs Agents, Guardrails and MCP"; redo Round 5 with your own added constraint |
+| Round 6 weak | Values | C4 Reading the Labs and C5 "Answering Mission Questions Honestly" |
 | Any round: unsure what the real loop looks like | Process | C1 "The Loop, Round by Round" and "Your Prep Plan" |
 
 ## Step 4: the two-week fix plan
@@ -103,6 +108,7 @@ Repeating the same prompt measures memory, not skill. For the second loop, use m
 | 2. Coding | Ticket router | C3 "Drill: An LLM Gateway Ledger" or the E7 prompt-template registry, both at 75 minutes |
 | 3. Customer call | Ines | A7's customer round with Victor Hale, or Ines again with a different take-home answer |
 | 4. Deep dive | Theo, on deployment A | Theo again on a different deployment, or the C5 deep dive |
+| 5. System design | Ilse, the Hollis claims-intake agent | E6's design prompts, run as an FDE: add a customer network, identity and system-of-record constraint of your own before you start |
 
 The role-plays adapt to what you say, so repeating them with different material is fair practice. You may also use Claude outside the course to run extra mock rounds, which Anthropic's [candidate AI guidance](https://www.anthropic.com/candidate-ai-guidance) encourages (**Official**). Ask it for original cases and questions in the style of a round, never for "the real questions".
 
@@ -112,7 +118,7 @@ Stop adding loops when two in a row pass every round on fresh material. After th
 
 > **Key takeaways**
 >
-> - Score every round out of 100. For Round 2: 25 per level inside the 75 minutes, 10 per level after.
+> - Score every round out of 100, five scored rounds including the system design. For Round 2: 25 per level inside the 75 minutes, 10 per level after. The progress page collects your graded scores.
 > - Judge readiness by your weakest round and its lowest rubric line, not the average.
 > - Job skills live in FDE modules 1 to 10; interview skills live in the shared core. Most weak signals need one of each.
 > - Two weeks, 60 to 90 minutes a day, then a second loop on material you haven't seen.

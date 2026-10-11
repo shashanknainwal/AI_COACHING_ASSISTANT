@@ -84,7 +84,11 @@ def answer(question, send):
         model="claude-opus-5-5",
         max_tokens=4096,
         output_config={"effort": "low"},
-        system=STABLE_INSTRUCTIONS,            # same bytes every request, so it can cache
+        system=[{
+            "type": "text",
+            "text": STABLE_INSTRUCTIONS,       # same bytes every request...
+            "cache_control": {"type": "ephemeral"},   # ...and opted in, so it caches
+        }],
         messages=[{"role": "user", "content": question}],
     ) as stream:
         for text in stream.text_stream:
@@ -95,6 +99,8 @@ def answer(question, send):
     total = time.perf_counter() - start
     return final, {"ttft_s": ttft, "total_s": total, "output_tokens": final.usage.output_tokens}
 ```
+
+Two details in that sample matter. A stable prefix caches only because the block carries `cache_control`; identical bytes without the marker are billed as fresh input every time. And `effort` is set explicitly, because thinking happens before the first visible token and its tokens count toward `max_tokens`.
 
 Log those three numbers with the request id (`final._request_id`) on every call. Output tokens matter because generation time scales with them: if total time doubled, check whether the answers got longer before blaming the API.
 
@@ -112,13 +118,17 @@ limit = asyncio.Semaphore(8)           # stay inside your rate limits
 async def classify(email):
     async with limit:
         return await client.messages.create(
-            model="claude-haiku-5-5", max_tokens=256,
+            model="claude-haiku-5-5",
+            max_tokens=1024,                   # covers thinking plus the label
+            output_config={"effort": "low"},   # Haiku 5.5 thinks at medium by default
             messages=[{"role": "user", "content": email}],
         )
 
 async def classify_all(emails):
     return await asyncio.gather(*(classify(e) for e in emails))
 ```
+
+`max_tokens` covers thinking too. A 256-token cap that was plenty for a one-word label on a non-thinking model can stop a thinking model before it writes the label, so either set a low effort and leave headroom, as here, or turn thinking off where the model allows it (Haiku 5.5 accepts `thinking={"type": "disabled"}` at effort `high` or below).
 
 Three cautions to raise yourself in an interview:
 

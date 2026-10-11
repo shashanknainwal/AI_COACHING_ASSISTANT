@@ -105,13 +105,13 @@ Each case is graded on four things:
 | Citation support | LLM judge: is each claim supported by the cited chunk? | At least 95% |
 | Permission leaks | Code: does any answer cite or quote a restricted chunk? | Zero |
 
-The judge itself is checked: on the 100 human-labelled cases it should agree with people at least 85% of the time before I trust its scores.
+The judge itself is checked: on the 100 human-labelled cases I want Cohen's kappa of at least 0.6 against the human labels, and I'll read every false pass, before I trust its scores. Raw agreement alone is easy to fool: if 85% of answers are good, a judge that passes everything agrees 85% of the time with no skill at all. And kappa on 100 cases still has an interval of roughly plus or minus 0.1, so a borderline result means labelling more cases, not celebrating.
 
 One caution on noise. With 300 cases and a true pass rate of 85%, the standard error is about 2 points, so the 95% interval is roughly plus or minus 4 points. A one-point change between two prompt versions is not a real difference at this size. I'd compare versions on the same cases and look at which cases flipped.
 
 After launch: thumbs up or down, citation click-through, the "couldn't find this" rate by topic (which shows gaps in the corpus), and a weekly review of 50 sampled conversations.
 
-> **Why this scores:** this is the stage that separates strong answers. The golden set includes unanswerable and permission cases, the metrics split retrieval from generation, the judge is validated, and the gate has thresholds agreed in advance. The noise calculation shows the candidate knows an eval score is a measurement with error.
+> **Why this scores:** this is the stage that separates strong answers. The golden set includes unanswerable and permission cases, the metrics split retrieval from generation, the judge is validated with kappa rather than raw agreement, and the gate has thresholds agreed in advance. The noise calculation shows the candidate knows an eval score is a measurement with error.
 
 ## Minutes 31–36: failure modes
 
@@ -128,20 +128,21 @@ After launch: thumbs up or down, citation click-through, the "couldn't find this
 
 ## Minutes 36–41: cost and latency
 
-**Candidate:** Per question on Claude Sonnet 5.5:
+**Candidate:** Per question on Claude Sonnet 5.5, with `effort: "low"` set explicitly. Sonnet 5.5 defaults to `high`, and thinking is billed as output, so I'll put it in the table. The thinking figure is my assumption until I measure it:
 
 | Part | Tokens | Rate per million | Cost |
 |---|---|---|---|
 | Cached prefix (instructions, rules) | 2,500 | $0.10 | $0.00025 |
 | Fresh input (chunks, history, question) | 4,900 | $2.00 | $0.0098 |
-| Output | 350 | $10.00 | $0.0035 |
-| **Total** | | | **about $0.0136** |
+| Output: answer | 350 | $10.00 | $0.0035 |
+| Output: thinking (assumed, effort low) | 300 | $10.00 | $0.0030 |
+| **Total** | | | **about $0.0166** |
 
-At 6,000 questions a day that's about $81 a day, or roughly $1,800 a month over 22 working days: around 36 cents per employee per month. The query rewrite on Claude Haiku 5.5 (about 600 tokens in, 60 out) adds less than a hundredth of a cent per question.
+At 6,000 questions a day that's about $99 a day, or roughly $2,200 a month over 22 working days: around 44 cents per employee per month. If I left effort at the default and thinking tripled, output would be close to half the bill, which is why I pin effort per route and read `usage.output_tokens` in the first week. The query rewrite on Claude Haiku 5.5 (about 600 tokens in, 60 out) adds less than a hundredth of a cent per question.
 
 Cache writes cost about 1.25 times the input price, so the first request after the cache expires pays a little more. At 0.2 questions a second during the day, the 5-minute cache stays warm. I'd confirm with `usage.cache_read_input_tokens` in the logs.
 
-For comparison, the same answer step on Claude Opus 5.5 is about $0.027 a question, roughly double. The biggest lever beyond caching is retrieved context: cutting from 8 chunks to 5 saves about 1,500 fresh tokens, a fifth of the per-question cost. I'd only do that if recall on the golden set holds.
+For comparison, the same answer step on Claude Opus 5.5 at the same effort is about $0.033 a question, roughly double. The biggest lever beyond caching is retrieved context: cutting from 8 chunks to 5 saves about 1,500 fresh tokens, nearly a fifth of the per-question cost. I'd only do that if recall on the golden set holds.
 
 Latency budget for p95 to first token, all assumptions I'd measure in the first week:
 
@@ -151,13 +152,13 @@ Latency budget for p95 to first token, all assumptions I'd measure in the first 
 | Query rewrite (Haiku 5.5) | 400 ms |
 | Hybrid search with permission filter | 150 ms |
 | Rerank 40 to 8 | 200 ms |
-| Answer model to first token | 1,200 ms |
+| Answer model to first token (thinking included, effort low) | 1,200 ms |
 | Headroom | 500 ms |
 | **Total** | **2,500 ms** |
 
-If the rewrite step is the problem, skip it for first-turn questions, which don't need it.
+If the rewrite step is the problem, skip it for first-turn questions, which don't need it. If the answer step is the problem, remember that thinking happens before the first visible token: lower effort is the first lever, and Sonnet 5.5's lowest setting is `thinking: {"type": "between_tools"}` (it rejects `disabled`). I'd only take it if the golden-set scores hold.
 
-> **Why this scores:** the cost table is arithmetic anyone can check, ends in a per-employee number a buyer understands, and compares one alternative. The latency budget adds up to the target from minute one, labels its guesses as guesses, and names a specific cut.
+> **Why this scores:** the cost table is arithmetic anyone can check, includes thinking with the effort setting stated, ends in a per-employee number a buyer understands, and compares one alternative. The latency budget adds up to the target from minute one, labels its guesses as guesses, and names a specific cut.
 
 ## Minutes 41–45: iteration plan
 

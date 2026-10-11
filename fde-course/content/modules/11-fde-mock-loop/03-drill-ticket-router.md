@@ -79,3 +79,5 @@ The customer's support lead asks, after a bad week: "Which tickets were sitting 
 ## After the round
 
 Record three things before you look at the solution: the level you reached, the minute you cleared each level, and the one decision that cost you the most time. Lesson 06 turns these into your round score.
+
+**If your real screen allows AI tools**, run this drill a second time on your own machine with your coding assistant, under the same 75-minute clock, after you've scored the closed-book run. Follow the protocol in lesson 01: sketch the data model yourself, tests first, read and explain every generated line. Compare the two runs level by level. The in-course tutor stays off while the drill clock runs, so use your own tools for this rep.

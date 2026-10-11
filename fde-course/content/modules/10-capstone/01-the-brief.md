@@ -47,7 +47,9 @@ Sort each line: fact, opinion, requirement or risk?
 
 ## The engagement plan
 
-Scope (baseline, metrics) → clean and join the data → design → build the triage agent → evaluate and decide → readout numbers → the executive readout, a live readout with Dana, and the final assessment.
+Scope (baseline, metrics) → clean and join the data → design → build the triage agent → evaluate and decide → readout numbers → the executive readout, a live readout with Dana, the one-page design doc, and the final assessment.
+
+This capstone runs in the browser against the course's simulator, so you can finish it in a few days and every step is graded. It is not a portfolio piece on its own. The full portfolio capstone, with the real Claude API in your own repository, a design doc, evals and a demo you can defend in a deep dive, lives in Foundations module C8 (Portfolio Capstone). Do this one first; C8 asks you to apply the same steps to a domain you choose.
 
 > **Key takeaways**
 > - Coordinators triage exceptions by hand, and platinum customers breach SLAs most.

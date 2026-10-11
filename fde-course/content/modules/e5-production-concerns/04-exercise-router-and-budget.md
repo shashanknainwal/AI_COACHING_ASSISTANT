@@ -3,11 +3,11 @@ title: "Exercise: A Model Router With a Daily Budget"
 type: exercise
 minutes: 40
 hints:
-  - "`route`: start from `r = dict(ROUTES[task])`. For `complexity == \"high\"`, Opus gets `effort = \"high\"`; any other model becomes `LADDER[LADDER.index(r[\"model\"]) + 1]`. Then, if the model is Haiku and `input_tokens > HAIKU_MAX_INPUT`, switch to Sonnet."
-  - "`call_cost`: build a list of `(token_count, rate_key)` pairs: input, output, cache_read, then either the two TTL counts from `usage[\"cache_creation\"]` or all of `cache_creation_input_tokens` at `cache_write_5m`. Skip pairs with 0 tokens; raise if a needed key is missing from the model's rates."
-  - "`worst_case_cost`: `(input_tokens * rates[\"input\"] + r[\"max_tokens\"] * rates[\"output\"]) / 1_000_000`, rounded to 6 decimals."
-  - "`admit`: `left = self.daily_budget_usd - self._day(day)[\"spent\"]`. If the normal route's worst case fits, return `dict(r, degraded=False)`. For a degradable task, try `reversed(LADDER[:LADDER.index(r[\"model\"])])`, skipping Haiku for prompts over 100K tokens."
-  - "`report`: per task keep `cost` and `completed`. `cost_per_completed` is `round(cost / completed, 6)`, or `None` when nothing completed. Failed attempts still add to `cost`."
+  - "`route`: copy the route before you change it, so the shared table isn't modified. 'Move one step up' has a special case at the top of the ladder, and the long-prompt rule applies after the complexity rule."
+  - "`call_cost`: each usage field maps to one rate. Cache writes are the tricky part: when a TTL breakdown is present, price each TTL separately; otherwise use the 5-minute rate. A token type with no rate should fail loudly, not price at zero."
+  - "`worst_case_cost`: the worst case before a call is that nothing is cached and the output runs all the way to `max_tokens` (which, on thinking models, includes thinking)."
+  - "`admit`: first try the normal route against what's left of today's budget. Only degradable tasks may fall back, most capable cheaper model first, and the long-prompt rule still applies on the way down."
+  - "`report`: failed attempts are spending without completion, so they count toward cost but not toward the denominator. Decide what to return when nothing completed."
 ---
 
 Leo again. Ledgerline's CFO saw last month's bill and asked a fair question: "Why does every request go to the most expensive model, and what stops a bad day from costing ten times a good one?" Their workload is four tasks: classifying inbound vendor emails, extracting invoice fields, drafting replies to vendors, and auditing payment anomalies.

@@ -67,7 +67,7 @@ The value is never interpreted as SQL, and no hand-written escaping is as safe. 
 - **Mask by default:** `m***@example.com`, `***-***-1234`; unmasked access is a deliberate exception.
 - **Aggregate** when counts answer the question.
 - **No real customer data** in slides, tickets or screenshots.
-- **Follow the customer's policies** and laws like GDPR or HIPAA; ask the security team you mapped in Module 2.
+- **Follow the customer's policies** and laws like GDPR or HIPAA; ask the security team you mapped in Module 2. For health data under HIPAA, no patient data reaches a vendor (or a model) until a Business Associate Agreement is signed, and which platforms and features are covered must be confirmed with the account team, not assumed (Module 1, "Your First Week on an Engagement").
 
 > **Key takeaways**
 > - Layer 1: read replica, read-only user, least privilege, time-boxed access.

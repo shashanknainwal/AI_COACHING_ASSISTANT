@@ -6,6 +6,7 @@ GATE_CONFIG = {
     "category_floors": {"billing": 0.85, "cancel": 1.0, "sim_swap_fraud": 0.9},  # hard minimums
     "max_category_drop": 0.10,   # largest allowed drop in any category's pass rate
     "min_category_n": 5,         # below this many scored cases, a drop needs review, not a block
+    "min_category_flips": 2,     # a drop caused by fewer regressions than this needs review, not a block
     "max_error_rate": 0.05,      # more errors than this means the run itself is suspect
     "alpha": 0.05,               # significance level for the paired sign test
 }
@@ -80,14 +81,16 @@ def gate(baseline, candidate, config):
         elif rate < floor:
             reasons.append(_reason("below_floor", "block", f"{cat} pass rate {rate:.3f} below floor {floor:.3f}"))
 
+    category_of = {row["id"]: row["category"] for row in baseline}
     for cat, b in base["by_category"].items():
         c = cand["by_category"].get(cat)
         if not c or b["rate"] is None or c["rate"] is None:
             continue
         if round(b["rate"] - c["rate"], 3) > config["max_category_drop"]:
-            severity = "block" if c["n"] >= config["min_category_n"] else "review"
-            reasons.append(_reason("category_drop", severity,
-                                   f"{cat} dropped {b['rate']:.3f} -> {c['rate']:.3f} (n={c['n']})"))
+            flipped = sum(category_of[i] == cat for i in flips["regressions"])
+            enough = c["n"] >= config["min_category_n"] and flipped >= config["min_category_flips"]
+            reasons.append(_reason("category_drop", "block" if enough else "review",
+                                   f"{cat} dropped {b['rate']:.3f} -> {c['rate']:.3f} (n={c['n']}, regressions={flipped})"))
 
     r, f = len(flips["regressions"]), len(flips["fixes"])
     p = sign_test_p(r, f)

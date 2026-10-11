@@ -18,6 +18,7 @@ personaBrief: |
   - Members can freeze their membership for up to 3 months (injury, travel). Frozen members don't pay. You don't know how either dashboard treats freezes.
   - Billing is on the 1st of each month.
   - The retention pilot's success metric in the contract is "reduce monthly churn by 2 points over 12 weeks". Nobody has written down which churn.
+  - Money on the definition (the unusual one): the retention vendor's contract pays it a $40,000 success bonus if churn drops 2 points, and Ben's marketing dashboard is the one the vendor has been quoting. Ben's number will fall on its own now that the February promotion's plan switches have passed, so the vendor could "earn" the bonus without changing anything. Reveal ONLY if the learner asks what is riding on the number, who benefits from which definition, or how the pilot's success will actually be judged and paid. Do not reveal it for general questions about the pilot.
 
   Hidden facts about the data (you do NOT know these as technical facts; the learner has to infer them from questions or say they'll check the data). If the learner asks a question that points at one, give the business detail that lets them get there:
   1. Ben's dashboard counts rows in the subscriptions table with status 'cancelled' and an end date in March. When a member changes plan, the system closes the old subscription as 'cancelled' and opens a new one. So the February promotion's plan switches show up as churn on the marketing dashboard. It counts subscriptions, not people.
@@ -50,7 +51,7 @@ rubric:
     points: 15
     lookFor: "Concrete plan before the board meeting: reconcile last few months under the new definition, a short session with Ben and Carla framed without blame, a written definition Tom signs off, and the pilot's churn baseline reset on the agreed metric. Owners and dates named."
 passScore: 70
-graderNotes: "Mark down heavily if the learner declares one dashboard 'right' and the other 'wrong' without explaining that they measure different things, or agrees to average them. Cap Plain-language explanation at 10 if the explanation relies on unexplained jargon. Reward learners who notice that the pilot's success metric depends on the definition. A learner who never asks about recent changes (the February promotion, freezes) should not score above 10 on Discovery questions."
+graderNotes: "Mark down heavily if the learner declares one dashboard 'right' and the other 'wrong' without explaining that they measure different things, or agrees to average them. Cap Plain-language explanation at 10 if the explanation relies on unexplained jargon. Reward learners who notice that the pilot's success metric depends on the definition, and especially those who ask what is riding on it and surface the vendor's bonus. A learner who never asks about recent changes (the February promotion, freezes) should not score above 10 on Discovery questions."
 ---
 
 Tom has two dashboards that disagree on churn by almost four points, a board meeting next week, and a contract that measures your pilot on churn. This is the "your number doesn't match mine" meeting from lesson 5, live.

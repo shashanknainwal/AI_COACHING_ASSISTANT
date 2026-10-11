@@ -48,7 +48,7 @@ This round is different from the deep dives in module C5 (any project, ownership
 
 On the right, **Theo Brandt** runs the deep dive for about eight turns. Theo is a fictional practice hiring manager played by Claude, not a real person at any lab.
 
-1. Pick one deployment you shipped to a customer or to real users. Your capstone counts if you have nothing else; say so plainly.
+1. Write your project summary first (the lesson before this one). Theo reads it and uses it to dig into your claims. Pick one deployment you shipped to a customer or to real users. If you have nothing else, use the portfolio capstone from Foundations module C8, or the module 10 capstone, and say so plainly.
 2. Give the two-minute overview he asks for, then answer his follow-ups as you would in the room.
 3. Expect exactly one pushback, on your failure story or your success metric.
 4. After six to eight answers, press **End and get feedback** for a scored debrief against the rubric below.
