@@ -1,0 +1,56 @@
+# Runs on every pull request. Copy capstone-kit's contents to your repo root so this path is .github/workflows/evals.yml.
+# Add ANTHROPIC_API_KEY under Settings -> Secrets and variables -> Actions.
+name: evals
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evals-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+
+  evals:
+    needs: unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      CAPSTONE_BUDGET_USD: "2.00"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      # Pull requests from forks get no secrets: skip the real-model run instead of failing.
+      - name: Check for the API key
+        id: key
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; echo "::warning::ANTHROPIC_API_KEY not set; skipping real-model evals"; fi
+      - name: Run the golden set against the real model
+        if: steps.key.outputs.present == 'true'
+        run: python -m evals.run_evals --runs 2 --out results/latest.json
+      - name: Gate
+        if: steps.key.outputs.present == 'true'
+        run: python -m evals.gate --current results/latest.json --baseline evals/baseline.json --policy evals/gate_policy.json
+      - name: Keep the results
+        if: always() && steps.key.outputs.present == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: results/

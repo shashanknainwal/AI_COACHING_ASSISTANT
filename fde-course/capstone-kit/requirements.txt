@@ -1,0 +1,4 @@
+# Runtime: the official Anthropic Python SDK (1.x). Python 3.11+.
+anthropic>=1.13,<2
+# Tests: optional. Without pytest, run: python -m unittest discover -s tests -t .
+pytest>=8
