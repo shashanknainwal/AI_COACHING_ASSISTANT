@@ -39,18 +39,18 @@ def _field(value, quote):
 _SPEC = [
     ("H01", "Vossberg Transport BV", "VT-24-1187", "HFG-88213", "Rotterdam -> Duisburg", 1180, 142, 1322, "match", {}),
     ("H02", "Elbstrom Logistik GmbH", "EL-55021", "HFG-88240", "Hamburg -> Prague", 2450, 310, 2480, "overcharge", {}),
-    ("H03", "Northgate Haulage Ltd", "NG-7781", "HFG-88302", "Felixstowe -> Rotterdam", 1890, 205, 2095, "match", {}),
+    ("H03", "Brackwater Haulage Ltd", "NG-7781", "HFG-88302", "Felixstowe -> Rotterdam", 1890, 205, 2095, "match", {}),
     ("H04", "Wisla Cargo Sp. z o.o.", "WC/2026/0412", "HFG-88317", "Poznan -> Duisburg", 1320, 160, 1480, "match", {}),
     ("H05", "Vossberg Transport BV", "VT-24-1203", "HFG-88355", "Rotterdam -> Antwerp", 640, 70, 640, "overcharge", {}),
     ("H06", "Elbstrom Logistik GmbH", "EL-55088", "HFG-88371", "Hamburg -> Munich", 1980, 240, 2220, "match", {}),
-    ("H07", "Northgate Haulage Ltd", "NG-7802", "HFG-88390", "Felixstowe -> Birmingham", 720, 88, 808, "match", {}),
+    ("H07", "Brackwater Haulage Ltd", "NG-7802", "HFG-88390", "Felixstowe -> Birmingham", 720, 88, 808, "match", {}),
     ("H08", "Wisla Cargo Sp. z o.o.", "WC/2026/0431", "HFG-88402", "Gdansk -> Berlin", 1560, 190, 1610, "overcharge", {}),
     ("H09", "Vossberg Transport BV", "VT-24-1219", "HFG-88415", "Rotterdam -> Dusseldorf", 820, 84, 900, "match", {}),
     # Scan damage: the total can't be read. The right answer is "don't know".
     ("H10", "Elbstrom Logistik GmbH", "EL-55102", "HFG-88428", "Hamburg -> Leipzig", 1050, 150, 1200, "abstain",
      {"total_line": "Total due: [illegible - scan damaged]", "reply": {"total_eur": _field(None, None)}}),
     # The total is on a separate statement. The model invents one anyway.
-    ("H11", "Northgate Haulage Ltd", "NG-7815", "HFG-88433", "Tilbury -> Zeebrugge", 1300, 200, 1500, "abstain",
+    ("H11", "Brackwater Haulage Ltd", "NG-7815", "HFG-88433", "Tilbury -> Zeebrugge", 1300, 200, 1500, "abstain",
      {"total_line": "Total due: see attached statement",
       "reply": {"total_eur": _field(1500.0, "Total due: EUR 1,500.00")}}),
     # A shipment reference that isn't in Halberd's records.
@@ -59,14 +59,14 @@ _SPEC = [
     ("H13", "Elbstrom Logistik GmbH", "EL-55117", "HFG-88447", "Hamburg -> Linz (ADR class 3 fuel tanks)", 2100, 260, 2200,
      "overcharge", {"refuse": True}),
     # The model picks the line-haul subtotal instead of the total. The quote is real, so grounding can't catch it.
-    ("H14", "Northgate Haulage Ltd", "NG-7840", "HFG-88460", "Felixstowe -> Leeds", 1450, 180, 1450, "overcharge",
+    ("H14", "Brackwater Haulage Ltd", "NG-7840", "HFG-88460", "Felixstowe -> Leeds", 1450, 180, 1450, "overcharge",
      {"reply": {"total_eur": _field(1450.0, "Line haul: EUR 1,450.00")}}),
     # The model takes the carrier's own reference instead of Halberd's shipment reference.
     ("H15", "Wisla Cargo Sp. z o.o.", "WC/2026/0457", "HFG-88477", "Wroclaw -> Duisburg", 1290, 150, 1440, "match",
      {"extra": "Carrier ref: WC-REF-3391", "reply": {"shipment_ref": _field("WC-REF-3391", "Carrier ref: WC-REF-3391")}}),
     ("H16", "Vossberg Transport BV", "VT-24-1240", "HFG-88490", "Rotterdam -> Cologne", 930, 95, 1025, "match", {}),
     ("H17", "Elbstrom Logistik GmbH", "EL-55140", "HFG-88502", "Bremen -> Wroclaw", 1710, 205, 1700, "overcharge", {}),
-    ("H18", "Northgate Haulage Ltd", "NG-7866", "HFG-88515", "Southampton -> Rotterdam", 2240, 260, 2500, "match", {}),
+    ("H18", "Brackwater Haulage Ltd", "NG-7866", "HFG-88515", "Southampton -> Rotterdam", 2240, 260, 2500, "match", {}),
     ("H19", "Wisla Cargo Sp. z o.o.", "WC/2026/0470", "HFG-88530", "Lodz -> Venlo", 1380, 165, 1530, "match", {}),
     ("H20", "Vossberg Transport BV", "VT-24-1262", "HFG-88544", "Rotterdam -> Liege", 610, 66, 676, "match", {}),
 ]
