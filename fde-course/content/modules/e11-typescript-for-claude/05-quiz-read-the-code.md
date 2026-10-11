@@ -5,7 +5,7 @@ minutes: 15
 questions:
   - q: "Snippet 1. A Sonnet 5.5 call with max_tokens 64 and no effort set. What is the most likely output?"
     options:
-      - "end_turn text, because 64 tokens is enough for a short answer"
+      - "end_turn text, because 64 tokens is plenty for a short policy answer"
       - "A 400 error, because max_tokens must be at least 1,024"
       - "max_tokens thinking, because thinking used up the token limit first"
       - "refusal text, because short limits trigger the safety classifiers"
@@ -22,7 +22,7 @@ questions:
   - q: "Snippet 3. The route streams fine in testing. What goes wrong in production?"
     options:
       - "The API key is sent to the browser inside the stream"
-      - "Text arrives out of order because deltas are not sorted"
+      - "Text arrives out of order because the deltas are never sorted by index"
       - "The stream never closes, so the browser waits forever"
       - "When users close the tab, generation keeps running and is billed"
     answer: 3
@@ -55,13 +55,13 @@ questions:
     options:
       - "Error: err is of type unknown, so err.message is not allowed"
       - "Nothing: err is typed as Anthropic.APIError automatically"
-      - "Nothing: catch variables are always typed as any"
+      - "Nothing: catch variables are always typed as any in TypeScript"
       - "Error: a catch block must rethrow every error it receives"
     answer: 0
     explain: "Strict mode types catch variables as unknown. The fix is also the better design: check err instanceof Anthropic.RateLimitError instead of matching message strings."
   - q: "Snippet 8. Claude Code launches this MCP server over stdio and immediately reports a connection error. Why?"
     options:
-      - "registerTool must be called after server.connect, not before"
+      - "registerTool must be called after server.connect, never before it"
       - "Zod shapes are not accepted as inputSchema by the SDK"
       - "console.log writes to stdout, which corrupts the JSON-RPC stream"
       - "stdio servers need an OAuth token before initialize"
