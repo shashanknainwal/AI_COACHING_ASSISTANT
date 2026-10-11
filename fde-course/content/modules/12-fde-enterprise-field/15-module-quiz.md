@@ -37,7 +37,7 @@ questions:
     explain: "Build wheels for the exact target, pin them with hashes, import them through intake, and install with --no-index. And an air-gapped enclave can't call a hosted model without an approved private path, so plan that too."
   - q: "In the backfill, about 3% of tickets were re-run and appended at the end of the file. Why does the chunked aggregation need two passes?"
     options:
-      - "pandas can't group data when a file is read with a chunksize argument"
+      - "Grouping isn't possible while a CSV file is being read in chunks"
       - "Attempts of one ticket can land in different chunks, so find the latest first"
       - "Costs must be computed before counts, or the totals come out in the wrong order"
       - "Reading a CSV file twice is faster than reading it once with every column"

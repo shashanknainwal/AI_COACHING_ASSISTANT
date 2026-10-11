@@ -3,11 +3,11 @@ title: "Exercise: The 50,000-Ticket Backfill, Done for Real"
 type: exercise
 minutes: 40
 hints:
-  - "Pass 1: `for chunk in pd.read_csv(path, usecols=[\"ticket_id\", \"attempt\"], chunksize=chunksize):` then `chunk.groupby(\"ticket_id\")[\"attempt\"].max()` and merge into a dict, keeping the larger value."
-  - "Pass 2: read with `dtype={\"category\": str}, keep_default_na=False` so an empty category stays `\"\"` instead of NaN. Keep the latest rows with `chunk[chunk[\"attempt\"] == chunk[\"ticket_id\"].map(latest)]`."
-  - "Add helper columns with `chunk.assign(category=..., tickets=1, refusals=(chunk[\"stop_reason\"] == \"refusal\").astype(int))`, then `groupby([\"month\", \"category\"])[[...]].sum()` and append to a list."
-  - "Combine the partial tables with `pd.concat(parts).groupby(level=[\"month\", \"category\"]).sum().sort_index()`. Sums of sums are still sums. Compute `cost_usd` once, after combining."
-  - "In `report`, `table.groupby(level=\"month\")[\"tickets\"].sum()` gives tickets per month. For the earliest tie, take `s[s == s.max()].index.min()`."
+  - "`iter_chunks`: open the file, wrap it in `csv.DictReader`, then loop `chunk = list(islice(reader, chunksize))` until it comes back empty. Convert `INT_COLUMNS` to `int` in each row, then `yield chunk`."
+  - "Pass 1 (`latest_attempts`): for every row in every chunk, keep the larger of `row[\"attempt\"]` and what's already stored for that ticket."
+  - "Pass 2 (`aggregate`): skip rows whose attempt isn't the ticket's latest. A `defaultdict` of small dicts keyed by `(month, category or \"(none)\")` holds the running totals. Sums of chunk totals are still totals."
+  - "Build the returned dict in `sorted(totals)` order and add `cost_usd` once per key at the end, with the given `cost()`."
+  - "In `report`, sum tickets per month and per category (skipping `\"(none)\"`). For the earliest tie, `min(by_month, key=lambda m: (-by_month[m], m))`."
 ---
 
 Sana Iqbal again. The overnight backfill finished: 50,000 historical support tickets classified so our routing rules can be retrained. The job wrote one row per model call to `/data/backfill_results.csv`. Before I tell our COO it worked, I need three numbers I trust: tickets by month and category, the refusal rate, and what it cost, including what the retries cost us.
@@ -16,9 +16,9 @@ One complication. About 3% of tickets hit `max_tokens` on the first try. The job
 
 ## Why chunks, at only 50,000 rows
 
-Honestly, this file fits in memory. The real one next quarter is every ticket since 2016, and the analytics VM you'll get has 4 GB of RAM. So you'll practise the pattern here, where you can check it: read the file in chunks, aggregate each chunk, and combine the partial results. Sums and counts combine across chunks. **Deduplication doesn't**: a ticket's two attempts can be in different chunks. That's why this takes two passes: the first finds each ticket's latest attempt, reading only two columns; the second aggregates.
+Honestly, this file fits in memory. The real one next quarter is every ticket since 2016, and the analytics VM you'll get has 4 GB of RAM. So you'll practise the pattern here, where you can check it: stream the file in chunks, aggregate each chunk, and keep only small running totals, so memory doesn't grow with the input. Sums and counts combine across chunks. **Deduplication doesn't**: a ticket's two attempts can be in different chunks. That's why this takes two passes. The first pass finds each ticket's latest attempt, which is one small number per ticket. The second pass aggregates.
 
-This is the module's one pandas exercise. The first run loads pandas into the browser, which takes several seconds.
+You'll use only the standard library (`csv`, `itertools`, `collections`). In production you'd likely use pandas, DuckDB or polars; the pattern is the same.
 
 ## The data
 
@@ -37,21 +37,27 @@ The job ran on Claude Haiku 5.5 with `effort: "low"`. `output_tokens` already in
 
 ## Your task
 
-Use `pd.read_csv(..., chunksize=chunksize)` for every read (call it as `pd.read_csv`; the tests watch it).
+**1. `iter_chunks(path, chunksize)`** is a **generator** that yields lists of at most `chunksize` rows. Each row is a dict from `csv.DictReader` with `attempt`, `input_tokens` and `output_tokens` converted to `int`. Every other function reads the file only through `iter_chunks` (the tests watch it).
 
-**1. `latest_attempts(path, chunksize)`** returns a dict of `ticket_id` to its highest `attempt`. Read only the `ticket_id` and `attempt` columns (`usecols`).
+**2. `latest_attempts(path, chunksize)`** returns a dict of `ticket_id` to its highest `attempt`.
 
-**2. `aggregate(path, chunksize)`** returns a DataFrame:
-- indexed by `["month", "category"]`, sorted;
-- with the columns `COLUMNS`: `tickets`, `refusals` (rows whose `stop_reason` is `"refusal"`), `input_tokens`, `output_tokens` and `cost_usd`;
-- counting **only each ticket's latest attempt**;
-- with an empty category shown as `"(none)"`.
+**3. `aggregate(path, chunksize)`** returns a dict keyed by `(month, category)`, in sorted key order:
+
+```python
+{("2024-01", "(none)"): {"tickets": 13, "refusals": 13, "input_tokens": 19369, "output_tokens": 0, "cost_usd": 0.0019},
+ ("2024-01", "billing"): {...}, ...}
+```
+
+- Count **only each ticket's latest attempt**.
+- `refusals` counts rows whose `stop_reason` is `"refusal"`.
+- An empty category becomes `"(none)"`.
+- `cost_usd` comes from `cost()`.
 
 The result must not depend on the chunk size.
 
-**3. `retry_overhead(path, chunksize)`** returns the dollars spent on attempts that a later attempt replaced.
+**4. `retry_overhead(path, chunksize)`** returns the dollars spent on attempts that a later attempt replaced.
 
-**4. `report(table)`** returns:
+**5. `report(table)`** returns:
 
 ```python
 {"tickets": 50000, "refusal_rate": 0.0124, "cost_usd": 14.37,

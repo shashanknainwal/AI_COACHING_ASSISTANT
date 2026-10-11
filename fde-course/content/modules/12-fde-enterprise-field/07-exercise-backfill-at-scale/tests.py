@@ -1,11 +1,11 @@
 import csv as _csv
-import pandas as _pd
+import inspect as _inspect
 
 _REF = None
 
 
 def _reference():
-    """Plain-Python answer, computed once from the same file."""
+    """Plain answer computed once from the same file, independently."""
     global _REF
     if _REF is None:
         with open(RESULTS_PATH, newline="") as f:
@@ -13,38 +13,53 @@ def _reference():
         latest = {}
         for r in rows:
             latest[r["ticket_id"]] = max(latest.get(r["ticket_id"], 0), int(r["attempt"]))
-        groups, overhead_in, overhead_out = {}, 0, 0
+        groups, oin, oout = {}, 0, 0
         for r in rows:
             if int(r["attempt"]) < latest[r["ticket_id"]]:
-                overhead_in += int(r["input_tokens"])
-                overhead_out += int(r["output_tokens"])
+                oin += int(r["input_tokens"])
+                oout += int(r["output_tokens"])
                 continue
-            key = (r["month"], r["category"] or "(none)")
-            g = groups.setdefault(key, [0, 0, 0, 0])
+            g = groups.setdefault((r["month"], r["category"] or "(none)"), [0, 0, 0, 0])
             g[0] += 1
             g[1] += r["stop_reason"] == "refusal"
             g[2] += int(r["input_tokens"])
             g[3] += int(r["output_tokens"])
-        _REF = {"latest": latest, "groups": groups, "overhead": (overhead_in * 0.10 + overhead_out * 0.50) / 1e6}
+        _REF = {"latest": latest, "groups": groups, "overhead": (oin * 0.10 + oout * 0.50) / 1e6}
     return _REF
 
 
 class _Spy:
-    """Wraps pd.read_csv to record how it was called."""
+    """Temporarily wraps the learner's iter_chunks to record chunk sizes."""
 
-    def __init__(self):
-        self.calls = []
-        self.real = _pd.read_csv
+    def __init__(self, fn):
+        self.g = fn.__globals__
+        self.calls, self.max_rows = [], 0
 
     def __enter__(self):
-        def spy(*args, **kwargs):
-            self.calls.append(kwargs)
-            return self.real(*args, **kwargs)
-        _pd.read_csv = spy
+        self.real = self.g["iter_chunks"]
+        def spy(path, chunksize=10_000):
+            self.calls.append(chunksize)
+            for chunk in self.real(path, chunksize):
+                self.max_rows = max(self.max_rows, len(chunk))
+                yield chunk
+        self.g["iter_chunks"] = spy
         return self
 
     def __exit__(self, *exc):
-        _pd.read_csv = self.real
+        self.g["iter_chunks"] = self.real
+
+
+def test_iter_chunks():
+    """iter_chunks() is a generator yielding lists of at most chunksize rows, ints converted"""
+    gen = iter_chunks(RESULTS_PATH, 7_000)
+    assert _inspect.isgenerator(gen), "iter_chunks should be a generator (use yield), so memory stays flat"
+    sizes, first = [], None
+    for chunk in gen:
+        sizes.append(len(chunk))
+        if first is None:
+            first = chunk[0]
+    assert max(sizes) == 7_000 and sum(sizes) == sum(1 for _ in open(RESULTS_PATH)) - 1, f"chunks should hold at most 7000 rows and cover every row, got sizes {sizes!r}"
+    assert isinstance(first["attempt"], int) and isinstance(first["input_tokens"], int) and isinstance(first["output_tokens"], int), f"convert attempt and token columns to int, got {first!r}"
 
 
 def test_latest_attempts():
@@ -54,57 +69,38 @@ def test_latest_attempts():
     ref = _reference()["latest"]
     assert len(got) == 50_000, f"expected 50,000 tickets, got {len(got)}"
     wrong = [t for t in ref if got.get(t) != ref[t]]
-    assert not wrong, f"{len(wrong)} tickets have the wrong latest attempt, for example {wrong[0]}: expected {ref[wrong[0]]}, got {got.get(wrong[0])!r}"
+    assert not wrong, f"{len(wrong)} tickets wrong, e.g. {wrong[0]}: expected {ref[wrong[0]]}, got {got.get(wrong[0])!r}"
 
 
-def test_reads_in_chunks():
-    """Every read_csv call uses the chunksize you were given"""
-    with _Spy() as spy:
+def test_reads_through_chunks():
+    """aggregate() reads the file only through iter_chunks, with your chunksize"""
+    with _Spy(aggregate) as spy:
         aggregate(RESULTS_PATH, 9_000)
-    assert spy.calls, "aggregate() never called pd.read_csv"
-    sizes = [c.get("chunksize") for c in spy.calls]
-    assert all(s == 9_000 for s in sizes), f"every pd.read_csv call should pass chunksize=9000, got {sizes!r}"
-
-
-def test_pass_one_reads_two_columns():
-    """latest_attempts() reads only ticket_id and attempt"""
-    with _Spy() as spy:
-        latest_attempts(RESULTS_PATH, 10_000)
-    assert spy.calls, "latest_attempts() never called pd.read_csv"
-    cols = spy.calls[0].get("usecols")
-    assert cols is not None and sorted(cols) == ["attempt", "ticket_id"], f"pass 1 should use usecols=['ticket_id', 'attempt'], got {cols!r}"
-
-
-def test_aggregate_shape():
-    """aggregate() returns a (month, category) index and the five columns, sorted"""
-    t = aggregate(RESULTS_PATH, 10_000)
-    assert t is not None, "aggregate returned None"
-    assert list(t.index.names) == ["month", "category"], f"index names should be ['month', 'category'], got {list(t.index.names)!r}"
-    assert list(t.columns) == COLUMNS, f"columns should be {COLUMNS}, got {list(t.columns)!r}"
-    assert t.index.is_monotonic_increasing, "sort the index"
-    assert ("2024-01", "(none)") in t.index, "an empty category should become '(none)'"
+    assert len(spy.calls) >= 2, f"two passes means at least two calls to iter_chunks, got {len(spy.calls)}"
+    assert all(c == 9_000 for c in spy.calls), f"pass chunksize through, got {spy.calls!r}"
+    assert spy.max_rows <= 9_000, "no chunk may exceed chunksize"
 
 
 def test_aggregate_values():
     """aggregate() counts each ticket once, at its latest attempt, even across chunk boundaries"""
     t = aggregate(RESULTS_PATH, 6_000)
+    assert t is not None, "aggregate returned None"
     ref = _reference()["groups"]
-    assert len(t) == len(ref), f"expected {len(ref)} (month, category) rows, got {len(t)}"
-    assert int(t["tickets"].sum()) == 50_000, f"expected 50,000 tickets in total, got {int(t['tickets'].sum())}: did you drop the superseded attempts?"
+    assert list(t) == sorted(ref), "keys should be every (month, category) pair, sorted; an empty category is '(none)'"
+    assert sum(v["tickets"] for v in t.values()) == 50_000, "expected 50,000 tickets in total: did you drop superseded attempts?"
     for key, (n, refusals, tin, tout) in ref.items():
-        row = t.loc[key]
-        got = (int(row["tickets"]), int(row["refusals"]), int(row["input_tokens"]), int(row["output_tokens"]))
-        assert got == (n, refusals, tin, tout), f"{key}: expected tickets, refusals, input, output = {(n, refusals, tin, tout)}, got {got}"
-        want_cost = (tin * 0.10 + tout * 0.50) / 1e6
-        assert abs(float(row["cost_usd"]) - want_cost) < 1e-9, f"{key}: cost_usd should be {want_cost:.6f}, got {float(row['cost_usd']):.6f}"
+        row = t[key]
+        got = (row["tickets"], row["refusals"], row["input_tokens"], row["output_tokens"])
+        assert got == (n, refusals, tin, tout), f"{key}: expected {(n, refusals, tin, tout)}, got {got}"
+        want = (tin * 0.10 + tout * 0.50) / 1e6
+        assert abs(row["cost_usd"] - want) < 1e-9, f"{key}: cost_usd should be {want:.6f}, got {row['cost_usd']!r}"
 
 
 def test_chunk_size_does_not_change_answer():
     """aggregate() gives the same table for different chunk sizes"""
     a = aggregate(RESULTS_PATH, 4_999)
-    b = aggregate(RESULTS_PATH, 50_000)
-    assert a is not None and b is not None, "aggregate returned None"
-    assert a[["tickets", "refusals"]].equals(b[["tickets", "refusals"]]), "the result depends on chunk size: combine partial results by summing them"
+    b = aggregate(RESULTS_PATH, 60_000)
+    assert a is not None and a == b, "the result depends on chunk size: dedupe needs the first pass"
 
 
 def test_retry_overhead():
@@ -116,30 +112,23 @@ def test_retry_overhead():
 
 def test_report():
     """report() returns the headline numbers"""
-    t = aggregate(RESULTS_PATH, 10_000)
-    got = report(t)
+    got = report(aggregate(RESULTS_PATH, 10_000))
     assert got is not None, "report returned None"
     ref = _reference()["groups"]
     refusals = sum(v[1] for v in ref.values())
-    cost_total = sum((v[2] * 0.10 + v[3] * 0.50) / 1e6 for v in ref.values())
+    total = sum((v[2] * 0.10 + v[3] * 0.50) / 1e6 for v in ref.values())
     assert got["tickets"] == 50_000, f"got {got['tickets']!r}"
-    assert got["refusal_rate"] == round(refusals / 50_000, 4), f"expected {round(refusals / 50_000, 4)}, got {got['refusal_rate']!r}"
-    assert got["cost_usd"] == round(cost_total, 2), f"expected {round(cost_total, 2)}, got {got['cost_usd']!r}"
-    months, cats = {}, {}
-    for (m, c), v in ref.items():
-        months[m] = months.get(m, 0) + v[0]
-        if c != "(none)":
-            cats[c] = cats.get(c, 0) + v[0]
-    assert got["busiest_month"] == max(sorted(months), key=lambda m: months[m]), f"got {got['busiest_month']!r}"
-    assert got["top_category"] == max(sorted(cats), key=lambda c: cats[c]), f"top_category ignores '(none)', got {got['top_category']!r}"
+    assert got["refusal_rate"] == round(refusals / 50_000, 4), f"got {got['refusal_rate']!r}"
+    assert got["cost_usd"] == round(total, 2), f"expected {round(total, 2)}, got {got['cost_usd']!r}"
 
 
 def test_report_ties():
-    """report() breaks ties by the earliest month and the first category name"""
-    idx = _pd.MultiIndex.from_tuples([("2025-02", "card"), ("2025-01", "billing"), ("2025-01", "(none)"), ("2025-02", "billing")], names=["month", "category"])
-    t = _pd.DataFrame({"tickets": [5, 3, 2, 0], "refusals": [0, 0, 2, 0], "input_tokens": [1, 1, 1, 1],
-                       "output_tokens": [1, 1, 1, 1], "cost_usd": [0.5, 0.25, 0.25, 0.0]}, index=idx)
+    """report() breaks ties by the earliest month and the first category name, ignoring '(none)'"""
+    def row(n, r=0):
+        return {"tickets": n, "refusals": r, "input_tokens": 1, "output_tokens": 1, "cost_usd": 0.25}
+    t = {("2025-01", "(none)"): row(9, 9), ("2025-01", "billing"): row(1), ("2025-02", "card"): row(5),
+         ("2025-02", "billing"): row(4), ("2025-03", "login"): row(2)}
     got = report(t)
-    assert got["busiest_month"] == "2025-01", f"2025-01 and 2025-02 both have 5 tickets; expected the earlier one, got {got['busiest_month']!r}"
-    assert got["top_category"] == "card", f"got {got['top_category']!r}"
-    assert got["refusal_rate"] == 0.2 and got["cost_usd"] == 1.0, f"got {got!r}"
+    assert got["busiest_month"] == "2025-01", f"2025-01 and 2025-02 both have 10; expected the earlier, got {got['busiest_month']!r}"
+    assert got["top_category"] == "billing", f"billing and card both have 5; expected billing, got {got['top_category']!r}"
+    assert got["refusal_rate"] == 0.4286 and got["cost_usd"] == 1.25, f"got {got!r}"
