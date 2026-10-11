@@ -67,4 +67,6 @@ Priya sponsored your prototype, and it just gave her the wrong overdraft fee. No
 
 Good looks like this: own the mistake and explain its cause plainly; propose grounding, evaluation and human checks instead of promises; show cost as a method with assumptions, using the prices and caching from lesson 7; answer privacy questions without claiming anything you can't source, and name the controls the bank owns; finish with a pilot plan, success measures and stop criteria.
 
-You have up to eight turns. After at least four exchanges, press **End and get feedback** for a scored debrief. Priya Desai and Harbor Bank are fictional, played by Claude.
+A few turns in, Kwame Mensah, the bank's lead platform engineer, joins with technical questions about platforms, caching and why his existing search isn't enough. Answer him as precisely as you answer Priya.
+
+You have up to eight turns. After at least four exchanges, press **End and get feedback** for a scored debrief. Priya Desai, Kwame Mensah and Harbor Bank are fictional, played by Claude.
