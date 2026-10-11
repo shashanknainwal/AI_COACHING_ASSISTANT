@@ -11,7 +11,7 @@ minutes: 16
 The SDK's `messages.stream()` helper accumulates events for you, and you should use it in production. You still need the wire format, for three reasons:
 
 - **You'll build proxies.** A gateway, a backend-for-frontend or a WebSocket bridge passes events through, and has to understand them to meter usage, cut off a refusal or forward a cancel.
-- **Interviews use it.** Streaming parsers are a common practical coding prompt for applied AI roles, and Perplexity's coding round is reported to include streaming (Reported, see TRACKS_PLAN and E6).
+- **Interviews use it.** Perplexity's coding round is described as domain-flavoured, with streaming named as an example topic (Reported, see the course research in E6). A streaming parser is a natural practical prompt for any applied AI coding round.
 - **Bugs live here.** "The UI shows half an answer and then nothing" is almost always an unhandled event type.
 
 ## The event flow
