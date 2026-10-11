@@ -10,6 +10,8 @@ Five independent reviewers read the whole course, each acting as a senior hiring
 
 Between them they read all 241 lessons, every rubric, persona brief and quiz, and the exercise code. They checked API and platform facts against the live docs at platform.claude.com and the claude-api skill, recomputed about 60 worked numbers, and drove the app with Playwright at desktop and phone widths. Nobody edited anything during the review.
 
+> **Status, 2026-10-11:** every item in sections 3 and 6 (P0, P1, P2 and the next wave) and the section 5 lists A–I has been built on branch `claude/fde-course-platform-gf06sa`. See `docs/HANDOFF.md` → "Best-in-market upgrade" for what shipped, and the owner steps (two SQL files, refund line). Still open, by design: real testimonials and outcome data (need real learners), a human community space (owner sets `NEXT_PUBLIC_COMMUNITY_URL`), instructor name/photo (owner env vars), and an end-to-end capstone run on a real API key.
+
 ---
 
 ## 1. Verdict
