@@ -1,0 +1,3 @@
+Classify the customer support ticket into a category.
+
+Categories: order_status, returns, damaged_item, billing, account, product_question.

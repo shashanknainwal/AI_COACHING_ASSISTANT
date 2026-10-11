@@ -1,0 +1,20 @@
+{"id": "q01", "query": "How long do I have to send something back?", "relevant": ["returns-policy"]}
+{"id": "q02", "query": "my pen showed up broken", "relevant": ["damaged-items"]}
+{"id": "q03", "query": "how much is next-day delivery", "relevant": ["shipping"]}
+{"id": "q04", "query": "parcel says delivered but I can't find it", "relevant": ["order-tracking"]}
+{"id": "q05", "query": "can I fix a spelling mistake in the name I asked you to put on the pen", "relevant": ["engraving"]}
+{"id": "q06", "query": "I got billed two times", "relevant": ["billing"]}
+{"id": "q07", "query": "forgot my login", "relevant": ["accounts"]}
+{"id": "q08", "query": "when do reward points show up", "relevant": ["loyalty"]}
+{"id": "q09", "query": "discount for a school buying lots of notebooks", "relevant": ["wholesale"]}
+{"id": "q10", "query": "how do I clean my fountain pen", "relevant": ["product-care"]}
+{"id": "q11", "query": "Do you deliver to Toronto?", "relevant": ["shipping"]}
+{"id": "q12", "query": "is the gift voucher refundable", "relevant": ["returns-policy"]}
+{"id": "q13", "query": "the box came with the wrong colour notebook", "relevant": ["damaged-items"]}
+{"id": "q14", "query": "remove all my personal information", "relevant": ["accounts"]}
+{"id": "q15", "query": "will this notebook bleed with a wet broad nib", "relevant": ["product-care"]}
+{"id": "q16", "query": "my package is a week overdue, what will you do", "relevant": ["order-tracking"]}
+{"id": "q17", "query": "who pays customs on orders to London", "relevant": ["shipping"]}
+{"id": "q18", "query": "how many dollars of rewards do 300 points give me", "relevant": ["loyalty"]}
+{"id": "q19", "query": "can my office pay on account instead of upfront", "relevant": ["wholesale"]}
+{"id": "q20", "query": "charge for a return label when I simply changed my mind", "relevant": ["returns-policy"]}

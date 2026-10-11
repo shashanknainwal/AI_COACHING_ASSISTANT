@@ -1,0 +1,30 @@
+{"id": "t01", "text": "Where is my order QF-2210? Tracking hasn't updated in four days.", "label": "order_status", "ambiguous": false}
+{"id": "t02", "text": "I'd like to send back the A5 notebook, it's unopened. How do I start a return?", "label": "returns", "ambiguous": false}
+{"id": "t03", "text": "The fountain pen arrived with a cracked barrel. Photo attached.", "label": "damaged_item", "ambiguous": false}
+{"id": "t04", "text": "Why was I charged $14.95 for shipping? I thought it was free.", "label": "billing", "ambiguous": false}
+{"id": "t05", "text": "I can't log in. The password reset email never arrives.", "label": "account", "ambiguous": false}
+{"id": "t06", "text": "Is your black ink safe for vintage pens with steel nibs?", "label": "product_question", "ambiguous": false}
+{"id": "t07", "text": "My parcel says delivered but it's not here. Order QF-2318.", "label": "order_status", "ambiguous": false}
+{"id": "t08", "text": "Can I exchange the green rollerball for a blue one?", "label": "returns", "ambiguous": false}
+{"id": "t09", "text": "Two of the ink bottles leaked all over the box.", "label": "damaged_item", "ambiguous": false}
+{"id": "t10", "text": "I see two charges for one order on my credit card statement.", "label": "billing", "ambiguous": false}
+{"id": "t11", "text": "Please delete my account and all my data.", "label": "account", "ambiguous": false}
+{"id": "t12", "text": "What's the difference between 90 gsm and 120 gsm paper for fountain pens?", "label": "product_question", "ambiguous": false}
+{"id": "t13", "text": "Has QF-2290 shipped yet? I need it before Friday.", "label": "order_status", "ambiguous": false}
+{"id": "t14", "text": "I returned a pen two weeks ago and still haven't seen the refund.", "label": "returns", "ambiguous": true}
+{"id": "t15", "text": "You sent me a red notebook but I ordered grey.", "label": "damaged_item", "ambiguous": true}
+{"id": "t16", "text": "Can I get a VAT invoice with my company name for order QF-2155?", "label": "billing", "ambiguous": false}
+{"id": "t17", "text": "How do I change the email address on my account?", "label": "account", "ambiguous": false}
+{"id": "t18", "text": "Do you engrave leather notebook covers, and how many characters can I have?", "label": "product_question", "ambiguous": false}
+{"id": "t19", "text": "Order QF-2402 has been 'processing' for six days. Is something wrong?", "label": "order_status", "ambiguous": false}
+{"id": "t20", "text": "The engraving on my pen says 'Happy Birthdya'. I typed it right, I checked my confirmation email.", "label": "damaged_item", "ambiguous": true}
+{"id": "t21", "text": "I want my money back for the sample pack, I didn't like any of the inks.", "label": "returns", "ambiguous": false}
+{"id": "t22", "text": "My gift card code says it's invalid at checkout.", "label": "billing", "ambiguous": true}
+{"id": "t23", "text": "Someone changed my password and placed an order I didn't make.", "label": "account", "ambiguous": true}
+{"id": "t24", "text": "Will the shimmer ink clog my pen if I leave it for a month?", "label": "product_question", "ambiguous": false}
+{"id": "t25", "text": "Express shipping was supposed to take two days. It's day five. QF-2377.", "label": "order_status", "ambiguous": false}
+{"id": "t26", "text": "How much is the return label fee if I just changed my mind?", "label": "returns", "ambiguous": false}
+{"id": "t27", "text": "The notebook pages are stuck together and water-stained.", "label": "damaged_item", "ambiguous": false}
+{"id": "t28", "text": "Can I pay by bank transfer for a wholesale order?", "label": "billing", "ambiguous": true}
+{"id": "t29", "text": "I never got the confirmation email to activate my Inkwell Rewards account.", "label": "account", "ambiguous": false}
+{"id": "t30", "text": "Which of your pens is best for left-handed writers?", "label": "product_question", "ambiguous": false}
