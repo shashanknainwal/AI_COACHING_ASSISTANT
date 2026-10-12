@@ -33,7 +33,7 @@ Keep the set focused. Too many overlapping tools is a top cause of "wrong tool" 
 The model reads your tool definition as part of the prompt. Write it like one.
 
 - **Names** say the action and object: `find_alternatives`, not `search2`.
-- **Descriptions say when to call it**, not just what it does: "Call this when a flight is cancelled or the traveler wants to rebook." Anthropic's tool-use docs note that recent Opus models reach for tools more conservatively, and trigger conditions in descriptions measurably raise the should-call rate.
+- **Descriptions say when to call it**, not just what it does: "Call this when a flight is cancelled or the traveler wants to rebook." Anthropic's migration notes describe Claude Opus 4.8 as more conservative about reaching for custom tools and sub-agents unless told when they apply. That observation is documented for 4.8, not for Opus 5.5, but the fix is cheap on any model: trigger conditions in descriptions tell the model when a call is warranted.
 - **Describe every property**, with a format example: `"Booking reference such as FW7Q2K"`.
 - **Use `enum` for closed sets** (`reason`: `schedule_change`, `airline_cancellation`, ...). The model can't invent a value that isn't listed, and your reports get clean categories.
 - **Mark only truly required fields as required.**
@@ -70,8 +70,8 @@ A write tool can run twice for reasons that have nothing to do with the model's 
 
 | Pattern | How it works |
 |---|---|
-| Idempotency key | Pass a unique key with each write; the downstream system returns the original result for a repeated key. The `tool_use` block's `id` is a natural key: one model decision, one effect |
-| Natural key check | "Refund for booking X with reason Y already exists" → return it instead of creating another |
+| Idempotency key | Pass a unique key with each write; the downstream system returns the original result for a repeated key. The `tool_use` block's `id` works as the key for **replays of the same call**: a duplicate webhook, a resumed run, your own retry of that execution. It does **not** catch the model calling `issue_refund` again, or a turn regenerated after a timeout: each of those is a new `tool_use` block with a new id |
+| Natural key check | "Refund for booking X with reason Y already exists" → return it instead of creating another. This is the check that covers re-issued calls and regenerated turns, so risky writes need it in addition to the id |
 | Conditional writes | "Cancel only if status is `confirmed`" |
 
 Reads are safe to repeat. Writes must be safe to repeat. Say this sentence in your design round.
@@ -131,6 +131,6 @@ Original prompts in the style of a design round. Two minutes each.
 > - Prefer dedicated, typed tools over a god tool: your harness can gate, audit, render and parallelize them.
 > - Descriptions say *when* to call a tool; `strict: true` guarantees shape, never meaning. Ranges, ownership and policy live in code.
 > - Return compact results with stable IDs and errors that tell the model how to fix the call.
-> - Make writes idempotent; the `tool_use` id is a natural idempotency key.
+> - Make writes idempotent: the `tool_use` id dedupes replays of one call, and a natural-key check (booking plus reason) catches the model re-issuing the call with a new id.
 > - Approval gates live in code, fail closed, approve the exact call, and audit every decision.
 > - MCP earns its place when many clients or teams share one system; for a single app, plain tools are simpler.

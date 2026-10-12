@@ -10,7 +10,7 @@ hints:
   - "`compare`: build the baseline curve once. For every other option, the break-even month is the first `m + 1` where `curve[m] <= base_curve[m]`, else `None`. Sort by `(total, name)` and add `rank` starting at 1."
 ---
 
-Grace Liu here. **Harborview Mutual** (fictional) is an insurer that processes about 40,000 claim documents a month. Today a team of adjusters reads every one: eight minutes each, at a fully loaded $42 an hour. The VP of Claims has two proposals on her desk. One is a claims-intake product from an independent software vendor built on a frontier model. The other is an internal build on the Claude API that her platform team wants to own.
+Grace Liu here. **Harborview Mutual** (fictional) is an insurer that processes about 40,000 claim documents a month. Today a team of adjusters reads every one: eight minutes each, at a fully loaded $42 an hour. Rosa Delgado, the VP of Claims (also fictional), has two proposals on her desk. One is a claims-intake product from an independent software vendor built on a frontier model. The other is an internal build on the Claude API that her platform team wants to own.
 
 She asked us one question: "Which one is cheaper, and when does it pay for itself?" The honest answer is "it depends on the horizon and on how much human review each option still needs", so we'll show her the numbers instead of an opinion. Build the model in plain Python. Prices are passed in, never hard-coded in the math, so we can re-run it when the price list changes or the customer moves to a cloud platform with different rates.
 
@@ -67,6 +67,8 @@ Once it passes, look at what the numbers say. They are the point of the exercise
 
 - **Model spend is under $500 a month.** Human review is $16,800 and fixed costs are $18,000. On most document workflows the API bill is the smallest line. The decision turns on review rate and time to value, not token prices.
 - **The horizon flips the answer.** Over 12 months the build is cheapest. Over 6 months, buying wins because it goes live in month 2. State the horizon in the first line of your recommendation.
+- **Check the thinking tokens.** The 800 output tokens assume `effort` is set explicitly and measured. Sonnet 5.5 defaults to `high` effort and thinks by default, and thinking is billed as output. Run the workload at 2,400 output tokens (3x) and the API line rises from about $485 to about $933 a month. It's still under 3% of the build option's run cost, so the ranking holds, but say it out loud.
+- **The cache hit rate on batched traffic is optimistic.** The model applies the same 95% hit rate to the 60% of traffic sent through the Batch API. Anthropic's cost guidance notes that cache hits inside a concurrent batch are best-effort, so treat 95% as a ceiling for that share. Here a lower hit rate moves the bill by tens of dollars; on a prefix-heavy workload it can matter more.
 - **Every input is an assumption.** The 15% review rate is a guess until a proof of concept measures it. Run the model at 25% and see how the ranking moves. That is your sensitivity analysis, and the subject of lesson 4.
 
 ## Defend it

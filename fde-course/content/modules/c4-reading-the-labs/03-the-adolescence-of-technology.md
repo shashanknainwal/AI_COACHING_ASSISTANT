@@ -10,7 +10,7 @@ Read the original first: [The Adolescence of Technology: Confronting and Overcom
 
 ## Why it's worth your time
 
-No public source says lab interviewers quiz candidates on this essay. But it's the most complete public statement of how Anthropic's CEO thinks about risk, regulation and the company's own role. If you're interviewing there, it's the best material you have for a specific "why this lab" answer and for holding a real conversation in the values round (both covered in C1 and C5). If you're interviewing elsewhere, it's the clearest version of a position you'll be asked to agree or disagree with.
+It's the most complete public statement of how Anthropic's CEO thinks about risk, regulation and the company's own role. If you're interviewing there, it's the best material you have for a specific "why this lab" answer and for holding a real conversation in the values round (both covered in C1 and C5). If you're interviewing elsewhere, it's the clearest version of a position you'll be asked to agree or disagree with.
 
 ## The two-sentence summary
 

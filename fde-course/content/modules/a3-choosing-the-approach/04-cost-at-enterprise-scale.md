@@ -22,7 +22,7 @@ Claude list prices per million tokens, from [claude.com/pricing](https://claude.
 | Claude Sonnet 5.5 | $2.00 | $10.00 | $0.10 |
 | Claude Haiku 5.5 (prompts up to 100K tokens) | $0.10 | $0.50 | $0.01 (not used below) |
 
-Cache writes cost 1.25x the input price for the default 5-minute lifetime. The Batch API is 50% off. Output tokens include thinking.
+Cache writes cost 1.25x the input price for the default 5-minute lifetime. The Batch API is 50% off (cache hits inside a concurrent batch are best-effort, so don't count on your interactive hit rate there). Output tokens include thinking: all three models think by default, Sonnet 5.5 at `high` effort and Opus 5.5 and Haiku 5.5 at `medium`. Every estimate below either sets `effort` explicitly or carries a thinking line.
 
 ## Unit economics: price the business unit
 
@@ -42,6 +42,9 @@ Proposed design on Sonnet 5.5: about 4 model calls per ticket. Each call sends a
 | **Total, cached** | **$0.0100** | **$0.040** | **$12,000** |
 | Same without caching (12,500 x $2 + 400 x $10) | $0.0290 | $0.116 | $34,800 |
 | Opus 5.5, cached (10,000 x $0.20 + 2,500 x $4 + 400 x $20) | $0.0200 | $0.080 | $24,000 |
+| Thinking sensitivity: Sonnet 5.5 at default `high` effort, output 3x (1,200 tokens) | $0.0180 | $0.072 | $21,600 |
+
+The 400 output tokens assume `effort` is set explicitly (for example `low` or `medium` for a support loop) and measured in the pilot. If nobody sets it, Sonnet 5.5 runs at `high`, thinking is billed as output, and the cost can nearly double. It also adds to time to first token, because thinking happens before the reply starts.
 
 Now the value side. Suppose the assistant resolves 35% of tickets end to end and drafts replies for the rest, saving an agent 3 minutes each:
 
@@ -67,12 +70,13 @@ The business case rides on resolution rate and time saved, not on token prices. 
 
 ### When token cost does dominate
 
-Flip the workload. **Halstead Marketplace** (fictional) wants to classify 20 million product listings a month for policy violations. Each request is about 1,500 tokens in and 50 out (measure the real output, including any thinking). Value per item is a fraction of a cent.
+Flip the workload. **Halstead Marketplace** (fictional) wants to classify 20 million product listings a month for policy violations. Each request is about 1,500 tokens in and 50 out, with `effort: "low"` set explicitly (measure the real output, including any thinking). Value per item is a fraction of a cent.
 
 | Model | Per item | Per month |
 |---|---:|---:|
 | Haiku 5.5: 1,500 x $0.10 + 50 x $0.50 per million | $0.000175 | $3,500 |
 | Opus 5.5: 1,500 x $4 + 50 x $20 per million | $0.0070 | $140,000 |
+| Thinking line: Haiku 5.5 at default `medium` effort, if it adds 300 thinking tokens (1,500 x $0.10 + 350 x $0.50) | $0.000325 | $6,500 |
 
 That's a 40x spread. On high-volume, low-value-per-item work with checkable outputs, model choice and batch decide whether the project exists. Run the cheaper model against the eval, and price the failures it adds before you trust it.
 

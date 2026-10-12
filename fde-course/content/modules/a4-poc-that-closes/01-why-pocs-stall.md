@@ -33,7 +33,7 @@ Write the plan before kickoff and get the decision owner to agree to it in writi
 
 ### 1. The business outcome and the question
 
-One or two sentences. *"Halvorsen Mutual wants to cut claim-intake keying time. The POC answers: can automated extraction meet the accuracy bar on our real claims, at a cost and speed that make a production rollout worth funding?"* The question is what you'll answer at the readout. If you can't write it, you're not ready to start.
+One or two sentences. *"Thornbury Mutual wants to cut claim-intake keying time. The POC answers: can automated extraction meet the accuracy bar on our real claims, at a cost and speed that make a production rollout worth funding?"* The question is what you'll answer at the readout. If you can't write it, you're not ready to start.
 
 ### 2. Scope: in and out
 
@@ -56,7 +56,7 @@ Good criteria share a few traits:
 - **Few.** Three to six. Twelve criteria guarantee that something is always red and nothing is decisive.
 - **Tied to the business outcome.** Accuracy matters because rework costs money. Say how.
 - **Quality, operations and safety together.** At least one quality metric, latency and cost (operations), and any hard guardrail (for example "zero personal data written outside the claims system"). A system that's accurate but too slow or too expensive doesn't close.
-- **Sized for the evidence.** A 95% target measured on 40 cases is a coin toss: the 95% interval on 38 out of 40 runs from about 83% to 99%. Agree the eval set's size along with the target. The E4 module (*Evals as Engineering*) covers the statistics; as an architect you need to know that the margin is roughly ±10 points at 100 cases and ±5 at 400.
+- **Sized for the evidence.** A 95% target measured on 40 cases is a coin toss: the 95% interval on 38 out of 40 runs from about 83% to 99%. Agree the eval set's size along with the target. The E4 module (*Evals as Engineering*) covers the statistics; as an architect you need the rough sizes near a 95% target. The interval is lopsided there: 95 out of 100 gives a Wilson interval of about 89% to 98% (roughly 6 points down, 3 up), and 380 out of 400 gives about 92% to 97% (roughly 2 to 3 points either way). The familiar "±10 at 100 cases" holds only near a 50% pass rate.
 - **A borderline rule.** Decide up front what happens when a result lands right at the line. "Within 2% of the target counts as borderline, and borderline must-haves mean a conditional go with a fix plan" is a sentence that saves a week of argument later. You'll build exactly this rule in the next exercise.
 
 ### Why baselines matter so much

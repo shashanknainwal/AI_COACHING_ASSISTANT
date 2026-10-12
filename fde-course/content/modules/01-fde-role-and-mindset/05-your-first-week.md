@@ -1,7 +1,7 @@
 ---
 title: Your First Week on an Engagement
 type: reading
-minutes: 5
+minutes: 7
 ---
 
 > **By the end of this lesson** you will be able to run a kickoff, find the four key people, and write a one-page engagement brief.
@@ -42,17 +42,31 @@ Not scope:  EHR write-back (phase 2, pending vendor API access).
 People:     Sponsor: Dana Ruiz (VP Ops) · Champion: Priya Nair (Intake Lead)
             Security review: Sam Okafor (IT Director)
 Risks:      EHR API approval may take 6+ weeks. Handwritten referrals ~15%.
-Next 2 wks: Profile 1 month of faxes; extraction prototype on 50 samples.
+            Referrals are PHI: no real faxes to the model until a BAA
+            is signed and HIPAA scope is confirmed (Sam + account team).
+Next 2 wks: Profile 1 month of faxes on-site; extraction prototype on 50
+            de-identified samples until the BAA is in place.
 Asks:       Sandbox credentials (Sam, Mar 8). 2 hrs/wk of Priya's time.
 ```
 
 A line you can't fill is a discovery gap. Once the sponsor replies "looks right", it's your written scope for week-5 change requests.
 
+## Regulated data changes week one
+
+Brightline's referrals are protected health information (PHI) under HIPAA, and Brightline is a covered entity. That changes the order of work:
+
+- **A Business Associate Agreement (BAA) comes first.** Any vendor that processes PHI for Brightline, including the AI provider and your own company, needs a BAA before real patient data flows. Ask in the kickoff who signs it and how long their legal review takes.
+- **HIPAA readiness is set up, not assumed.** Anthropic offers HIPAA readiness for eligible Claude API features with a signed BAA, but not every platform or feature is covered (the Architect track's A2 module goes deeper). Confirm the exact scope, platform and features in writing with the customer's Anthropic account team before you design around them. "Claude is HIPAA compliant" is not a sentence an FDE says.
+- **Prototype without PHI.** Until the BAA is in place, work with de-identified or synthetic referrals, or profile the data on Brightline's own machines without sending it anywhere.
+- **Minimum necessary.** Send the model only the fields a step needs, and keep fax content and patient fields out of your logs. Request IDs, timings and token counts are enough to debug.
+
+Put the BAA on the risk line of your brief with an owner and a date. In regulated work it is often the critical path, ahead of any code.
+
 ## Week-one checklist
 
 - [ ] Notes shared within 24 hours; the four roles named
 - [ ] Metric agreed with a baseline (or a plan for one)
-- [ ] Data access requested; security review started
+- [ ] Data access requested; security review started; for regulated data, the BAA owner and timeline known
 - [ ] Brief v1 acknowledged; weekly update agreed
 
 **Cadence:** a short written update, same day every week: **Shipped**, **Metric**, **Next**, **Need from you**.
@@ -60,3 +74,4 @@ A line you can't fill is a discovery gap. Once the sponsor replies "looks right"
 > **Key takeaways**
 > - Leave the kickoff with a metric, named people, risks and owned actions.
 > - No sponsor by end of week one is your top risk.
+> - With regulated data (PHI), the BAA and confirmed HIPAA scope come before any real data reaches a model.

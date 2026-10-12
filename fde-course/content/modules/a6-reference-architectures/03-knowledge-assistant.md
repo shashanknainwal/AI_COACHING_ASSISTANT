@@ -28,7 +28,7 @@ If you design for those three, the rest is standard retrieval engineering. The A
 
 ## Components and data flow
 
-Fictional customer: **Halvorsen Industrial**, a manufacturer with 12,000 employees, content in a wiki, shared drives, an HR policy portal and a quality-management system with restricted procedures.
+Fictional customer: **Brennick Industrial**, a manufacturer with 12,000 employees, content in a wiki, shared drives, an HR policy portal and a quality-management system with restricted procedures.
 
 **Offline path (indexing):**
 
@@ -87,7 +87,7 @@ Compare per question on Sonnet 5.5 (prices per million: input $2, output $10, ca
 | Whole 300K-token handbook in a cached prefix | 300,000 x $0.10/M + 400 output x $10/M = about $0.034 | Each cache write costs 300,000 x $2.50/M = $0.75 when the cache has expired |
 | Retrieval of 8 chunks (see below) | about $0.016 | Plus indexing, connectors and vector store |
 
-The long-context option costs about twice as much per question but deletes a whole subsystem. It fits a single handbook or a product manual set under a few hundred thousand tokens, with one permission level. It doesn't fit Halvorsen: millions of documents, per-document permissions, constant change.
+The long-context option costs about twice as much per question but deletes a whole subsystem. It fits a single handbook or a product manual set under a few hundred thousand tokens, with one permission level. It doesn't fit Brennick: millions of documents, per-document permissions, constant change.
 
 ## Evals and launch gate
 
@@ -123,7 +123,7 @@ Cost drivers:
 3. **Conversation history** carried into each follow-up.
 4. **Output length.** Short answers with citations are cheaper and better liked.
 
-Halvorsen assumptions: 25% of 12,000 employees active daily (3,000), 5 questions each, so 15,000 questions a day over 22 working days a month.
+Brennick assumptions: 25% of 12,000 employees active daily (3,000), 5 questions each, so 15,000 questions a day over 22 working days a month.
 
 Per question:
 
@@ -132,10 +132,11 @@ Per question:
 | Query rewrite on Haiku 5.5 | 800 in, 60 out | $0.10 / $0.50 | $0.00011 |
 | Cached prefix on Sonnet 5.5 (rules, format) | 3,000 | $0.10 | $0.0003 |
 | Fresh input (8 chunks, history, question) | 6,000 | $2.00 | $0.0120 |
-| Output | 400 | $10.00 | $0.0040 |
+| Output (with `effort` set explicitly) | 400 | $10.00 | $0.0040 |
 | **Total** | | | **about $0.0164** |
+| Thinking sensitivity: output 3x at Sonnet 5.5's default `high` effort | 1,200 | $10.00 | total about $0.0244 |
 
-15,000 questions a day is about **$246 a day**, about **$5,400 a month**, or **45 cents per employee per month**. Fresh retrieved context is about three quarters of the cost, so "retrieve 5 chunks instead of 8" is the first lever, if recall on the golden set holds.
+15,000 questions a day is about **$246 a day**, about **$5,400 a month**, or **45 cents per employee per month**. If thinking triples output, it's about $366 a day and $8,050 a month, so set `effort` deliberately for a Q&A workload and measure thinking tokens in the pilot. Fresh retrieved context is about three quarters of the base cost, so "retrieve 5 chunks instead of 8" is the first lever, if recall on the golden set holds.
 
 ## Buy, build, or both
 
@@ -164,4 +165,4 @@ Original practice prompts:
 > - Enforce permissions inside the search query. Filtering after generation is too late.
 > - Freshness is a per-source contract with a monitor, not a hope.
 > - Claude's citations work on every platform but can't be combined with structured outputs in one request.
-> - At Halvorsen's volume the assistant costs about 45 cents per employee per month. For a small single-permission corpus, long context with caching can replace retrieval entirely.
+> - At Brennick's volume the assistant costs about 45 cents per employee per month. For a small single-permission corpus, long context with caching can replace retrieval entirely.

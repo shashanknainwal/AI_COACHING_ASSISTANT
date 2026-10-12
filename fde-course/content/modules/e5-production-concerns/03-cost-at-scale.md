@@ -42,17 +42,19 @@ Two consequences that strong candidates mention unprompted:
 
 ## Worked example: invoice extraction at volume
 
-Ledgerline (fictional) extracts fields from 200,000 invoices a month. Each request has a 12,000-token stable prefix (instructions, schema, worked examples), a 3,000-token invoice, and a 600-token JSON answer. On Claude Sonnet 5.5 ($2 input, $10 output, $0.10 cache read):
+Ledgerline (fictional) extracts fields from 200,000 invoices a month. Each request has a 12,000-token stable prefix (instructions, schema, worked examples), a 3,000-token invoice, and a 600-token JSON answer. It runs on Claude Sonnet 5.5 ($2 input, $10 output, $0.10 cache read) with `output_config={"effort": "low"}` set explicitly, because Sonnet 5.5 defaults to `high`. Assume about 400 thinking tokens per request at that setting, so each request bills 600 + 400 = 1,000 output tokens:
 
 | Configuration | Per request | Per month |
 |---|---:|---:|
-| No caching: 15,000 × $2 + 600 × $10 | $0.0360 | $7,200 |
-| Prefix cached (steady state): 12,000 × $0.10 + 3,000 × $2 + 600 × $10 | $0.0132 | $2,640 |
-| Cached and sent through the Batch API (half of the line above) | $0.0066 | $1,320 |
+| No caching: 15,000 × $2 + 1,000 × $10 | $0.0400 | $8,000 |
+| Prefix cached (steady state): 12,000 × $0.10 + 3,000 × $2 + 1,000 × $10 | $0.0172 | $3,440 |
+| Cached and sent through the Batch API (half of the line above) | $0.0086 | $1,720 |
+
+The 400 thinking tokens are an assumption for the example; read the real figure from `usage.output_tokens`, which includes thinking. As a sensitivity check, leave effort at the default `high` and suppose thinking grows to 2,000 tokens: the cached line becomes 12,000 × $0.10 + 3,000 × $2 + 2,600 × $10 = $0.0332 per request, $6,640 a month. Same prompt, same model, almost double the bill.
 
 Read the table the way an interviewer would:
 
-- Caching cut the bill by about 63%. Output is now 45% of what's left, so the next lever is output length, then effort, then model choice.
+- Caching cut the bill by about 57%. Output, thinking included, is now about 58% of what's left, so the next levers are effort and output length, then model choice.
 - The batch line is a ceiling, not a promise: cache hits inside a concurrent batch are best-effort.
 - Per-token prices differ by 40x between Haiku 5.5 ($0.10 input) and Opus 5.5 ($4). That spread is why routing matters, and also why you must measure quality per route before trusting a cheap one.
 
@@ -64,7 +66,7 @@ The C2 rules still hold: prefix match over tools, then system, then messages; st
 2. **Choose the TTL from the gaps between requests.** A cache read refreshes the timer for free. Requests that share a prefix and start less than five minutes apart keep the default cache warm forever; the 1-hour TTL pays only when gaps run 5 to 60 minutes. Measure the start-to-start gaps, not their average.
 3. **Caches are per model and per workspace.** A router that sends the same prefix to three models writes three cache entries. Two workspaces sending the same prompt don't share one either.
 4. **Short prefixes don't cache.** Each model has a minimum cacheable length (listed as 512 tokens for the newest models, up to 4,096 on some older ones). Below it, nothing is cached and nothing errors.
-5. **Settings are part of the cache key.** Changing top-level `effort` or `thinking` between requests invalidates the messages cache, so pin them per route rather than per request.
+5. **Settings are part of the cache key.** Changing top-level `effort` or `thinking` between requests invalidates the messages cache, so pin them per route rather than per request. One exception to know about: a beta for per-message effort (`mid-conversation-output-config-2026-07-01`, Claude API and Google Cloud, on Opus 5.5, Sonnet 5.5 and a few other current models) changes effort mid-conversation through a `role: "system"` message without that reset. Check the current docs before relying on it.
 
 Caching also buys throughput: on the Claude API, cache reads don't count toward input-token rate limits on most models.
 

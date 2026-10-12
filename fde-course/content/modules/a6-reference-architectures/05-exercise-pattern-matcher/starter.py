@@ -29,6 +29,10 @@ DEFAULT_REVIEW_RATE = 0.15
 # Message Batches is listed for the Claude API and Claude Platform on AWS only
 # (Anthropic's platform availability table, checked 2026-10-08).
 NO_BATCH_PLATFORMS = {"bedrock", "vertex", "foundry"}
+# Structured outputs on Bedrock split by integration (checked 2026-10-10): the newer
+# Messages-API endpoint lists them as not supported; the legacy InvokeModel
+# integration supports them for some models. Flag it so someone confirms which.
+STRUCTURED_OUTPUT_CHECK_PLATFORMS = {"bedrock"}
 SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
 
 

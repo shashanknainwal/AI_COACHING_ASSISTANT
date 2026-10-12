@@ -13,7 +13,7 @@ Leah Park, Head of Integrations at Northwind Freight, needs shipment status from
 
 ## Methods and retry safety
 
-`GET` (read), `PUT` (replace) and `DELETE` are safe to retry; `PATCH` usually is. `POST` (create) is **not**, unless the API supports idempotency keys.
+`GET` (read), `PUT` (replace) and `DELETE` are idempotent, so they're safe to retry. `POST` (create) and `PATCH` (partial update) are **not**. A `PATCH` that appends to a list, increments a counter or applies a JSON Patch `add` does the work twice when you retry it. Retry either one only with an idempotency key, or when the API documents that specific operation as idempotent.
 
 ## Status codes: what your code does
 
@@ -87,7 +87,7 @@ Then **make one request by hand** before writing code. Docs are often slightly w
 |---|---|---|
 | No timeout | Job hangs forever | `timeout=` on every call |
 | Only the first page | Most data missing, silently | Follow pagination |
-| Retrying POSTs blindly | Duplicate orders | Idempotency keys |
+| Retrying POSTs or PATCHes blindly | Duplicate orders, double-applied updates | Idempotency keys |
 | Ignoring 429 | Your key gets blocked | Respect `Retry-After` |
 | No error body in logs | Impossible to debug | Log status, URL (no secrets), body |
 

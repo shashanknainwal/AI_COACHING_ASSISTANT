@@ -1,0 +1,19 @@
+{
+  "_note": "Fictional sample data for the capstone kit. Quillfeather Stationery is not a real company. Replace this file with your own domain's data.",
+  "customers": {
+    "C-201": {"name": "Avery Molina", "email": "avery@example.com", "tier": "Gold", "points": 640},
+    "C-202": {"name": "Sam Okonjo", "email": "sam@example.com", "tier": "Standard", "points": 85},
+    "C-203": {"name": "Lena Fischer", "email": "lena@example.com", "tier": "Standard", "points": 0}
+  },
+  "orders": {
+    "QF-1001": {"customer_id": "C-201", "status": "delivered", "delivered_on": "2026-09-20", "total": 64.50,
+                "items": [{"sku": "PEN-FP-NAVY", "name": "Fountain pen, navy", "engraved": true, "qty": 1}]},
+    "QF-1002": {"customer_id": "C-202", "status": "shipped", "shipped_on": "2026-10-02", "eta": "2026-10-08", "total": 23.00,
+                "items": [{"sku": "NB-A5-DOT", "name": "A5 dotted notebook", "engraved": false, "qty": 2}]},
+    "QF-1003": {"customer_id": "C-203", "status": "processing", "total": 112.00,
+                "items": [{"sku": "INK-50-BLK", "name": "Black ink, 50 ml", "engraved": false, "qty": 4},
+                          {"sku": "PEN-RB-GRN", "name": "Rollerball, green", "engraved": false, "qty": 2}]},
+    "QF-1004": {"customer_id": "C-202", "status": "delivered", "delivered_on": "2026-07-01", "total": 18.00,
+                "items": [{"sku": "GIFT-25", "name": "Gift card, $25", "engraved": false, "qty": 1}]}
+  }
+}

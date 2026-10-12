@@ -1,7 +1,7 @@
 ---
 title: "Deploying into Customer Environments"
 type: reading
-minutes: 5
+minutes: 8
 ---
 
 > **By the end of this lesson you will be able to:**
@@ -29,9 +29,32 @@ Put the answers in a one-page **environment doc**. It prevents the week-six surp
 
 ## How the customer reaches Claude
 
-Claude is available through the **Claude API**, **Amazon Bedrock**, **Google Cloud Vertex AI** and **Microsoft Foundry**. Using a cloud they already have can skip months of procurement, stay inside an approved security setup, and offer regional options.
+Claude is available five ways. Using a cloud the customer already has can skip months of procurement and stay inside an approved security setup.
 
-The trade-off: features and models can differ or arrive later by platform, and each has its own client, model IDs and auth. **Check every feature you depend on (structured outputs, caching, batches, specific tools) on their platform before building.** The SDKs have a client per platform, so most code stays the same.
+| Platform | Who operates it | Auth and billing | Model IDs |
+|---|---|---|---|
+| **Claude API** | Anthropic | Anthropic API key; Anthropic billing | `claude-opus-5-5` |
+| **Claude Platform on AWS** | Anthropic, on AWS infrastructure | AWS IAM with SigV4 signing; AWS Marketplace billing | Bare IDs, same as the Claude API |
+| **Amazon Bedrock** | AWS | AWS IAM; AWS billing | Provider-prefixed (`anthropic.…`) |
+| **Google Cloud Vertex AI** | Google | Google Cloud IAM; Google billing | Platform-specific; check its model list |
+| **Microsoft Foundry** | Microsoft (some deployments hosted by Anthropic) | Azure identity; Azure billing | Platform-specific; check its model list |
+
+**Claude Platform on AWS** is the option to know for the very common "we only buy through AWS" customer. Anthropic runs it, so the API matches the Claude API feature for feature on the same day, but access is controlled with the customer's own IAM roles and billed through their AWS Marketplace account. In Python it's `AnthropicAWS()` from the `anthropic[aws]` package, configured with an AWS region and a workspace ID. It is not the same thing as Bedrock: Bedrock is operated by AWS, with its own release timing and feature subset.
+
+**Features differ by platform.** Check every feature you depend on before building. A few gaps that change designs:
+
+| Feature | Claude API and Claude Platform on AWS | Bedrock | Vertex AI | Foundry |
+|---|---|---|---|---|
+| Message Batches (50% off) | Yes | No | No | No |
+| MCP connector (Claude calls a remote MCP server for you) | Beta | No | No | Beta |
+| Agent Skills | Yes | No | No | Beta (Anthropic-hosted deployments only) |
+| Code execution tool | Yes | No | No | Anthropic-hosted deployments only |
+| Server-side refusal `fallbacks` | Beta | No | No | No |
+| `inference_geo` (data residency control) | Yes | No | No | No |
+
+Availability moves fast; treat this table as a snapshot and confirm on the current platform docs. The [platform fit checker](/learn/a2-enterprise-deployment/03-exercise-platform-fit-checker) in the Architect track turns this into code. Regulated data adds another axis: HIPAA readiness, for example, is not offered on every platform (Module 1 covers Brightline's case), so confirm it with the customer's Anthropic account team and the cloud provider's compliance docs.
+
+The SDKs have a client per platform, so most code stays the same. In a locked-down account, prefer the platform's IAM roles over long-lived API keys wherever the platform supports them.
 
 ## The security brief
 
@@ -56,6 +79,6 @@ Early answers cut reviews from months to weeks.
 
 > **Key takeaways**
 > - Map compute, network, data, identity, secrets, observability and change process in week one.
-> - Claude runs on the Claude API, Bedrock, Vertex AI and Foundry; check feature availability on the customer's platform first.
+> - Claude runs on the Claude API, Claude Platform on AWS, Bedrock, Vertex AI and Foundry. Batches, the MCP connector and Skills are missing on Bedrock and Vertex; check every feature on the customer's platform first.
 > - Have a security brief ready before the questionnaire.
 > - One configurable image, health checks, IaC, staged rollout, tested rollback.

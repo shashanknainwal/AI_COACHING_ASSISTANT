@@ -18,7 +18,7 @@ So this lesson only states facts taken from pages you can open: Anthropic's [API
 
 From lesson 01, and stated directly on Anthropic's data retention page:
 
-- **Anthropic is the data processor** on the Claude API, Claude Platform on AWS and Claude in Microsoft Foundry. Anthropic's arrangements (ZDR, HIPAA readiness) and terms apply there.
+- **Anthropic is the data processor** on the Claude API, Claude Platform on AWS and Claude in Microsoft Foundry. Anthropic's arrangements (ZDR, HIPAA readiness) and terms apply there. On Foundry the exact wording is that Anthropic acts as an "independent processor for Microsoft" and Foundry customers are subject to Anthropic's data use terms. Use that phrase in a review rather than inventing a subprocessor chain.
 - **The cloud provider is the data processor** on Amazon Bedrock and Google Cloud's Vertex AI. Anthropic's page sends you to the provider's own retention and compliance documentation for equivalent controls.
 
 This one fact routes the review. If the customer chose Bedrock, half of the data questions are AWS questions, and your job is to point to AWS's documentation and help the customer's team find the answer, not to answer for AWS.
@@ -34,7 +34,13 @@ Say exactly that. Don't paraphrase it into "Anthropic never sees your data," whi
 
 ## Step 3: Retention, and what ZDR does and doesn't cover
 
-**Standard retention.** Anthropic's standard retention periods for commercial API data are published in its commercial data retention policy, linked from the data retention page. Quote the current number from that page during a review; don't quote a number from memory.
+**Standard retention.** The data retention page currently says, among its commitments: "Conversation content (your prompts and Claude's outputs) is not retained by default; the exception is Covered Models, which require 30-day retention." That sentence is the headline, but it comes with caveats you must state alongside it:
+
+- The detailed periods live in Anthropic's commercial data retention policy, linked from the same page. **Quote the current commercial policy** in writing, with its date, rather than a number from memory.
+- The customer-managed keys page talks about encrypting workspace data at rest, and the data retention page describes enabling 30-day retention for a workspace. So "not retained by default" depends on the organization's and workspace's retention settings, the models used, and the features used (Batches, Files API and code execution all store data; see below).
+- Flagged content and legal holds are exceptions under any arrangement (see the end of this step).
+
+A safe sentence for a questionnaire: "Per Anthropic's data retention page (checked on [date]), conversation content isn't retained by default except for Covered Models; feature-specific retention applies to Batches, Files API and code execution; flagged content may be kept up to 2 years. We'll attach the current commercial retention policy." 
 
 **Zero data retention (ZDR).** Under a ZDR arrangement, Anthropic does not store customer prompts or responses at rest after the API response is returned. Key facts from the docs:
 
@@ -82,7 +88,7 @@ For Bedrock and Vertex AI, encryption controls are the cloud provider's; confirm
 | Workload identity | Workload Identity Federation (AWS IAM, Google Cloud, OIDC issuers such as Entra ID or Okta) exchanges a short-lived token; no static key | AWS IAM / SigV4; short-term API keys (max 12 h) | Service role, IAM roles assumed through SAML/OIDC/Identity Center; short-term bearer tokens (max 12 h) | Google Cloud credentials | Entra ID with Azure RBAC, or API keys |
 | Keys | Personal and service-account keys tied to an identity; expiration settable at creation | IAM policies on workspace ARNs | IAM | IAM | Azure-issued keys |
 | Private networking | Confirm with current docs | AWS PrivateLink supported | Confirm with AWS docs | Confirm with Google Cloud docs | Azure Virtual Network supported |
-| Activity logs | Compliance API and its Activity Feed (Activity Feed retained 6 years) | Compliance API available (IAM-authorized) | CloudWatch and CloudTrail | Request-response logging service | Azure Monitor and Log Analytics |
+| Activity logs | Compliance API and its Activity Feed (Activity Feed retained 6 years) | Compliance API: confirm availability and how access is authorized with current docs | CloudWatch and CloudTrail | Request-response logging service | Azure Monitor and Log Analytics |
 
 Anthropic recommends keeping activity logs on at least a 30-day rolling basis on every platform. Every Claude API response carries a `request-id` header; Foundry adds `apim-request-id`. Log both; support needs them.
 
@@ -106,7 +112,7 @@ For each question in a review, answer in three columns. It keeps you honest and 
 |---|---|---|---|
 | "Do you train on our data?" | Commercial Terms: Anthropic may not train on Customer Content (link, Oct 2026) | Contract review by their legal team | None |
 | "How long are prompts kept?" | ZDR available per org on request; Batches, Files API and code execution are outside ZDR; flagged content up to 2 years | Feature allowlist at their gateway | Confirm ZDR enablement for prod and dev orgs (Anthropic account team, before pilot) |
-| "Can inference stay in the EU?" | Claude API `inference_geo` offers `us` and `global` only; Bedrock and Vertex AI offer EU options | Platform choice | Confirm the needed model is offered in the EU geography (architect, this week) |
+| "Can inference stay in the EU?" | Claude API `inference_geo` offers `us` and `global` only; Foundry offers Global or US Data Zone only; Bedrock (EU profile or in-region in listed regions) and Vertex AI (`eu` multi-region) offer EU options | Platform choice | Confirm the needed model is offered in the EU geography (architect, this week). If they say "Germany only", say no documented option pins current models to one country |
 | "Which certifications do you hold?" | Not stated from memory | | Send current Trust Center reports (account team, under NDA) |
 
 An open item with an owner and a date is a strong answer. A confident guess is a weak one.

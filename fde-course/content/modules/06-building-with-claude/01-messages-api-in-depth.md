@@ -41,22 +41,22 @@ Prices per million tokens (input / output):
 | Claude Opus 5.5 | `claude-opus-5-5` | $4 / $20 | Default: complex reasoning, agents, customer-facing work that must be right |
 | Claude Sonnet 5.5 | `claude-sonnet-5-5` | $2 / $10 | High-volume production work |
 | Claude Haiku 5.5 | `claude-haiku-5-5` | $0.10 / $0.50 (prompts up to 100K tokens) | Fast, cheap classification, routing, extraction |
-| Claude Haiku 4.5 | `claude-haiku-4-5` | $1 / $5 | Previous Haiku, still served; no `effort` parameter, 200K context |
+| Claude Haiku 4.5 | `claude-haiku-4-5` | $1 / $5 | Legacy: ten times the price of Haiku 5.5, no `effort` parameter, 200K context |
 
 The method: **start with the most capable model** and get the task working against an evaluation set (Module 8); **then try lower effort, then a cheaper model**, re-running the evaluation each time; **keep the cheapest option that meets the bar**. Lower effort on the top model often matches a smaller model with fewer surprises.
 
 ## Effort and thinking
 
-Claude Opus 5.5 always thinks before answering (adaptive thinking); it can't be turned off. Effort controls how much:
+Claude Opus 5.5 always thinks before answering (adaptive thinking); it can't be turned off. Sonnet 5.5 and Haiku 5.5 also think by default. Effort controls how much:
 
 | Effort | Use for |
 |---|---|
 | `low` | Chat, simple classification, routing, high volume |
-| `medium` | Default on Opus 5.5: everyday tasks |
+| `medium` | Default on Opus 5.5 and Haiku 5.5: everyday tasks (Sonnet 5.5 defaults to `high`) |
 | `high` / `xhigh` | Hard analysis, coding, multi-step agents |
 | `max` | Correctness far outweighs cost and latency |
 
-Higher effort means more billed output tokens and latency. Thinking arrives as `thinking` blocks you must handle, even if you don't show them.
+Higher effort means more billed output tokens and latency: thinking tokens are billed as output, count toward `max_tokens`, and arrive before the first visible text. Thinking arrives as `thinking` blocks you must handle, even if you don't show them.
 
 ## Reading a response
 
@@ -86,7 +86,18 @@ history.append({"role": "user", "content": "And for a domestic one?"})
 second = client.messages.create(model="claude-opus-5-5", max_tokens=16000, system=SYSTEM, messages=history)
 ```
 
-**Append the assistant's full `content` list**, thinking blocks included, unchanged. **Never edit earlier turns**; append new ones. Because history grows, so do cost and latency: trim old turns (complete pairs, still starting with `user`), summarize them, or use prompt caching (lesson 7).
+**Append the assistant's full `content` list**, thinking blocks included, unchanged. **Never edit earlier turns**; append new ones.
+
+That rule is stricter than it looks on Claude Opus 5.5 (and Sonnet 5.5 and Haiku 5.5). Each thinking block's signature is bound to the system prompt, the tools and every message before it. If you change any of those and replay the block, the check fails. On accounts created since 31 August 2026 that is a 400 by default; on older accounts the reasoning is silently dropped. Either way, the prompt cache also misses from the edit onward. So "trim the oldest turns" is a trap.
+
+History still grows, and so do cost and latency. Handle it without editing the past:
+
+| Approach | What it does | Safe with preserved thinking? |
+|---|---|---|
+| Prompt caching (lesson 7) | Makes the unchanged prefix cheap to resend | Yes, and append-only history is what keeps it hitting |
+| Server-side compaction or context editing (beta) | Anthropic summarizes or clears old content on its side | Yes, designed for it; check platform support and the beta header in the current docs |
+| Simple client-side compaction | Ask for a summary, then start a fresh history whose first user turn carries it | Yes: no old thinking block is replayed (you build this in the next exercise) |
+| Rolling truncation (keep the last N turns) | Drops the oldest pairs, replays the rest with their thinking | No: 400 or lost reasoning, plus a cache miss every turn |
 
 Content can also be a list of blocks that includes images (`{"type": "image", ...}` next to a text block).
 
@@ -95,3 +106,4 @@ Content can also be a list of blocks that includes images (`{"type": "image", ..
 > - Start with the most capable model, then step down effort or model against an evaluation.
 > - Check `stop_reason` first and log request IDs.
 > - The API is stateless: append the full content list; never edit earlier turns.
+> - Long chats: compact (server-side, or summary into a fresh history), never trim, on models with preserved thinking.

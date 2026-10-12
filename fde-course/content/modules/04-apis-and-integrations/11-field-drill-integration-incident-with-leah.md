@@ -21,6 +21,7 @@ personaBrief: |
   - Ridgeway sent a release notice two weeks ago lowering the limit from 600 to 120 requests per minute. Your team missed it. (Reveal if asked whether anything changed on Ridgeway's side, or about their limits or notices.)
   - The client honors Retry-After, but the job gives up after 5 attempts and the scheduler re-runs the whole window from the last saved watermark. That re-fetch is correct behaviour on its own.
   - The cause of the duplicates: the Ridgeway connector, built quickly last month by your team, writes to the ERP with a plain insert keyed on the ERP's auto-generated ID, not an upsert on Ridgeway's shipment ID (external_id). So every re-run re-inserts records. (Reveal if asked how records are written or keyed, or whether re-runs are idempotent.)
+  - Raw responses (the unusual one): Ridgeway's 429 responses carry `Retry-After: 30` and every response carries `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers. The connector logs only the status code, so nobody has looked at them. The API also supports `updated_since`, which would cut each run from about 9,000 requests to a few hundred, but the connector re-fetches the whole window. Reveal ONLY if the learner asks to see a raw response, its headers, or the API's documentation for filtering or incremental fetches. Do not reveal it for general questions about what changed.
   - Constraints: tomorrow is the retailer's peak shipping day. You can pause the Ridgeway sync for at most two hours before agents are flying blind. Deleting records in the ERP needs approval from the retailer's ERP admin. You need a short written statement for the retailer by 15:00 UTC.
 
   How to react:
@@ -48,7 +49,7 @@ rubric:
     points: 15
     lookFor: "Ends with an ordered plan with owners and times: throttle and upsert fix tested, dedupe approved and run, sync re-enabled and watched, rate-limit notices routed to someone, postmortem scheduled."
 passScore: 70
-graderNotes: "Mark down a learner who never pauses the job, who proposes raising retry counts or removing backoff, or who deletes records without a dry run or approval. A learner who asserts a root cause without asking questions should not score above half on Diagnosis. Reward finding both the lowered limit and the non-idempotent insert; the 429s alone don't explain the duplicates."
+graderNotes: "Mark down a learner who never pauses the job, who proposes raising retry counts or removing backoff, or who deletes records without a dry run or approval. A learner who asserts a root cause without asking questions should not score above half on Diagnosis. Reward finding both the lowered limit and the non-idempotent insert; the 429s alone don't explain the duplicates. Extra credit within 'Technically sound fix' for a learner who asks for the raw response headers and proposes pacing from X-RateLimit-Remaining or fetching with updated_since."
 ---
 
 A partner API changed under you, and now there are duplicate shipments in a customer's ERP and confused end customers. This drill practises the incident call: stop the damage, find the real cause with good questions, fix it safely and keep the customer informed. It puts lessons 03, 05 and 07 under pressure.

@@ -32,9 +32,9 @@ A help center of 300 articles, about **400K tokens**. **10,000 questions a day**
 | Whole corpus, prompt-cached (steady traffic keeps the cache warm) | 400K cache-read tokens | about $0.04 | about $400 |
 | RAG: 8 chunks of 500 tokens plus 1K of instructions | about 5K tokens | about $0.01 | about $100 + search infrastructure |
 
-Output (say 300 tokens, $0.003 per answer) is the same in every row, so it doesn't change the decision.
+Output is the same in every row, so it doesn't change the decision, but don't leave it out of the total. Sonnet 5.5 thinks by default at effort `high`, and thinking is billed as output. With `effort: "low"` set explicitly, say 300 visible tokens plus an assumed 300 thinking tokens: 600 output tokens, about $0.006 per answer ($60 a day). At the default effort, measure it; thinking can be several times that.
 
-Caching changes the math by 20x, which is why "just use long context" is a real option now. But caching only works while the prefix is byte-identical. Edit one article and the next request pays a full cache write.
+Caching changes the math by 20x, which is why "just use long context" is a real option now. But caching only works while the prefix is byte-identical, and only when the request opts in with `cache_control` (top-level automatic caching or a breakpoint on the corpus block). Edit one article and the next request pays a full cache write.
 
 ### When long context wins
 

@@ -1,14 +1,32 @@
 ---
 title: How Progressive Coding Screens Work
 type: reading
-minutes: 12
+minutes: 15
 ---
 
 > **By the end of this lesson** you'll know what a progressive coding screen is, why it rewards a different skill from algorithm puzzles, and the routine to run in the first ten minutes.
 
 ## The format
 
-Candidates who have taken Anthropic's online assessment describe the same shape again and again: **one problem, about four levels, roughly 90 minutes, in Python.** Each level extends the code you wrote for the previous one, and a level only opens when every check on the previous one passes. The checks are hidden and the scoring is automatic. These are candidate reports, not an official description, so treat the details as approximate; recruiters confirm the format for each role.
+Candidates who have taken Anthropic's online assessment describe the same shape again and again: **one problem, about four levels, roughly 90 minutes, in Python, on CodeSignal.** Each level extends the code you wrote for the previous one, and a level only opens when every check on the previous one passes. The checks are hidden and the scoring is automatic. These are candidate reports (**Reported**), not an official description, so treat the details as approximate; recruiters confirm the format for each role.
+
+## The environment
+
+Here is what's official and what isn't.
+
+| Fact | Label |
+|---|---|
+| Anthropic's [careers page](https://www.anthropic.com/careers) says technical interviews use live coding tools such as Colab and CodeSignal. | **Official** (checked 2026-10-10) |
+| The same page says you can look things up, but should be comfortable enough with basic syntax and the standard library that it doesn't eat your time. | **Official** |
+| The online assessment is a single progressive problem on CodeSignal, with levels that unlock in turn. | Reported (many accounts) |
+| Exact details such as the Python version, how partial credit is counted, or whether a level's hidden checks are all-or-nothing. | No reliable public source. Ask your recruiter, and read the instructions on the screen. |
+
+What follows from the official part is practical:
+
+- **Practise without your setup.** A browser editor won't have your linters, snippets, local test runner or familiar shortcuts. Do at least one drill in this course in a plain editor with autocomplete off, using only the standard library.
+- **Know the standard library cold.** `collections` (`defaultdict`, `Counter`, `deque`), `heapq`, `bisect`, `dataclasses`, `sorted` with tuple keys, f-string formatting. Looking up `bisect_left` costs a minute. Looking up how dictionaries work costs the level.
+- **"You can look things up" isn't "you can use AI".** Anthropic's candidate guidance says assessments and live interviews are AI-free unless they tell you otherwise. Documentation is fine where the page says so; an assistant is not.
+- **If your invitation links a practice or setup page, use it** before the real attempt, so the editor isn't new on the day.
 
 Other labs describe similar ideas in other wrappers. Perplexity's assessments are reported as project-style, multi-part tasks with predefined tests. OpenAI's forward deployed engineering loop is reported to favour practical, production-style coding over puzzles. The common thread: **can you build and extend working software quickly, without making a mess?**
 
@@ -38,5 +56,6 @@ The next lesson is a full four-level drill on an original problem: a feature-fla
 > **Key takeaways**
 >
 > - One problem, several levels, a clock: data modelling and careful reading matter more than algorithms.
+> - Anthropic officially names CodeSignal and Colab as its live coding tools; the one-problem, four-level OA shape is reported. Practise in a plain browser editor with only the standard library.
 > - Design Level 1's data model for the history and scheduling questions that usually follow.
 > - Submit often; each failing check names the requirement you missed.

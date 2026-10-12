@@ -85,7 +85,8 @@ def call_with_retries(client, params, *, max_attempts=4, deadline_s=60.0, attemp
 log = []
 params = {
     "model": MODEL,
-    "max_tokens": 1024,
+    "max_tokens": 4096,                    # covers thinking plus the answer
+    "output_config": {"effort": "low"},    # set explicitly; Opus 5.5 defaults to medium
     "messages": [{"role": "user", "content": "Extract vendor, total and currency from invoice INV-20931."}],
 }
 try:

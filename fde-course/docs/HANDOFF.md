@@ -1,6 +1,6 @@
 # FDE Playbook: project handoff
 
-Read this first when resuming. It records what exists, what's live, the decisions behind it, how to verify changes, and what's next. Last updated: 2026-10-06 (logins live).
+Read this first when resuming. It records what exists, what's live, the decisions behind it, how to verify changes, and what's next. Last updated: 2026-10-11 (best-in-market upgrade from docs/COURSE_REVIEW.md).
 
 ## 1. The product
 
@@ -49,7 +49,13 @@ Read this first when resuming. It records what exists, what's live, the decision
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or `NEXT_PUBLIC_SUPABASE_ANON_KEY`), `SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`) | Logins, progress sync, purchases | Added by the Vercel–Supabase integration, which points to Supabase project `etoeogxzkanrtntudvnp`. Use that project (run the migration and URL configuration there). A second project, `xmhqjgqraxrfiyddoouf`, was created by hand and is unused. |
 | `FREE_ACCESS_EMAILS` | Comma-separated emails with full access without paying | Set (owner's email); verified working |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` (optional) | Payments (price from `priceUsd()`) | **Not set yet** |
-| `ANTHROPIC_API_KEY` | AI tutor | **Not set yet** |
+| `ANTHROPIC_API_KEY` | AI tutor, grading, role-play | Check Vercel |
+| `AI_DAILY_LIMIT` / `AI_GLOBAL_DAILY_LIMIT` | Per-learner (default 60) and site-wide (default 3000) daily AI calls; AI fails closed if the usage tables are missing | Optional |
+| `COACH_PERSONA_MODEL` | Model for role-play persona turns (default `claude-opus-5-5`); try `claude-sonnet-5-5` to cut cost | Optional |
+| `COACH_SIGNING_SECRET` | Signs persona lines so transcripts can't be forged (falls back to a key derived from the secret key) | Optional |
+| `CRON_SECRET`, `RESEND_API_KEY`, `NUDGE_FROM_EMAIL` | Weekly interview-countdown nudge emails (`vercel.json` cron, Mondays 14:00 UTC); no-op unless all three are set | Optional |
+| `NEXT_PUBLIC_COMMUNITY_URL`, `NEXT_PUBLIC_MOCK_BOOKING_URL` | Community join button and paid 1:1 mock button (hidden unless set) | Optional |
+| `NEXT_PUBLIC_INSTRUCTOR_NAME`, `_LINKEDIN`, `_PHOTO` | Instructor details on the home page (hidden unless set) | Optional |
 
 ## 4. Status
 
@@ -77,6 +83,18 @@ The course is expanding into three tracks for people targeting frontier-lab jobs
 - Before launch: run `supabase/setup_ai_usage_single_statement.sql` in Vercel → Storage → Query, set `ANTHROPIC_API_KEY`, then `TRACKS_LIVE=true` (the price switches to $249 automatically; if `STRIPE_PRICE_ID` is set, point it at a $249 Price or remove it).
 - Owner "From my loop" stories are in C1 and C5 (blockquotes starting with **From my loop**). Add more only from the owner's own words; never invent them.
 
+### Best-in-market upgrade (2026-10-10/11)
+
+Built from the five-reviewer review in `docs/COURSE_REVIEW.md` (all of P0, P1, P2 and sections A–I):
+
+- **Fixes:** about 30 factual errors across all four tracks; every quiz rebalanced (the validator now fails a quiz whose answers cluster on one position or whose correct option is usually the longest).
+- **Platform:** grader injection defence, enforced criterion names, cached rubric, signed persona turns, second grade near the pass mark, every attempt stored (`grade_attempts`, `drill_attempts`); tutor locked to the lesson; AI usage fails closed with a global breaker; `scripts/grader-eval.mjs` checks graders against `anchors` in lesson frontmatter (needs a key).
+- **Lesson features:** voice mode for role-plays, design-mode role-plays (`mode: design`, `diagram`, `timeLimit`, `constraints`), personas that read earlier work (`contextFrom`), attempt history, drill reset/level times/extended time, loop mode, hard mode, accessibility fixes.
+- **Site:** `/learn/progress` (loop scorecards, rubric trends, next best module, settings), `/start` (diagnostic and plan with interview countdown), `/review` (flashcards from quizzes and `content/prices.json`), `/community` (peer-mock kit), `/u/<handle>` (public portfolio and certificate; AI-graded rounds verified server-side, coding self-reported), outcome survey, nudge emails.
+- **New modules:** C6 How LLMs Work, C7 Modern Agent Stack, C8 Portfolio Capstone (+ `capstone-kit/` repo template run with the learner's own key), C9 Getting the Job; E8 Agent Evals, E9 Multimodal/Streaming/Scale, E10 Inference and Model Choices, E11 TypeScript; A8 Governance and Commercial, A9 Demos and Enterprise Rollout; FDE 12 Enterprise Field Work, FDE 13 Drills and War Room. Mock loops keep their codes (E7, A7, 11); the new modules follow them as advanced modules.
+- **Owner SQL (run once each in Vercel → Storage → Query, in order):** `supabase/setup_ai_usage_single_statement.sql` (done), `supabase/setup_attempts_single_statement.sql`, `supabase/setup_profiles_single_statement.sql`.
+- **Owner to confirm:** the refund line on the home page ("Refunds: email us within 14 days (reply to your receipt). A refund ends access.").
+
 ## 5. Next steps, in order
 
 1. **Supabase (logins):** done on 2026-10-06. Owner login verified.
@@ -97,7 +115,7 @@ The course is expanding into three tracks for people targeting frontier-lab jobs
 
 ```bash
 cd fde-course
-node scripts/validate-content.mjs     # every lesson (113 as of phase 1): solutions pass, starters fail, drills, rubrics and quizzes well-formed
+node scripts/validate-content.mjs     # every lesson (400+ as of 2026-10-11): solutions pass, starters fail, drills, rubrics and quizzes well-formed
 npx tsc --noEmit
 npm run build
 ```

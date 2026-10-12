@@ -10,6 +10,9 @@
 
 export const FREE_MODULES = new Set(["01-fde-role-and-mindset", "c1-how-labs-hire"]);
 
+/** The final mock-interview-loop module of each track (engineer, architect, fde). Loop mode applies to these. */
+export const MOCK_LOOP_MODULES = ["e7-engineer-mock-loop", "a7-architect-mock-loop", "11-fde-mock-loop"];
+
 /**
  * The three-track course (shared core + Applied AI Engineer + Applied AI Architect + FDE).
  * Shown in dev and on unlocked previews; production keeps the original FDE course until

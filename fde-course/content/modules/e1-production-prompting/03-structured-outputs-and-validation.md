@@ -71,7 +71,7 @@ Most hallucinated fields come from a schema that leaves the model no honest way 
 2. **Make unknowns nullable, not optional.** Keep every field in `required` and allow `null` through `anyOf: [{"type": "string"}, {"type": "null"}]`. "The model said null" and "the field is missing because of a bug" are different situations, and you want to tell them apart.
 3. **Use enums for anything code will branch on.** Free text is for humans to read. If code routes on it, it's an enum.
 4. **Ask for evidence you can check.** A short exact quote from the input per key decision lets you verify grounding with a substring check. It's also what an auditor actually wants.
-5. **Don't ask for the model's reasoning in the output.** A `reasoning` field that pushes the model to reproduce its internal thinking in the response can be declined on Claude Opus 5.5 and Sonnet 5.5 (refusal category `reasoning_extraction`). A short explanation of the answer, or an evidence quote, is fine. If you need to see how the model thought, read summarized thinking blocks and log them separately.
+5. **A short `rationale` is fine; a long `reasoning` field isn't needed.** This is the rule the whole track uses. A `rationale` field of one or two sentences that names the evidence or the criterion behind the answer is useful: reviewers read it and you can spot-check it. A long free-form "reasoning" or "think step by step here" field adds nothing on current models, because adaptive thinking already deliberates before the first output token, and you don't need to order fields to make the model "reason first". Worse, a field that pushes the model to reproduce its internal thinking can be declined on Claude Opus 5.5 and Sonnet 5.5 (refusal category `reasoning_extraction`). If you need to see how the model thought, read summarized thinking blocks and log them separately.
 6. **One decision per field.** `"status": "damaged_needs_refund"` hides two decisions in one string, and you can't score them separately.
 7. **Keep it flat and small.** Every field is something to test. Ten fields you check beat thirty you don't.
 8. **Generate the schema from the same lists as the prompt.** The catalog that feeds the prompt also feeds the enum. Then they can't drift apart.
@@ -131,6 +131,6 @@ Original prompts in the style of an applied AI fundamentals or design round:
 > - Structured outputs guarantee syntax and shape. Constraints, grounding, business rules and truth are yours to check.
 > - Check `stop_reason` first: a refusal or a `max_tokens` cut-off can break the schema.
 > - Use `output_config.format` for answers, strict tools for actions, and `messages.parse()` for typed objects. Forced tool choice is a 400 on Claude Opus 5.5.
-> - Give enums an escape hatch, make unknowns nullable, ask for checkable evidence, and don't ask for the model's reasoning in the output.
+> - Give enums an escape hatch, make unknowns nullable and ask for checkable evidence. A one- or two-sentence `rationale` is fine; a long `reasoning` field isn't needed, because adaptive thinking already deliberates.
 > - Parse with `json.loads`, never a regex. Retry once with the errors, then hand off to a human.
 > - Measure extraction per field, with normalization, null handling and critical fields.

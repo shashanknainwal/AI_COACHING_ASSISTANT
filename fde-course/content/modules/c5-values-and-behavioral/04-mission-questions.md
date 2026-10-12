@@ -8,7 +8,7 @@ minutes: 15
 
 ## What mission questions are for
 
-At a mission-driven lab, some questions aren't about your past at all. They ask what you think. Reported examples at Anthropic include whether you'd prioritize the mission over the company's future share price (**Reported**, [Axios AI+](https://www.axios.com/newsletters/axios-ai-plus-10f46cb9-9c35-4d55-b72c-498c853ea10b.html)). Expect questions about safety, the pace of AI progress, and what worries you.
+At a mission-driven lab, some questions aren't about your past at all. They ask what you think. One example said to come up at Anthropic is whether you'd prioritize the mission over the company's future share price (**Reported (secondary sources)**; see lesson 01). Expect questions about safety, the pace of AI progress, and what worries you.
 
 The interviewer isn't checking whether your views match the company's. They're checking three things:
 
@@ -49,7 +49,7 @@ Saying you disagree with something a lab has published can be a strength, if you
 4. **Say what would change your mind.** This is what separates a view from a reflex.
 5. **Stay curious.** "How do people here think about that?" is a fine way to end.
 
-Read the primary sources yourself rather than summaries. For Anthropic, that means essays such as Dario Amodei's [*The Urgency of Interpretability*](https://darioamodei.com/post/the-urgency-of-interpretability) and the company's published policies, covered in module C4. No public source says interviewers quiz candidates on these documents. Read them to have real views, not to recite them.
+Read the primary sources yourself rather than summaries. For Anthropic, that means essays such as Dario Amodei's [*The Urgency of Interpretability*](https://darioamodei.com/post/the-urgency-of-interpretability) and the company's published policies, covered in module C4. Read them to have real views, not to recite them.
 
 ## What not to say
 

@@ -55,5 +55,5 @@ Launches happen at 9am whether or not anyone is awake.
 
 An incident review asks: "what was this flag at 2:14am, and can we put it back?"
 
-- `state_at(timestamp, name, at)`: return the flag's own state (ignoring overrides) as of time `at`, or `None` if the flag didn't exist then. A change made at exactly `at` counts. A scheduled change happened at its scheduled time.
+- `state_at(timestamp, name, at)`: return the flag's own state (ignoring overrides) as of time `at`, or `None` if the flag didn't exist then. A change made at exactly `at` counts. A scheduled change happened at its scheduled time. `at` may be later than `timestamp`: then answer with what has happened up to `timestamp`. A change that is still pending doesn't count until it has been applied.
 - `rollback(timestamp, name, to)`: set the flag to the state it had at time `to`. The rollback is a new change recorded at `timestamp`; earlier history stays as it was. Return `True`, or `False` if the flag doesn't exist now or didn't exist at `to`.

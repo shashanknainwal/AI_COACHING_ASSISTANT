@@ -10,7 +10,7 @@ Read the original first: [Machines of Loving Grace: How AI Could Transform the W
 
 ## Why it's worth your time
 
-No public source says lab interviewers quiz candidates on this essay. But it's the positive half of how Anthropic's CEO sees the future, and its companion, *The Adolescence of Technology* (lesson 03), builds directly on it. Together they're the most useful public material for a specific "why this lab" answer and for a real conversation in the values round. The "marginal returns to intelligence" idea is also a genuinely useful tool for any applied AI role: it's how you reason about where AI will and won't speed things up for a customer.
+It's the positive half of how Anthropic's CEO sees the future, and its companion, *The Adolescence of Technology* (lesson 03), builds directly on it. Together they're the most useful public material for a specific "why this lab" answer and for a real conversation in the values round. The "marginal returns to intelligence" idea is also a genuinely useful tool for any applied AI role: it's how you reason about where AI will and won't speed things up for a customer.
 
 ## The two-sentence summary
 

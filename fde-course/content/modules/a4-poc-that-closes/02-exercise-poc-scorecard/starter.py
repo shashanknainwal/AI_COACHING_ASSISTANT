@@ -1,4 +1,4 @@
-# CRITERIA and RESULTS (Halvorsen Mutual, week 6) are loaded for you.
+# CRITERIA and RESULTS (Thornbury Mutual, week 6) are loaded for you.
 # print(CRITERIA[0]) or print(RESULTS) to look at them.
 
 

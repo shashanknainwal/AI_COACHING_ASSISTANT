@@ -1,7 +1,7 @@
 ---
 title: "Round 3: The Customer Conversation"
 type: roleplay
-minutes: 30
+minutes: 20
 persona:
   name: Victor Hale
   role: Chief Operating Officer (practice)

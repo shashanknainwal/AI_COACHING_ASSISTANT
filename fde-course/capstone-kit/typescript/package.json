@@ -1,0 +1,22 @@
+{
+  "name": "capstone-kit-typescript",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "TypeScript examples for the FDE Playbook capstone kit: streaming chat route, tool loop, MCP server.",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "loop": "tsx src/toolLoop.ts",
+    "mcp": "tsx src/mcpServer.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "tsx": "^4.20.0",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
+  }
+}

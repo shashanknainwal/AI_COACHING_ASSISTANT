@@ -1,7 +1,7 @@
 ---
 title: "Role-play: Discovery Call at Whitlock Mutual"
 type: roleplay
-minutes: 30
+minutes: 20
 persona:
   name: Carla Dorsey
   role: VP of Operations
@@ -54,7 +54,7 @@ Grace's note: *"Whitlock Mutual came in through a conference lead. Carla Dorsey 
 
 On the right, **Carla Dorsey** plays the customer for up to twelve turns. Carla and Whitlock Mutual are fictional, played by Claude. Carla knows more than she'll say: she answers what you ask, and nothing she isn't asked.
 
-1. Treat it as a real first call. You have about 30 minutes.
+1. Treat it as a real first call. Twelve turns go faster than they sound: spend them on questions, not on pitching.
 2. Use the six discovery outputs from lesson 02 as your checklist: stakeholders, workflow numbers, data, metrics with baselines, constraints, decision process.
 3. Before you end, play back what you heard and propose next steps.
 4. Press **End and get feedback** for a scored debrief against the rubric below.

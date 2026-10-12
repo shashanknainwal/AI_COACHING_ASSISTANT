@@ -8,7 +8,7 @@ minutes: 15
 
 ## Step 1: score every round out of 100
 
-Rounds 2 to 5 already have a score from Claude's rubric. Round 1 needs a formula. Use this one, written for this course (it is not how any lab scores its assessment):
+Rounds 2 to 6 and the values round already have a score from Claude's rubric. If you're signed in, the progress dashboard at `/learn/progress` fills these in automatically as you finish each graded round, and shows your weakest round and its lowest rubric line, so you can skip the copying below and check its numbers instead. Round 1 needs a formula. Use this one, written for this course (it is not how any lab scores its assessment):
 
 | Round 1 result | Points |
 |---|---|
@@ -23,12 +23,15 @@ Then fill in the card. Copy this into a note:
 ```text
 MOCK LOOP SCORECARD                         date: ________
 
-Round                     Score   Pass?  One sentence: what went wrong
-1  Coding (registry)      ___     ___    ______________________________
-2  Design (PR review)     ___     ___    ______________________________
-3  Deep dive (Marcus)     ___     ___    ______________________________
-4  Exp. and goals (Elena) ___     ___    ______________________________
-5  Values (C5, optional)  ___     ___    ______________________________
+Round                           Score   Pass?  One sentence: what went wrong
+1  Coding (registry, 02)        ___     ___    ______________________________
+2  Design, live (Nadia, 03b)    ___     ___    ______________________________
+3  Deep dive (Marcus, 04)       ___     ___    ______________________________
+4  Exp. and goals (Elena, 05)   ___     ___    ______________________________
+5  Customer session (05b)       ___     ___    ______________________________
+6  Take-home panel (05d)        ___     ___    ______________________________
+   Take-home README (05c)       ___     ___    (preparation; not a round)
+V  Values (C5, optional)        ___     ___    ______________________________
 
 Weakest round: ____   Lowest rubric line in it: ________________
 Round 1 minute marks:  L1 ___  L2 ___  L3 ___  L4 ___
@@ -56,12 +59,17 @@ Look at the rubric line, not just the round. A design score of 62 made of 19/25 
 | Round 1: stuck on Level 3 or 4, rewriting earlier code | A Level 1 data model that couldn't grow | C3 "Data Models That Survive Level 4", then redo the C3 drills on the clock |
 | Round 1: levels fail on edge cases you missed | Reading the spec too fast | C3 "How Progressive Coding Screens Work" (the first-ten-minutes routine) |
 | Round 1: slow everywhere, right in the end | Python fluency: sorting, formatting, dict handling | C3 "Exercise: Ranking and Formatting Warm-Up", repeated until it's under 15 minutes |
-| Round 2: low scoping | Jumping to boxes before numbers | E6, practising the first five minutes on several prompts |
+| Round 2: low scoping, or 'Asked for the numbers' | Jumping to boxes before numbers | E6, the live design interviews (gateway, coding agent) where requirements only appear when you ask |
+| Round 2: low 'Adapted to the new constraint' | Defending the first design instead of revising it | Rerun an E6 live design interview and say out loud what changes and what doesn't after each constraint |
 | Round 2: low evals, or Round 3 evals | No habit of proving quality | E4 Evals as Engineering |
 | Round 2: low context or architecture | Retrieval and context selection | E3 Retrieval at Scale, E2 Tool Use & Agents |
 | Round 2 or 3: low cost and latency | Token math not automatic | C2 "Tokens, Context Windows and What They Cost" and "Prompt Caching and Latency", then E5 Production Concerns |
 | Round 2 or 3: thin failure modes | Haven't run an LLM system in production | E2 (tool failures, traces) and E5 (rate limits, fallbacks, observability) |
 | Round 3: folded under pushback | Decisions you made but never wrote down the reasons for | Write a one-page decision record for your project; rerun Round 3 |
+| Round 3: low 'Depth on one decision' | You know the choice but not the measurement behind it | Answer the four drill-down questions (why, the alternative's result, how it was measured, how sure) for your key decision; E4 for the measurement habits |
+| Round 5: missed root causes | Migration details not automatic | E1 and E2 (forced tool_choice, prefill, append-only history), E5 (max_tokens and thinking) |
+| Round 5: low 'Explains to the non-expert' | Answering a decision-maker with detail instead of a decision | A5 Executive Communication (Architect track), and practise a one-sentence answer plus a date |
+| Round 6: low evaluation rigour | Take-home eval too small, tuned on its own test cases, or no run-to-run check | E4 lessons 1 and 4, then rebuild the take-home eval with a held-out set |
 | Round 3: "we" answers, unclear part | Ownership | C5 "Building Your Story Bank" and the C5 deep-dive practice |
 | Round 4: generic motivation | No specific reason written down | C1 "Write It: Why This Lab?" |
 | Round 4: weak conflict or customer story | Thin story bank | C5 "Building Your Story Bank" and "Write It: Two Stories" |
@@ -91,9 +99,11 @@ Repeating the same prompt measures memory, not skill. For the second loop, use m
 | Round | First loop | Second loop |
 |---|---|---|
 | 1. Coding | Prompt-template registry | C3 "Drill: An LLM Gateway Ledger", or the C3 feature-flag drill if it's been a month |
-| 2. Design | PR review assistant | E6 "Design It: A Support Agent at 10,000 Tickets a Day" |
+| 2. Design | PR review assistant (live, 03b) | E6 "Design Interview: A Multi-Tenant LLM Gateway" or "Design Interview: An Autonomous Coding Agent" |
 | 3. Deep dive | Marcus, on project A | Marcus again, on a different project, or the C5 deep dive |
 | 4. Experiences and goals | Elena | Elena again, with different stories from your bank |
+| 5. Customer session | Ostrander Payroll | FDE track module 11's customer call, or Rafael again with a different diagnosis order |
+| 6. Take-home panel | Sablewood take-home | A different take-home of your own choosing, built against the real API, with the same README sections |
 
 The role-plays adapt to what you say, so repeating them with different stories is fair practice. You may also use Claude outside the course to run extra mock rounds, which Anthropic's [candidate AI guidance](https://www.anthropic.com/candidate-ai-guidance) encourages (**Official**). Ask it for original questions in the style of a round, never for "the real questions".
 
@@ -103,7 +113,7 @@ Stop adding loops when two in a row pass every round on fresh material. After th
 
 > **Key takeaways**
 >
-> - Score every round out of 100. For Round 1: 25 per level inside the clock, 10 per level after it.
+> - Score every round out of 100. For Round 1: 25 per level inside the clock, 10 per level after it. The progress dashboard at `/learn/progress` collects the rubric scores for you.
 > - Judge readiness by your weakest round and its lowest rubric line, not the average.
 > - Every weak signal maps to a specific module; fix the cause, not the round.
 > - Two weeks, 60 to 90 minutes a day, then a second loop on material you haven't seen.

@@ -23,6 +23,7 @@ personaBrief: |
   - Last quarter's board pack included a "top 20 customers by revenue" slide built from the same report. If asked what the numbers have been used for, admit this. You will need to tell the audit committee chair, and you would rather hear it now than in the meeting.
   - The billing system is being retired at the end of Q1. If asked about fixing at the source, say fixing it in billing is wasted effort; fixes belong in the migration to the new system.
   - You cannot approve new spend above $25,000 without the board. If the learner proposes a large cleanup project, ask what it costs.
+  - Acme renegotiation (the unusual one): Acme Industrial, the #1 customer on last quarter's slide, is mid-renegotiation, and your VP of Sales quoted Acme's annual revenue from that slide in the negotiation. Acme is one of the triplicated accounts, so its revenue was overstated by roughly $310,000. Reveal ONLY if the learner asks which customers are most affected by the duplicates or offers to list the top affected accounts. Do not reveal it for general questions. When revealed, ask: "Can you get me Acme's corrected number today?"
   - What you actually need by Friday: one corrected revenue-by-customer number you can defend, a one-paragraph data-quality note for the pre-read, and a clear yes or no on whether the AI assistant demo is safe to show.
 
   How to react:
@@ -32,6 +33,7 @@ personaBrief: |
   - If they overclaim ("it's all fixed", "the AI is 100% accurate"), push back: "Would you put that in front of my auditors?"
   - Ask at least once: "Can't you just clean it and give me the right number?" A good answer explains what can be fixed by Friday (deduplicate the 61 keys, recompute, reconcile to the ledger) and what can't (the 2,140 orphan invoices need an owner).
   - Ask: "Is the assistant demo still on?" A strong answer ties it to the duplicates: show it only on deduplicated data, or scope the demo to areas not affected.
+  - Technical pushback (your controller briefed you): once the learner explains the duplicates, ask "How did you decide two accounts are the same company? If your matching is wrong, I'm presenting a different wrong number." A strong answer explains the rule (for example normalized name plus address or tax ID), says borderline pairs were reviewed by hand or need finance to confirm, and gives a check (the deduplicated total reconciles to the ledger). Push once more if they say "the algorithm is accurate": "Accurate on what sample?"
   - Near the end, ask what exactly they will send you, and when.
 rubric:
   - name: Bad news first, quantified
@@ -50,7 +52,7 @@ rubric:
     points: 15
     lookFor: "Ends with specific deliverables, owners and dates (for example: corrected revenue-by-customer and reconciliation by Wednesday, draft data-quality paragraph by Thursday, review with the controller)."
 passScore: 70
-graderNotes: "Mark down heavily if the learner never states the $1.9M overstatement or which number is right, if they blame Owen's team, or if they promise everything is fixed by Friday. Reward learners who ask what the numbers were used for and who turn findings into a decision Owen agrees to. Jargon without numbers should not score well on the first line."
+graderNotes: "Mark down heavily if the learner never states the $1.9M overstatement or which number is right, if they blame Owen's team, or if they promise everything is fixed by Friday. Reward learners who ask what the numbers were used for, who ask which customers are most affected (Acme), who can defend how duplicates were matched, and who turn findings into a decision Owen agrees to. Jargon without numbers should not score well on the first line."
 ---
 
 You've profiled, cleaned and reconciled Cobalt Supply's data. Now you have to tell the CFO what it showed, including news he won't like: the revenue-by-customer view his team built double-counts some orders. This drill practises the conversation where data work turns into a decision.

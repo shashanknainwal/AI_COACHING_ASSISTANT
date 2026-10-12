@@ -1,4 +1,4 @@
-# Halvorsen Mutual (fictional insurer): claims-intake extraction proof of concept.
+# Thornbury Mutual (fictional insurer): claims-intake extraction proof of concept.
 # The criteria were agreed in writing at kickoff and signed by the decision owner,
 # Ruth Okafor (VP Claims Operations, fictional). Baselines come from two weeks of
 # measuring today's manual process before any model was involved.

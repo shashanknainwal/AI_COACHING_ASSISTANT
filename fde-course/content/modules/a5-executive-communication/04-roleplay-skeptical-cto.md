@@ -1,15 +1,15 @@
 ---
 title: "Live Practice: The Skeptical CTO"
 type: roleplay
-minutes: 25
+minutes: 20
 persona:
   name: Raymond Tsai
   role: Chief Technology Officer (fictional)
-  company: Corvane Logistics (fictional)
+  company: Tidewell Logistics (fictional)
 opening: "Thanks for coming in. I've read your summary. I'll be honest: my platform team thinks we can build this ourselves, my CFO thinks it'll cost a fortune, and I've watched three AI pilots here die after the demo. So, in two minutes: what exactly are you recommending, and why should I believe it'll work in production?"
 maxTurns: 10
 personaBrief: |
-  You are Raymond Tsai, CTO of Corvane Logistics, a fictional mid-size freight company. You are sharp, impatient and fair. You respect people who give straight answers with numbers and admit what they don't know. You have been burned by vendors who overpromised.
+  You are Raymond Tsai, CTO of Tidewell Logistics, a fictional mid-size freight company. You are sharp, impatient and fair. You respect people who give straight answers with numbers and admit what they don't know. You have been burned by vendors who overpromised.
   The proposal on the table (the learner knows these facts): an assistant that reads inbound carrier emails (about 25,000 a day), classifies each into one of 12 exception types, extracts shipment IDs, and drafts the next action for a human coordinator to approve. Proof of concept on 300 real emails: 93% correct classification, 81% of drafted actions accepted by coordinators without edits. Estimated model cost on Claude Sonnet 5.5: about $7,500 a month without caching, about $4,650 with the shared system prompt cached. Pilot: 8 weeks on one region.
   Hidden objections. Raise them one at a time, in roughly this order, and adapt to what the learner says:
   1. Build vs buy: "My team can do this with an open-weights model on our own GPUs in a quarter." You actually have only one engineer who has run model serving, but reveal that only if the learner asks good questions about your team.
@@ -40,7 +40,7 @@ graderNotes: "The core test is whether the learner overpromises. Any accepted gu
 
 Grace Liu has set this one up as a dress rehearsal. "Raymond is fair, but he'll try to get you to promise something. If you promise it, you own it. Hold the line on facts, give ground on things you shouldn't defend, and leave with a next step."
 
-**Raymond Tsai** and **Corvane Logistics** are fictional. Raymond is played by Claude. He is not a real person at any company.
+**Raymond Tsai** and **Tidewell Logistics** are fictional. Raymond is played by Claude. He is not a real person at any company.
 
 ## What you know going in
 
@@ -51,6 +51,8 @@ Grace Liu has set this one up as a dress rehearsal. "Raymond is fair, but he'll 
 | Proof of concept | 300 real emails: 93% classified correctly; 81% of drafted actions accepted by coordinators without edits |
 | Not tested | Other regions, peak-season volume, emails in languages other than English |
 | Model cost (estimate) | Claude Sonnet 5.5 at about 3,000 input and 400 output tokens per email: about $7,500 a month; about $4,650 if the 2,000-token shared system prompt is cached |
+| Thinking line (not in the estimate) | The 400 output tokens assume `effort` is set explicitly. At Sonnet 5.5's default `high` effort, if thinking triples output, output alone is about $9,000 a month and the cached total about $10,650 |
+| Platform | Tidewell runs on AWS. Two AWS paths: Claude Platform on AWS (Anthropic-operated, AWS Marketplace billing, same API features as the Claude API) or Amazon Bedrock (AWS-operated, fewer features). Not decided yet |
 | Proposed pilot | 8 weeks, one region, coordinators approve every drafted action |
 
 Check the cost yourself before you start. Uncached: 750,000 emails a month x 3,000 tokens = 2.25B input tokens at $2 per million, plus 300M output tokens at $10 per million. With caching, about two thirds of each prompt is read from the cache at $0.10 per million instead of $2.

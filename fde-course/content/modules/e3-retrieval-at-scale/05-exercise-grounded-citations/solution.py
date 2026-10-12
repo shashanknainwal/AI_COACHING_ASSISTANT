@@ -80,7 +80,7 @@ def answer_question(client, question, k=3):
     retrieved = [d["id"] for d in docs]
     messages = [{"role": "user", "content": build_user_message(question, docs)}]
     for attempt in range(1, MAX_ATTEMPTS + 1):
-        response = client.messages.create(model=MODEL, max_tokens=1024, system=SYSTEM_PROMPT, messages=messages)
+        response = client.messages.create(model=MODEL, max_tokens=4096, system=SYSTEM_PROMPT, messages=messages)
         text = "".join(b.text for b in response.content if b.type == "text").strip()
         if text == INSUFFICIENT:
             return {"status": "insufficient", "answer": None, "citations": [], "attempts": attempt, "problems": None}

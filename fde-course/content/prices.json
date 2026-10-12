@@ -1,0 +1,15 @@
+{
+  "_note": "Claude prices in USD per million tokens, used by /review number cards. Source: docs/HANDOFF.md section 7, docs/COURSE_REVIEW.md section 3 and the claude-api skill (checked 2026-10-10). Sonnet 5.5 cache reads are $0.10 per the live pricing page. Update this file when prices change.",
+  "checked": "2026-10-10",
+  "models": [
+    { "id": "claude-opus-5-5", "name": "Opus 5.5", "input": 4, "output": 20, "cacheRead": 0.2, "effortDefault": "medium" },
+    { "id": "claude-sonnet-5-5", "name": "Sonnet 5.5", "input": 2, "output": 10, "cacheRead": 0.1, "effortDefault": "high" },
+    { "id": "claude-haiku-5-5", "name": "Haiku 5.5", "input": 0.1, "output": 0.5, "effortDefault": "medium", "note": "for prompts up to 100K tokens; $0.50/$2.50 above that" },
+    { "id": "claude-fable-5-1", "name": "Fable 5.1", "input": 10, "output": 50, "cacheRead": 0.25 },
+    { "id": "claude-haiku-4-5", "name": "Haiku 4.5 (older)", "input": 1, "output": 5 }
+  ],
+  "batchDiscount": 0.5,
+  "cacheWrite": { "fiveMinute": 1.25, "oneHour": 2 },
+  "cacheMinimumTokens": 512,
+  "cacheTtl": { "default": "5 minutes", "option": "1 hour" }
+}

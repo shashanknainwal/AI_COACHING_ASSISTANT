@@ -34,7 +34,7 @@ rubric:
     lookFor: "Names realistic failures (hallucinated policy, wrong refunds, prompt injection through ticket text, outages) with detection and mitigation, including human review for risky actions."
   - name: Cost and latency math
     points: 15
-    lookFor: "A rough but explicit cost-per-ticket and latency estimate from token counts and model prices, and at least one lever to reduce it (caching, model routing, batching)."
+    lookFor: "A rough but explicit cost-per-ticket and latency estimate from token counts and model prices, with the effort level stated or thinking tokens counted as output, and at least one lever to reduce it (caching, model routing, effort, batching)."
 passScore: 70
 graderNotes: "Reward explicit numbers and reasoning over long component lists. An answer that never estimates cost, never mentions evals, or lets the model issue refunds without limits should not pass."
 ---
@@ -55,6 +55,6 @@ Answer in the four sections on the right, as you would talk through it in a 45-m
 4. **Break it on purpose.** Hallucinated policy, a refund loop, prompt injection hidden in an email, the order API timing out. For each: how do you notice, and what happens next?
 5. **Do the math.** Estimate tokens per ticket, multiply by model prices and volume. A rough number with stated assumptions beats no number.
 
-Useful facts for the math: Claude Opus 5.5 costs $4 per million input tokens and $20 per million output tokens; Claude Sonnet 5.5 is $2 and $10; Claude Haiku 5.5 is $0.10 and $0.50. Cached input is much cheaper than fresh input, so a long, stable system prompt and help-centre context are good candidates for prompt caching.
+Useful facts for the math: Claude Opus 5.5 costs $4 per million input tokens and $20 per million output tokens; Claude Sonnet 5.5 is $2 and $10; Claude Haiku 5.5 is $0.10 and $0.50. Cached input is much cheaper than fresh input, so a long, stable system prompt and help-centre context are good candidates for prompt caching. All three think by default (Opus 5.5 and Haiku 5.5 at effort `medium`, Sonnet 5.5 at `high`), thinking tokens are billed as output and sit inside time to first token, and `max_tokens` covers them. So state the effort you'd set, or add a thinking line to your estimate. Caching is opt-in: the request needs a `cache_control` marker.
 
 When you submit, Claude grades your design against the interviewer rubric below.

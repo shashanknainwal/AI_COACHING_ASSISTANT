@@ -154,6 +154,15 @@ def test_l4_history_uses_schedule_time():
     assert s.state_at(51, "a", 9) is False
 
 
+def test_l4_future_at_ignores_pending():
+    """state_at for a future time counts only changes applied so far"""
+    s = _svc()
+    s.create_flag(1, "a", False)
+    s.schedule(2, "a", 100, True)
+    assert s.state_at(10, "a", 200) is False, "the change at 100 is still pending at timestamp 10"
+    assert s.state_at(150, "a", 200) is True, "by timestamp 150 the scheduled change has been applied"
+
+
 def test_l4_history_survives_delete():
     """History covers deletes and re-creation; overrides don't count"""
     s = _svc()

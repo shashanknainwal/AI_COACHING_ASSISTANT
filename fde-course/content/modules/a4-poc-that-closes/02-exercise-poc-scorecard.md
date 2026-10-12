@@ -12,9 +12,9 @@ hints:
 
 Grace Liu, the Principal architect who coaches this track (a fictional character), forwards you a spreadsheet and a calendar invite.
 
-"Halvorsen Mutual's claims-intake POC reads out on Thursday. Ruth Okafor, their VP of Claims Operations, is the decision owner. We agreed six success criteria with her at kickoff, with baselines, and three are must-haves. Week 6 numbers are in. Half the room thinks it's a clear win because the demo survey came back at 9.1 out of 10. I don't want anyone arguing from vibes on Thursday. Build me a scorecard that applies the rules we agreed: met, missed, borderline or not measured for each criterion, and go, conditional, no-go or incomplete overall. And it should refuse to score anything nobody agreed to up front."
+"Thornbury Mutual's claims-intake POC reads out on Thursday. Ruth Okafor, their VP of Claims Operations, is the decision owner. We agreed six success criteria with her at kickoff, with baselines, and three are must-haves. Week 6 numbers are in. Half the room thinks it's a clear win because the demo survey came back at 9.1 out of 10. I don't want anyone arguing from vibes on Thursday. Build me a scorecard that applies the rules we agreed: met, missed, borderline or not measured for each criterion, and go, conditional, no-go or incomplete overall. And it should refuse to score anything nobody agreed to up front."
 
-Halvorsen Mutual and Ruth Okafor are fictional. `CRITERIA` (the six agreed criteria) and `RESULTS` (the week 6 measurements) are loaded for you.
+Thornbury Mutual and Ruth Okafor are fictional. `CRITERIA` (the six agreed criteria) and `RESULTS` (the week 6 measurements) are loaded for you.
 
 ## The data
 
@@ -77,4 +77,4 @@ After the loop, add `"no must-have criterion"` if no criterion has a truthy `mus
 
 The band around 0.90 is 0.02 × 0.90 = 0.018, so 0.89 is borderline and 0.87 is a miss.
 
-Press **Run** to see Halvorsen's scorecard, then **Submit**. Before you move on, write the one sentence you'd open Thursday's readout with. It should state the decision, the borderline must-have and what you'd do about it, and it shouldn't mention the 9.1.
+Press **Run** to see Thornbury's scorecard, then **Submit**. Before you move on, write the one sentence you'd open Thursday's readout with. It should state the decision, the borderline must-have and what you'd do about it, and it shouldn't mention the 9.1.

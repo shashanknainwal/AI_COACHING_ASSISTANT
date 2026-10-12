@@ -3,11 +3,11 @@ title: "Exercise: A Chunker and BM25 From Scratch"
 type: exercise
 minutes: 40
 hints:
-  - "`chunk_text`: validate first, then `words = text.split()` and `step = size - overlap`. Loop with `start = 0`; append `words[start:start + size]`; break as soon as `start + size >= len(words)`, otherwise `start += step`."
-  - "`chunk_corpus`: `for n, piece in enumerate(chunk_text(doc[\"text\"], size, overlap), 1)` and build the id with `f\"{doc['id']}#{n}\"`."
-  - "In `__init__`, build `self.tfs = [Counter(tokenize(c[\"title\"] + \" \" + c[\"text\"])) for c in chunks]`, then `self.lengths` from `sum(tf.values())`. Count document frequency with another `Counter`, updating it with `tf.keys()` for each chunk."
-  - "`score`: `norm = k1 * (1 - b + b * length / avgdl)`; for each term in `set(tokenize(query))`, take `f = tf.get(term, 0)`, skip it when `f == 0`, otherwise add `idf[term] * f * (k1 + 1) / (f + norm)`."
-  - "`search`: score every chunk, keep scores above 0 as `(id, round(score, 4))`, sort with `key=lambda h: -h[1]` (a stable sort keeps chunk order for ties), and slice `[:k]`."
+  - "`chunk_text`: validate the arguments before anything else. Each window starts `size - overlap` words after the previous one. The tricky part is the end: stop once a window reaches the last word, so you never emit a final chunk that is entirely overlap."
+  - "`chunk_corpus`: chunk ids are 1-based and built from the document id. Python can number items for you as you iterate."
+  - "`__init__`: everything BM25 needs at query time can be computed once here: per-chunk term counts, chunk lengths, the average length, and how many chunks contain each term. Remember the title is indexed with the text."
+  - "`score`: write the formula from the spec as a sum over the *distinct* query terms. A term that doesn't occur in the chunk contributes nothing, so skip it rather than dividing by anything odd."
+  - "`search`: think about ties. If two chunks have the same score, the spec wants corpus order, and Python's sort is stable. Drop zero scores before you take the top `k`."
 ---
 
 Leo Martins, a Staff engineer you're pairing with this week, forwards a take-home in the style applied AI teams send out. The fictional customer is **Ridgeline Software**. Their on-call engineers search runbooks during incidents, and the current search is a substring match that returns nothing for "token expired" because the runbook says "expired token". Leo's note: "Before anyone mentions embeddings, build the lexical baseline properly. Half the candidates I review can't write BM25 without a library, and the other half can't explain why their chunk boundaries are where they are. Do both."

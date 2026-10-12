@@ -1,0 +1,10 @@
+{
+  "_doc": "Thresholds for evals/gate.py. Change them in a reviewed pull request, never to make a red build green.",
+  "mode": "point",
+  "max_drop": 0.05,
+  "min_pass_rate": 0.70,
+  "max_error_rate": 0.10,
+  "max_cost_per_case_usd": 0.03,
+  "max_p95_latency_s": 30.0,
+  "critical_must_pass_every_run": true
+}

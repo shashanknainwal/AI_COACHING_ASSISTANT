@@ -3,11 +3,11 @@ title: "Exercise: A Warranty-Claim Extractor That Checks Its Own Output"
 type: exercise
 minutes: 40
 hints:
-  - "`build_system_prompt`: build a list of lines and join with `\"\\n\"`. Catalog lines are `f\"- {sku}: {description}\"`; the blank strings between sections give you the empty lines."
-  - "`RMA_SCHEMA`: nullable is `{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}]}`. Build the enums from `PRODUCTS` and `FAILURE_MODES` with list comprehensions so they can never drift from the prompt."
-  - "`validate_rma`: for the serial, check the format with `SERIAL_FORMAT.fullmatch(serial)` first; only if the format is fine, check `serial in email[\"subject\"] + \"\\n\" + email[\"body\"]`. Evidence fails if `not evidence.strip()` or `evidence not in email[\"body\"]`."
-  - "`extract_rma`: the reply starts with a thinking block, so `response.content[0].text` breaks. Use `next(b.text for b in response.content if b.type == \"text\")`. Check `stop_reason` for `\"refusal\"` and `\"max_tokens\"` before you read any text."
-  - "Loop `for attempt in (1, 2)`. On a validation failure, set `messages = messages + [{\"role\": \"assistant\", \"content\": response.content}, {\"role\": \"user\", \"content\": correction_message(errors)}]`. On truncation, keep `messages` as they are and set `max_tokens = MAX_TOKENS * 2`."
+  - "`build_system_prompt` has no inputs. Assemble it from the given constants as a list of lines and join once at the end; the blank entries between sections are what produce the empty lines in the expected layout."
+  - "`RMA_SCHEMA`: a nullable string is an `anyOf` of two types. Derive both enums from the same constants the prompt uses, so a new SKU can never appear in one and not the other."
+  - "`validate_rma`: order matters. A badly formatted serial should not also be reported as missing from the email, so only run the grounding check when the format check passed. 'Appears in the email' means subject or body; the evidence quote is checked against the body only."
+  - "`extract_rma`: current models can return a thinking block before the text, so don't assume the text is at a fixed index. Decide what to do from `stop_reason` before you try to parse anything."
+  - "The two retry kinds differ in what you change. A validation failure needs the conversation extended (the whole previous turn, then the correction). A truncation needs the same conversation with more room. Keep `messages` and `max_tokens` as variables your loop can update."
 ---
 
 Leo hands you a practice take-home, written in the style of a take-home case study. "The customer is Halden Robotics, a made-up maker of desktop robot arms. Their returns team reads every warranty email by hand and types the details into their RMA system. They want Claude to fill in those fields. Most candidates hand in a prompt, a schema and a `json.loads`. That gets you through the demo, but it falls over on real email. I want an extractor that **knows when its own output is wrong**: it checks what the schema can't, gives Claude one chance to fix it, and sends the rest to a human. When I review this, I read the prompt, the schema and the failure handling, in that order."
@@ -36,7 +36,7 @@ The catalog (`PRODUCTS`), the failure modes, the actions, `CONTEXT`, `RULES`, `M
 </rules>
 ```
 
-It takes no input, so it's identical on every call. That's what makes it cacheable.
+It takes no input, so it's identical on every call. That's what makes it cacheable. Identical bytes are only the precondition: in production you'd also send the system prompt as a block with `cache_control` (Lesson 1). This exercise leaves the marker out so the tests can compare a plain string.
 
 **2. `build_user_message(email)`** returns:
 

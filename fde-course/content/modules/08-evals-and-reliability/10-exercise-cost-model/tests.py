@@ -22,7 +22,7 @@ def test_request_cost():
     u = U(input_tokens=200, output_tokens=120, cache_read_input_tokens=3000)
     assert request_cost("claude-sonnet-5-5", u) == 0.0019
     assert request_cost("claude-opus-5-5", U(input_tokens=1_000_000)) == 4.0
-    assert request_cost("claude-haiku-4-5", U(output_tokens=1000, cache_read_input_tokens=10_000)) == 0.006
+    assert request_cost("claude-haiku-5-5", U(output_tokens=1000, cache_read_input_tokens=10_000)) == 0.0006
 
 
 def test_request_cost_batch_and_unknown():
@@ -61,7 +61,7 @@ def test_monthly_cost():
     assert monthly_cost("claude-sonnet-5-5", 5000, 3200, 120, cached_tokens=3000, cache_hit_rate=0.95) == 339.0
     assert monthly_cost("claude-sonnet-5-5", 5000, 3200, 120, cached_tokens=3000, cache_hit_rate=0.95, batch=True) == 169.5
     assert monthly_cost("claude-opus-5-5", 1000, 2000, 500, days=1) == 18.0
-    assert monthly_cost("claude-haiku-4-5", 100, 5000, 100, cached_tokens=5000, cache_hit_rate=0.0) == 20.25, \
+    assert monthly_cost("claude-haiku-5-5", 1000, 5000, 100, cached_tokens=5000, cache_hit_rate=0.0) == 20.25, \
         "a 0% hit rate pays the cache-write price on every request"
 
 
@@ -72,7 +72,7 @@ def test_cheapest_passing():
                                                       "input_tokens": 2000, "output_tokens": 300}},
         {"name": "mid", "pass_rate": 0.92, "params": {"model": "claude-sonnet-5-5", "requests_per_day": 1000,
                                                       "input_tokens": 2000, "output_tokens": 300}},
-        {"name": "small", "pass_rate": 0.80, "params": {"model": "claude-haiku-4-5", "requests_per_day": 1000,
+        {"name": "small", "pass_rate": 0.80, "params": {"model": "claude-haiku-5-5", "requests_per_day": 1000,
                                                         "input_tokens": 2000, "output_tokens": 300}},
     ]
     assert cheapest_passing(opts, 0.92) == {"choice": {"name": "mid", "monthly_cost": 210.0}, "rejected": ["small"]}

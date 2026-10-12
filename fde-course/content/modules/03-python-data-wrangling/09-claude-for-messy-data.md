@@ -82,7 +82,7 @@ cost           = input × input_price + output × output_price
 | 1 | 50,000 | 23,000,000 | 750,000 | $107.00 |
 | 25 | 2,000 | 3,800,000 | 750,000 | $30.20 |
 
-Batching cuts about 70%; rules-first cuts more. For backfills, the **Message Batches API** runs asynchronously (results within 24 hours) at 50% of the normal price, and **prompt caching** makes a long repeated system prompt much cheaper after the first call.
+Batching cuts about 70%; rules-first cuts more. For backfills, the **Message Batches API** runs asynchronously (results within 24 hours) at 50% of the normal price, and **prompt caching** makes a long repeated system prompt much cheaper after the first call. Check the customer's platform before you promise the batch discount: Message Batches is available on the Claude API and Claude Platform on AWS, but not on Amazon Bedrock, Google Vertex AI or Microsoft Foundry (those clouds have their own batch offerings with their own terms). The [platform fit checker](/learn/a2-enterprise-deployment/03-exercise-platform-fit-checker) in the Architect track covers these gaps.
 
 ## Evaluate on a sample before the full run
 
@@ -92,4 +92,4 @@ Run 100 hand-labeled tickets first. 94% agreement on genuinely ambiguous misses:
 > - Write the rule when you can; use Claude for language judgment.
 > - Conservative rules first; Claude for the remainder, in batches matched by index.
 > - Validate every batch and fall back safely.
-> - Estimate cost before running; batching, the Batches API and caching reduce it.
+> - Estimate cost before running; batching, the Batches API (where the platform offers it) and caching reduce it.

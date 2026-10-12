@@ -33,6 +33,13 @@ export default async function PurchaseSuccess({ searchParams }: { searchParams: 
           <Link href="/learn" className="mt-8 inline-block rounded-full bg-graphite px-6 py-3 font-semibold text-paper hover:bg-black">
             Go to the course →
           </Link>
+          <p className="mt-4 text-sm text-graphite-2">
+            Interview coming up?{" "}
+            <Link href="/start" className="font-semibold text-forest hover:underline">
+              Build my plan
+            </Link>{" "}
+            from your interview date and the hours you have.
+          </p>
         </>
       ) : (
         <>

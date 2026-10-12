@@ -1,0 +1,4 @@
+{
+  "_doc": "No baseline yet. Run the evals once on main, check the result by hand, then: python -m evals.gate --current results/latest.json --update-baseline",
+  "pass_rate": null
+}

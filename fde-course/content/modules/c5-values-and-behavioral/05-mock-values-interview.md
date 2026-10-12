@@ -34,10 +34,10 @@ rubric:
     points: 15
     lookFor: "Answers the question asked, concisely; responds to follow-ups instead of repeating a script."
 passScore: 70
-graderNotes: "This is the round that guides say fails the most candidates. Be strict about vagueness and rehearsed answers. Reward candidates who say 'I don't know' honestly or describe real discomfort over candidates who give perfect-sounding answers without detail."
+graderNotes: "Be strict about vagueness and rehearsed answers. Reward candidates who say 'I don't know' honestly or describe real discomfort over candidates who give perfect-sounding answers without detail."
 ---
 
-Several interview guides single out the culture or values interview as the round that fails the most candidates at mission-driven labs (**Reported**; see lesson 01). Reported questions include whether you'd prioritize the mission over the company's future share price, and describing someone you respect but disagree with on values. Nobody can tell you the "right" answers, because there aren't any. What interviewers look for is **specific, honest evidence of how you behave**.
+The culture interview is a real filter at mission-driven labs, and lesson 01 sets out what's known about it and how much each claim deserves to be trusted. Nobody can tell you the "right" answers, because there aren't any. What interviewers look for is **specific, honest evidence of how you behave**.
 
 ## How this practice works
 

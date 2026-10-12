@@ -37,7 +37,23 @@ Beginners think of "the prompt" as one string. In production, behavior comes fro
 
 Two rules fall out of this table.
 
-**Stable content goes first, volatile content goes last.** Prompt caching is a prefix match over tools, then system, then messages. Any byte change invalidates everything after it. A timestamp, a request ID or a user's name in the system prompt means you never get a cache hit. On current models the minimum cacheable prefix is 512 tokens, so a system prompt with real definitions and examples usually qualifies. Cached reads on Claude Opus 5.5 cost $0.20 per million tokens against $4 for fresh input.
+**Stable content goes first, volatile content goes last.** Prompt caching is a prefix match over tools, then system, then messages. Any byte change invalidates everything after it. A timestamp, a request ID or a user's name in the system prompt means you never get a cache hit. On current models the minimum cacheable prefix is 512 tokens, so a system prompt with real definitions and examples usually qualifies. Cached reads on Claude Opus 5.5 cost $0.20 per million tokens against $4 for fresh input (0.05x; most older models read at 0.1x, so always name the model when you quote a saving).
+
+A stable prefix is necessary but not sufficient. Caching is opt-in: the request must carry a top-level `cache_control` (automatic caching) or a `cache_control` breakpoint on a block. Without one, identical bytes are billed as fresh input every time.
+
+```python
+response = client.messages.create(
+    model="claude-sonnet-5-5",
+    max_tokens=2000,
+    system=[{
+        "type": "text",
+        "text": SYSTEM_PROMPT,                    # same bytes on every request
+        "cache_control": {"type": "ephemeral"},   # breakpoint: cache everything up to here
+    }],
+    messages=[{"role": "user", "content": f"<email>\n{email}\n</email>\n\nExtract the claim fields."}],
+)
+print(response.usage.cache_read_input_tokens)     # > 0 on the second identical-prefix call
+```
 
 **Don't make prose do a config job.** "Think step by step", "take a deep breath" and "be thorough" are steering thinking depth with words. On current models, adaptive thinking is on and `effort` controls depth and spend; on Claude Opus 5.5 thinking can't be disabled and the default effort is `medium`. "Respond only in JSON" is doing the schema's job, badly. Move each of these to the parameter that owns it.
 

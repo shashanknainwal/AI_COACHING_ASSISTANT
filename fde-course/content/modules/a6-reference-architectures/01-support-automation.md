@@ -123,9 +123,9 @@ Calder Home assumptions (state them out loud; replace them with measured numbers
 |---|---|
 | Contacts per day | 8,000 |
 | Share sent to the agent after triage | 70% (5,600) |
-| Triage call | 1,500 input, 50 output tokens on Haiku 5.5, uncached |
+| Triage call | 1,500 input, 50 output tokens on Haiku 5.5 with `effort: "low"` set, uncached |
 | Agent calls per conversation | 4 |
-| Per agent call | 6,000 cached prefix tokens, 3,000 fresh input tokens, 400 output tokens on Sonnet 5.5 |
+| Per agent call | 6,000 cached prefix tokens, 3,000 fresh input tokens, 400 output tokens on Sonnet 5.5 with `effort` set explicitly (thinking included) |
 
 Per agent call on Sonnet 5.5:
 
@@ -142,7 +142,9 @@ Daily: 8,000 x $0.000175 = $1.40 for triage, plus 5,600 x $0.0424 = $237.44 for 
 
 Now the comparison that matters to the executive. Suppose Calder Home tells you a human-handled contact costs them $5 all-in (their number, not yours). If the agent fully resolves half of the 5,600 tickets it sees, that's 2,800 contacts a day that no longer need a person, about $14,000 a day of human handling against about $239 of model spend. The model bill is not the business case; the **resolution rate** is. That's why the eval gate and the rollout stages deserve more of your time than shaving tokens.
 
-Two sensitivities to have ready:
+Three sensitivities to have ready:
+
+- **Thinking tokens:** Sonnet 5.5 defaults to `high` effort and thinks by default, and thinking is billed as output and sits inside time to first token. If nobody sets `effort` and output triples to 1,200 tokens, a call costs $0.0186, a conversation $0.0744, and the agent about $417 a day. Set `effort` per step and measure it in week one.
 
 - **Opus 5.5 for the agent:** the agent part roughly doubles, to about $475 a day. Worth it only if the eval shows it resolves materially more tickets.
 - **Eight turns instead of four:** the agent cost more than doubles, because later turns carry more history. Long loops are usually a sign of poor tool design (tools that return too much, or too little).

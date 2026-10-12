@@ -35,7 +35,7 @@ rubric:
     lookFor: "A golden set built from past requests with known outcomes (approved, denied with reason), including missing-documentation and outdated-policy cases. Field-level accuracy, criteria-match accuracy with citation support, and zero invented clinical facts. A gate with agreed numbers, compared with today's nurse baseline (time per request, denial rate)."
   - name: Cost estimate
     points: 15
-    lookFor: "Explicit token assumptions multiplied by correct prices (for example Sonnet 5.5 at $2 input and $10 output per million) to a per-request and monthly figure. Recognises that nurse time (25 minutes per request today) dominates and that the business case is minutes saved and denials avoided, not token price. Bonus for noting Message Batches isn't listed for Vertex AI, or that most of this flow is interactive anyway."
+    lookFor: "Explicit token assumptions multiplied by correct prices (for example Sonnet 5.5 at $2 input and $10 output per million) to a per-request and monthly figure. Recognises that nurse time (25 minutes per request today) dominates and that the business case is minutes saved and denials avoided, not token price. States the effort setting or includes a thinking-token line. Bonus for noting Message Batches isn't listed for Vertex AI, or that most of this flow is interactive anyway."
   - name: Risks, pushback and honesty
     points: 15
     lookFor: "Names realistic risks (invented or misread clinical facts, stale payer policy, permission and privacy handling, portal automation fragility, nurses rubber-stamping) with mitigations. Pushes back on 'fully automated submission' for phase 1 and explains why. Says that compliance questions (for example health-data agreements and data handling on Google Cloud) must be confirmed with the vendors' current documentation rather than asserted."
@@ -80,5 +80,7 @@ Useful facts, from Anthropic's [pricing page](https://platform.claude.com/docs/e
 | Claude on Google Cloud | Available through Vertex AI; PDF input, citations and structured outputs are listed as supported there |
 | Message Batches API | Listed for the Claude API and Claude Platform on AWS, not for Vertex AI |
 | Citations with structured outputs | Can't be combined in one request |
+| Thinking and effort | All three models think by default and thinking is billed as output. Sonnet 5.5 defaults to `high` effort, Opus 5.5 and Haiku 5.5 to `medium`. State the effort you'd set or add a thinking-token line |
+| Vertex AI endpoints | Single-region endpoints serve Claude Sonnet 4.6 and earlier only; newer models use the global or a multi-region (`us`, `eu`) endpoint |
 
 When you submit, Claude grades your memo against the rubric below. The rubric rewards adaptation, honest scoping and numbers, not length.

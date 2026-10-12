@@ -36,7 +36,7 @@ const STEPS = [
 const FAQ = [
   ["Do I need to install anything?", "No. Lessons, the code editor and the Python runtime all run in your browser. The code you write uses the same Anthropic SDK calls you'd use in production."],
   ["How much Python do I need?", "Comfort with functions, lists and dictionaries is enough to start. Module 3 strengthens the data-wrangling skills the rest of the course relies on."],
-  ["Do I need an Anthropic API key?", "Not for the course. Exercises run against a built-in simulator of the SDK, so you can learn without paying for API calls. Your code works against the real API unchanged."],
+  ["Do I need an Anthropic API key?", "Not for the course. Exercises run against a built-in simulator of the SDK, so you can learn without paying for API calls. It uses the same calls as the real SDK for the features taught."],
   ["How long does it take?", "About 40 hours of lessons and exercises. Most people finish in 4 to 8 weeks at a few hours a week. Access never expires."],
   ["Can I try it before buying?", "Yes. Module 1 is free, with no credit card needed."],
 ];
@@ -201,6 +201,9 @@ async function FdeHome() {
               <a href="#pricing" className="rounded-full border border-graphite/20 px-6 py-3 font-semibold text-graphite hover:border-graphite/50">
                 Full access · ${price}
               </a>
+              <Link href="/start" className="px-2 py-3 font-semibold text-graphite-2 underline decoration-rule underline-offset-4 hover:text-graphite">
+                Build my plan
+              </Link>
             </div>
             <p className="mt-5 text-sm text-graphite-3">No installs · No API key needed · Lifetime access</p>
           </div>

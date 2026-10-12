@@ -3,11 +3,11 @@ title: "Exercise: A Retry Policy You Can Defend"
 type: exercise
 minutes: 40
 hints:
-  - "`is_retryable`: check `isinstance(exc, anthropic.APIConnectionError)` first (timeouts are a subclass of it). For `anthropic.APIStatusError`, return `exc.status_code in RETRYABLE_STATUS or exc.status_code >= 500`. Anything else is `False`."
-  - "`retry_after_seconds`: `getattr(exc, \"response\", None)`, then its `headers.get(\"retry-after\")`. Wrap `float(value)` in `try/except (TypeError, ValueError)` and return `None` for negatives."
-  - "`backoff_delay`: `if retry_after is not None: return float(retry_after)`. Otherwise `return rand() * min(cap, base * 2 ** attempt)`. Test `is not None`, because a retry-after of 0 is a real value."
-  - "`call_with_retries`: record `start = time.monotonic()`. Each attempt uses `timeout = min(attempt_timeout_s, deadline_s - (time.monotonic() - start))` and calls `client.with_options(max_retries=0, timeout=timeout).messages.create(**params)`."
-  - "On `except anthropic.APIError as exc`: append the log entry with `wait: None`; re-raise with a bare `raise` if the error isn't retryable, if this was the last attempt, or if `time.monotonic() - start + delay >= deadline_s`. Otherwise set the entry's `wait` to the delay and `time.sleep(delay)`."
+  - "`is_retryable`: sort errors into two families: the request never got a response (network, timeout), or it did and carries a status code. Look at the SDK's exception hierarchy to see which class covers timeouts."
+  - "`retry_after_seconds`: the header comes from the server, so treat it as untrusted input. A missing header, a non-number or a negative value all mean 'no usable hint'."
+  - "`backoff_delay`: the server's hint wins when there is one. Be careful with how you test for it: zero is a valid hint, and it's falsy."
+  - "`call_with_retries`: one clock for the whole call. Each attempt gets whatever is left of the deadline, capped at the per-attempt timeout, and the SDK's own retries must be off so the two retry layers don't multiply."
+  - "When an attempt fails, decide in this order: can a retry ever help, is this the last attempt, and would the wait run past the deadline? Only if all three allow it do you sleep. Log every attempt, successful or not."
 ---
 
 Leo Martins here. One of our customers, Ledgerline (fictional), runs accounts-payable automation: Claude reads vendor invoices and pulls out the fields their ledger needs. On the last two days of every month their traffic jumps, and so do their errors. Their current code wraps every call in `for i in range(10): try ... except Exception: time.sleep(1)`. It retries bad requests that can never succeed, it hammers the API at a fixed one-second rhythm during an overload, and when something fails they can't tell support which request it was.
