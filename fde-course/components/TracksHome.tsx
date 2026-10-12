@@ -290,8 +290,12 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
               </span>
             </h1>
             <p className="mt-7 max-w-xl text-lg leading-relaxed text-graphite-2">
-              Three role tracks, for Applied AI Engineer, Applied AI Architect and Forward Deployed Engineer, built around how labs like Anthropic, OpenAI
-              and Perplexity are reported to hire. Write real Python, get your written answers graded, and practice the conversations live.
+              You know the material. Then the interviewer says &ldquo;walk me through it,&rdquo; the clock starts, and your best answer comes out
+              half-formed. Interviews aren&apos;t purely logical tests: pressure, nerves and a skeptical face in the room decide as much as knowledge does.
+            </p>
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-graphite-2">
+              So rehearse under pressure. Three role tracks, for Applied AI Engineer, Applied AI Architect and Forward Deployed Engineer: timed drills,
+              graded answers and live, spoken rounds with interviewers and customers who push back.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
@@ -307,7 +311,7 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
                 All tracks · ${price}
               </a>
             </div>
-            <p className="mt-5 text-sm text-graphite-3">No installs · No API key · Original questions, never leaked ones</p>
+            <p className="mt-5 text-sm text-graphite-3">Start with a 2-minute plan · No installs · No API key · Original questions, never leaked ones</p>
           </div>
           <LoopComposition />
         </div>
@@ -325,6 +329,43 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
             ),
           )}
         </dl>
+      </section>
+
+      {/* Why people stumble */}
+      <section className="mx-auto max-w-6xl px-4 pt-24 sm:px-6">
+        <Eyebrow>Why strong engineers stumble</Eyebrow>
+        <h2 className="mt-4 max-w-3xl font-serif text-4xl font-semibold leading-tight tracking-[-0.015em] text-graphite">
+          It&apos;s rarely knowledge. It&apos;s the room.
+        </h2>
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {[
+            [
+              "You freeze, then ramble",
+              "A design prompt with no numbers, a clock and a silent interviewer. Without reps, people jump to a solution and talk until time runs out.",
+              "Timed design rounds with a live interviewer who changes the requirements halfway through.",
+            ],
+            [
+              "You fold under pushback",
+              "A staff engineer says \u201cI\u2019m not convinced.\u201d A CISO asks you to just confirm. Wanting to be liked makes people agree or overclaim.",
+              "Personas trained to push back once, with grading that rewards holding a reasoned position.",
+            ],
+            [
+              "You prepare for rumors",
+              "Prep sites sell certainty: \u201cthey always ask X.\u201d Ten blogs copying one forum post still feel like proof when you\u2019re anxious.",
+              "Every hiring claim labelled official, reported or anecdotal, with sources, so you train for what\u2019s real.",
+            ],
+          ].map(([title, problem, answer]) => (
+            <div key={title} className="flex flex-col rounded-3xl border border-rule bg-white/70 p-6">
+              <h3 className="font-serif text-2xl font-semibold text-graphite">{title}</h3>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-graphite-2">{problem}</p>
+              <p className="mt-5 border-t border-rule pt-4 text-sm font-semibold leading-relaxed text-forest">{answer}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-8 max-w-3xl text-graphite-2">
+          Knowing how pressure and persuasion work doesn&apos;t only help you read a room. It also protects you from being pushed: by a customer who wants a
+          promise you can&apos;t keep, an executive who wants a rounder number, or a prep course that sells fear. Every module trains both.
+        </p>
       </section>
 
       {/* Tracks */}
@@ -578,6 +619,10 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
               Start free with the first Foundations module, the first lesson of every track and FDE Module 1. Upgrade when you&apos;re ready to prepare
               for real.
             </p>
+            <p className="mt-4 max-w-md text-graphite-2">
+              For scale: a single one-hour mock with a human interviewer is reported to cost roughly $170 to $340 on popular platforms. This is one
+              payment for every track, unlimited practice and lifetime updates. Human mocks are still worth doing; this is how you arrive ready for them.
+            </p>
           </div>
           <div className="rounded-3xl bg-graphite p-8 text-paper shadow-[0_40px_80px_-40px_rgba(29,27,22,0.9)] sm:p-10">
             <div className="flex items-baseline gap-2">
@@ -631,8 +676,11 @@ export default function TracksHome({ course, viewer }: { course: Course; viewer:
           <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-emerald-400/15 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-24 -right-10 h-64 w-64 rounded-full bg-orange-400/10 blur-3xl" />
           <p className="relative font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-300">Foundations · C1 · Free</p>
-          <h2 className="relative mt-4 font-serif text-4xl font-semibold leading-tight sm:text-5xl">Start with how the loop works.</h2>
-          <p className="relative mx-auto mt-4 max-w-xl text-paper-3">The first module is free and takes under two hours. No setup, no credit card.</p>
+          <h2 className="relative mt-4 font-serif text-4xl font-semibold leading-tight sm:text-5xl">Walk into the onsite having done it before.</h2>
+          <p className="relative mx-auto mt-4 max-w-xl text-paper-3">
+            The best feeling in an interview is recognition: you&apos;ve heard this kind of question, you&apos;ve been pushed like this, and you know your
+            next move. Start with the free module. It takes under two hours, with no setup and no credit card.
+          </p>
           <Link href="/learn" className="relative mt-9 inline-block rounded-full bg-emerald-400 px-7 py-3 font-semibold text-graphite hover:bg-emerald-300">
             Start free →
           </Link>
